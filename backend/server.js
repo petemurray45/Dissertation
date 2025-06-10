@@ -4,16 +4,21 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
+import multer from "multer";
 import { sql } from "./config/db.js";
 
 // route imports
 import propertyRoutes from "./routes/propertyRoutes.js";
+import { url } from "inspector";
 dotenv.config();
 
+// configured multer to store files in memory
+const upload = multer({ storage: multer.memoryStorage() });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 // helmet used as security middleware to protect app by setting various HTTP headers
 app.use(helmet());
