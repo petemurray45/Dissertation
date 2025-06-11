@@ -5,11 +5,12 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import multer from "multer";
+import axios from "axios";
 import { sql } from "./config/db.js";
+import { aj } from "./lib/arcjet.js";
 
 // route imports
 import propertyRoutes from "./routes/propertyRoutes.js";
-import { url } from "inspector";
 dotenv.config();
 
 // configured multer to store files in memory
@@ -24,6 +25,42 @@ app.use(cors());
 app.use(helmet());
 // morgan used to log requests
 app.use(morgan("dev"));
+// images is the name attribute applied to the input type "file" on the frontend
+app.use("/api", upload.array("images", 10), propertyRoutes); // max 10 images for now
+
+// apply rate-limiting to all routes
+app.use(async (req, res, next) => {
+  try {
+    const decision = await aj.protect(req, {
+      requested: 1, // each request uses 1 token
+    });
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        res.status(429).json({ error: "Too many requests" });
+      } else if (decision.reason.isBot()) {
+        res.status(403).json({ error: "Bot access denied" });
+      } else {
+        res.status(403).json({ error: "Forbidden" });
+      }
+      return;
+    }
+
+    // check for spoofed bots
+    if (
+      decision.results.some(
+        (result) => result.reason.isBot() && result.reason.isSpoofed()
+      )
+    ) {
+      res.status(403).json({ error: "Spoofed bot detected" });
+      return;
+    }
+    next();
+  } catch (err) {
+    console.log("Arcjet error", err);
+    next(err);
+  }
+});
 
 // routes
 app.use("/api/properties", propertyRoutes);

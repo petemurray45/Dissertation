@@ -1,6 +1,13 @@
 import { sql } from "../config/db.js";
 import axios from "axios";
 import dotenv from "dotenv";
+import cloudinary from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
@@ -20,7 +27,7 @@ export const getAllProperties = async (req, res) => {
   }
 };
 
-export const getProperty = async (req, res) => {
+export const createProperty = async (req, res) => {
   const {
     title,
     description,
@@ -33,6 +40,13 @@ export const getProperty = async (req, res) => {
     postcode,
     country,
   } = req.body;
+
+  // files stored in req.files due to multer middleware
+  const files = req.files;
+
+  if (!files || files.length === 0) {
+    return res.status(400).json({ message: "At least one image is required" });
+  }
 
   if (
     !title ||
@@ -76,12 +90,25 @@ export const getProperty = async (req, res) => {
         .status(400)
         .json({ message: "Could not geocode provided address" });
     }
-    const { lat, lang } = results[0].geometry.location;
+    const { lat, long } = results[0].geometry.location;
+  } catch (err) {
+    console.log("Error geocoding address");
+  }
+
+  try {
+    const propertyResult = await sql`
+    INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
+    VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${lat}, ${long}, NOW())
+    RETURNING id;`;
+
+    const propertyID = propertyResult[0].id;
+
+    /////// need to loop and upload images and then insert into images
   } catch (err) {
     console.log("Error adding property to database");
   }
 };
 
-export const createProperty = async (req, res) => {};
+export const getProperty = async (req, res) => {};
 export const updateProperty = async (req, res) => {};
 export const deleteProperty = async (req, res) => {};
