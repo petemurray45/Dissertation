@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@arcjet/node": "^1.0.0-beta.8",
+    "@clerk/clerk-sdk-node": "^5.1.6",
     "@neondatabase/serverless": "^1.0.1",
     "axios": "^1.9.0",
     "cloudinary": "^2.6.1",
@@ -23,6 +24,11 @@
     "multer": "^2.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "autoprefixer": "^10.4.21",
+    "init": "^0.1.2",
+    "nodemon": "^3.1.10",
+    "npx": "^3.0.0",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^4.1.8"
   }
 }
