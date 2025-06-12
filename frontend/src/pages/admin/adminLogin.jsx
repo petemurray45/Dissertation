@@ -1,12 +1,12 @@
 import React from "react";
-import loginCard from "../../components/admin/loginCard";
+import LoginCard from "../../components/admin/loginCard";
 
-function adminLogin() {
+function AdminLogin() {
   return (
     <div>
-      <loginCard />
+      <LoginCard />
     </div>
   );
 }
 
-export default adminLogin;
+export default AdminLogin;

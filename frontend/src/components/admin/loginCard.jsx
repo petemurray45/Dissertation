@@ -6,7 +6,7 @@ import {
   UserButton,
 } from "@clerk/clerk-react";
 
-function loginCard() {
+function LoginCard() {
   return (
     <header>
       <SignedOut>
@@ -19,4 +19,4 @@ function loginCard() {
   );
 }
 
-export default loginCard;
+export default LoginCard;

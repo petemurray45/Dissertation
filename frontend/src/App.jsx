@@ -1,11 +1,12 @@
-import adminLogin from "./pages/admin/adminLogin";
+import AdminLogin from "./pages/admin/adminLogin";
 import {
   SignedIn,
   SignedOut,
   SignIn,
   RedirectToSignIn,
 } from "@clerk/clerk-react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import AdminDashboard from "./pages/admin/adminDashboard";
 
 function App() {
   return (
@@ -13,14 +14,29 @@ function App() {
       <Route
         path="/admin"
         element={
-          <SignedIn>
-            <adminLogin />
-          </SignedIn>
+          <>
+            <SignedIn>
+              <AdminDashboard />
+            </SignedIn>
+
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
         }
       />
       <Route
         path="/sign-in"
-        element={<SignIn routing="path" path="/sign-in" />}
+        element={
+          <>
+            <SignedOut>
+              <SignIn routing="path" path="/sign-in" />
+            </SignedOut>
+            <SignedIn>
+              <Navigate to="/admin" />
+            </SignedIn>
+          </>
+        }
       />
       <Route path="*" element={<RedirectToSignIn />} />
     </Routes>
