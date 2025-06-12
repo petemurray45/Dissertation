@@ -1,4 +1,5 @@
 import React from "react";
+import SignOut from "./SignOut";
 
 function AdminNavBar() {
   return (
@@ -7,6 +8,7 @@ function AdminNavBar() {
         <a className="btn btn-ghost normal-case text-3xl">Property-App</a>
       </div>
       <div className="flex-none">
+        <SignOut />
         <button className="btn btn-square btn-ghost size-15">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -20,7 +20,7 @@ function App() {
             </SignedIn>
 
             <SignedOut>
-              <RedirectToSignIn />
+              <Navigate to="/sign-in" />
             </SignedOut>
           </>
         }
@@ -30,7 +30,7 @@ function App() {
         element={
           <>
             <SignedOut>
-              <SignIn routing="path" path="/sign-in" />
+              <AdminLogin />
             </SignedOut>
             <SignedIn>
               <Navigate to="/admin" />
@@ -38,7 +38,7 @@ function App() {
           </>
         }
       />
-      <Route path="*" element={<RedirectToSignIn />} />
+      <Route path="*" element={<Navigate to="/admin" />} />
     </Routes>
   );
 }
