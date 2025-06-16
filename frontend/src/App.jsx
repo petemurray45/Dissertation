@@ -1,4 +1,3 @@
-import AdminLogin from "./pages/admin/adminLogin";
 import {
   SignedIn,
   SignedOut,
@@ -7,6 +6,7 @@ import {
 } from "@clerk/clerk-react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./pages/admin/adminDashboard";
+import LoginCard from "./components/admin/loginCard";
 
 function App() {
   return (
@@ -30,7 +30,7 @@ function App() {
         element={
           <>
             <SignedOut>
-              <AdminLogin />
+              <LoginCard />
             </SignedOut>
             <SignedIn>
               <Navigate to="/admin" />

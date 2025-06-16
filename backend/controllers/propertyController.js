@@ -28,6 +28,38 @@ export const getAllProperties = async (req, res) => {
 };
 
 export const createProperty = async (req, res) => {
+  const { title, description, price, bedrooms, location, latitude, longitude } =
+    req.body;
+
+  if (
+    !title ||
+    !description ||
+    !price ||
+    !bedrooms ||
+    !location ||
+    !latitude ||
+    !longitude
+  ) {
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields required" });
+  }
+
+  try {
+    const property = await sql`
+      INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
+      VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude}) RETURNING *`;
+
+    console.log("New property added", property);
+    res.status(201).json({ success: true, data: property });
+  } catch (err) {
+    console.log("Error creating property", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error creating property" });
+  }
+
+  /*
   const {
     title,
     description,
@@ -107,8 +139,64 @@ export const createProperty = async (req, res) => {
   } catch (err) {
     console.log("Error adding property to database");
   }
+
+  */
 };
 
-export const getProperty = async (req, res) => {};
-export const updateProperty = async (req, res) => {};
-export const deleteProperty = async (req, res) => {};
+export const getProperty = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const property = await sql`
+    SELECT * FROM properties WHERE id = ${id}`;
+    res.status(200).json({ success: true, data: property[0] });
+  } catch (err) {
+    console.log("Error getting product");
+    res
+      .status(500)
+      .json({ success: false, message: "Error getting property", id });
+  }
+};
+
+export const updateProperty = async (req, res) => {
+  const { id } = req.params;
+
+  const { title, description, price, bedrooms, location, latitude, longitude } =
+    req.body;
+
+  try {
+    const updatedProperty = await sql`
+      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price}, bedrooms=${bedrooms}, location=${location}, latitude=${latitude}, longitude=${longitude} WHERE id=${id} RETURNING *`;
+
+    if (updatedProperty.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+    res.status(200).json({ success: true, data: updateProperty[0] });
+  } catch (err) {
+    console.log("Error updating product", err);
+    res.status(500).json({ success: false, message: "Error updating product" });
+  }
+};
+
+export const deleteProperty = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedProperty = await sql`
+    DELETE FROM properties WHERE id=${id} RETURNING *`;
+
+    if (deletedProperty.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+    res.status(200).json({ success: true, data: deletedProperty[0] });
+  } catch (err) {
+    console.log("Error in delete property controller", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error deleting property" });
+  }
+};

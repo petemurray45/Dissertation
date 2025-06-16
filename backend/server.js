@@ -22,13 +22,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 // helmet used as security middleware to protect app by setting various HTTP headers
-app.use(helmet());
+//app.use(helmet());
 // morgan used to log requests
 app.use(morgan("dev"));
 // images is the name attribute applied to the input type "file" on the frontend
-app.use("/api", upload.array("images", 10), propertyRoutes); // max 10 images for now
+//app.use("/api", upload.array("images", 10), propertyRoutes); // max 10 images for now
 
 // apply rate-limiting to all routes
+
+/** 
 app.use(async (req, res, next) => {
   try {
     const decision = await aj.protect(req, {
@@ -61,8 +63,8 @@ app.use(async (req, res, next) => {
     next(err);
   }
 });
+*/
 
-// routes
 app.use("/api/properties", propertyRoutes);
 
 async function initDB() {
@@ -75,6 +77,10 @@ async function initDB() {
     return false;
   }
 }
+
+app.listen(PORT, (req, res) => {
+  console.log("Server running on port:", PORT);
+});
 
 initDB().then((success) => {
   if (success) {
