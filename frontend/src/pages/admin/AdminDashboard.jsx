@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AdminNavBar from "../../components/admin/adminNavBar";
 import AdminHero from "../../components/admin/AdminHero";
 import AdminCard from "../../components/admin/AdminCard";
+import AddPropertyModal from "../../components/admin/AddPropertyModal";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdBrowserUpdated } from "react-icons/md";
 import { HiOutlineViewfinderCircle } from "react-icons/hi2";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { useListingStore } from "../../listings/useListingsStore";
 
 function AdminDashboard() {
+  const { properties, loading, error, fetchProperties, addProperty } =
+    useListingStore();
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
   return (
     <div className="h-full w-full">
       <AdminNavBar />
@@ -18,7 +27,9 @@ function AdminDashboard() {
           title="Add a property"
           icon={<IoCreateOutline className="size-11" />}
           description="Add a property to the site"
-          // onclick=
+          onClick={() => {
+            document.getElementById("add_property_modal").showModal();
+          }}
           action="Add"
         />
         <AdminCard
@@ -43,6 +54,8 @@ function AdminDashboard() {
           action="Delete"
         />
       </div>
+
+      <AddPropertyModal />
     </div>
   );
 }
