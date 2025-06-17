@@ -65,7 +65,7 @@ function AdminDashboard() {
         Current Listings
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 p-10">
+      <div className="w-full m-10 h-full">
         {error && <div className="alert alert-error mb-8">{error}</div>}
 
         {properties.length === 0 && !loading && (
@@ -87,9 +87,9 @@ function AdminDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {properties.map((property) => (
-              <PropertyCard property={property} />
+              <PropertyCard property={property} key={property.id} />
             ))}
           </div>
         )}

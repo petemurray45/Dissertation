@@ -19,8 +19,33 @@ export const getAllProperties = async (req, res) => {
     SELECT * FROM properties
     ORDER BY created_at DESC`;
 
-    console.log("Fetched Properties", properties);
-    res.status(200).json({ success: true, data: properties });
+    let images = [];
+
+    const propertyIds = properties.map((p) => Number(p.id));
+
+    if (propertyIds.length > 0) {
+      console.log("Type of first property ID:", typeof propertyIds[0]);
+
+      images = await sql`
+      SELECT property_id, image_url
+      FROM images
+      WHERE property_id = ANY(${propertyIds}::integer[])
+      ORDER BY property_id, id;`;
+    }
+
+    const propertyWithImages = properties.map((property) => {
+      const propertyImages = images
+        .filter((img) => img.property_id === property.id)
+        .map((img) => img.image_url);
+
+      return {
+        ...property,
+        imageUrls: propertyImages,
+      };
+    });
+
+    console.log("Fetched Properties", propertyWithImages);
+    res.status(200).json({ success: true, data: propertyWithImages });
   } catch (err) {
     console.log("Error fetching properties", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -36,7 +61,7 @@ export const createProperty = async (req, res) => {
     location,
     latitude,
     longitude,
-    image,
+    imageUrls,
   } = req.body;
 
   if (
@@ -47,7 +72,7 @@ export const createProperty = async (req, res) => {
     !location ||
     !latitude ||
     !longitude ||
-    !image
+    !imageUrls
   ) {
     return res
       .status(400)
@@ -55,12 +80,25 @@ export const createProperty = async (req, res) => {
   }
 
   try {
-    const property = await sql`
-      INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
-      VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude}), ${image} RETURNING id`;
+    const insertedProperties = await sql`
+        INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
+        VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude})
+        RETURNING id;
+      `;
+    const propertyId = insertedProperties[0].id; // why is this not showing results?
 
-    console.log("New property added", property);
-    res.status(201).json({ success: true, data: property });
+    if (imageUrls.length > 0) {
+      const imageInsertPromises = imageUrls.map(
+        (url) => sql`
+          INSERT INTO images (property_id, image_url)
+          VALUES (${propertyId}, ${url});
+        `
+      );
+      await Promise.all(imageInsertPromises);
+    }
+
+    console.log("New property added", insertedProperties);
+    res.status(201).json({ success: true, data: insertedProperties });
   } catch (err) {
     console.log("Error creating property", err);
     res
@@ -158,6 +196,17 @@ export const getProperty = async (req, res) => {
   try {
     const property = await sql`
     SELECT * FROM properties WHERE id = ${id}`;
+
+    const fetchedProperty = property[0];
+
+    const imagesResult = await sql`
+      SELECT image_url
+      FROM images
+      WHERE property_id = ${id}
+      ORDER BY id; -- Order them if you care about display order
+    `;
+
+    property.imageUrls = imagesResult.map((img) => img.imageUrls);
     res.status(200).json({ success: true, data: property[0] });
   } catch (err) {
     console.log("Error getting product");
@@ -170,12 +219,20 @@ export const getProperty = async (req, res) => {
 export const updateProperty = async (req, res) => {
   const { id } = req.params;
 
-  const { title, description, price, bedrooms, location, latitude, longitude } =
-    req.body;
+  const {
+    title,
+    description,
+    price,
+    bedrooms,
+    location,
+    latitude,
+    longitude,
+    imageUrls,
+  } = req.body;
 
   try {
     const updatedProperty = await sql`
-      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price}, bedrooms=${bedrooms}, location=${location}, latitude=${latitude}, longitude=${longitude} WHERE id=${id} RETURNING *`;
+      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price}, bedrooms=${bedrooms}, location=${location}, latitude=${latitude}, longitude=${longitude}, WHERE id=${id} RETURNING *`;
 
     if (updatedProperty.length === 0) {
       return res
