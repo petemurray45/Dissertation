@@ -20,6 +20,7 @@ export const useListingStore = create((set, get) => ({
     location: "",
     latitude: "",
     longitude: "",
+    images: [],
   },
 
   setFormData: (formData) => set({ formData }),
@@ -33,15 +34,18 @@ export const useListingStore = create((set, get) => ({
         location: "",
         latitude: "",
         longitude: "",
+        images: [],
       },
     }),
 
   addProperty: async (e) => {
-    e.preventDefault();
     set({ loading: true });
 
     try {
       const { formData } = get();
+      console.log("Payload:", {
+        ...formData,
+      });
       await axios.post(`${BASE_URL}/api/properties`, formData);
       await get().fetchProperties();
       get().resetForm();

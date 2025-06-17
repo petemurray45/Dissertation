@@ -7,10 +7,56 @@ import {
   MapPinPlusInside,
   Compass,
   PlusCircleIcon,
+  ImageIcon,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 function AddPropertyModal() {
-  const { addProperty, formData, setFormData, loading } = useListingStore();
+  const { addProperty, formData, setFormData, loading, resetForm } =
+    useListingStore();
+
+  const uploadImagestoCloudinary = async (files) => {
+    const uploadedUrls = [];
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "property-app");
+      formData.append("cloud_name", "dnldppxxg");
+
+      const res = axios.post(
+        "https://api.cloudinary.com/v1_1/dnldppxxg/image/upload",
+        formData
+      );
+      const data = res.data;
+      uploadedUrls.push(data.secure_url);
+    }
+    return uploadedUrls;
+  };
+
+  const handleSubmit = async (e) => {
+    console.log("handleSubmit e:", e);
+    e.preventDefault();
+
+    try {
+      console.log("Type of formData.images:", typeof formData.images);
+      console.log("Is Array:", Array.isArray(formData.images));
+      console.log("Contents:", formData.images);
+      const imageUrls = await uploadImagestoCloudinary(formData.images);
+
+      await addProperty({
+        ...formData,
+        images: undefined,
+        imageUrls,
+      });
+      resetForm();
+      toast.success("Property Added!");
+    } catch (err) {
+      console.log("Error in image upload", err);
+      toast.error("Property creation failed.");
+    }
+  };
 
   return (
     <dialog id="add_property_modal" className="modal">
@@ -23,7 +69,7 @@ function AddPropertyModal() {
         </form>
         {/* Modal Header */}
         <h3 className="font-bold text-xl mb-8">Add New Property</h3>
-        <form onSubmit={addProperty} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/*Property Name Field */}
           <div className="form-control">
             <label className="label">
@@ -134,7 +180,7 @@ function AddPropertyModal() {
               </div>
 
               <input
-                type="number"
+                type="Text"
                 min="0"
                 step="1"
                 placeholder="0"
@@ -160,8 +206,8 @@ function AddPropertyModal() {
               <input
                 type="number"
                 min="0"
-                step="1"
-                placeholder="0"
+                step="0.0001"
+                placeholder="Latitude"
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.latitude}
                 onChange={(e) => {
@@ -187,12 +233,40 @@ function AddPropertyModal() {
               <input
                 type="number"
                 min="0"
-                step="1"
-                placeholder="0"
+                step="0.0001"
+                placeholder="Longitude"
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.longitude}
                 onChange={(e) => {
                   setFormData({ ...formData, longitude: e.target.value });
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Image Upload */}
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">
+                Upload Images
+              </span>
+            </label>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <ImageIcon className="size-5" />
+              </div>
+
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
+                onChange={(e) => {
+                  console.log("FILES:", e.target.files);
+                  const filesArray = Array.from(e.target.files);
+                  setFormData((prev) => ({ ...prev, images: filesArray }));
                 }}
               />
             </div>
@@ -205,7 +279,7 @@ function AddPropertyModal() {
             <button
               type="submit"
               className="btn btn-primary min-w[120px]"
-              disabled={
+              /* disabled={
                 !formData.title ||
                 !formData.description ||
                 !formData.price ||
@@ -213,7 +287,7 @@ function AddPropertyModal() {
                 !formData.location ||
                 !formData.latitude ||
                 !formData.longitude
-              }
+              } */
             >
               {loading ? (
                 <span className="loading loading-spinner loading-sm" />

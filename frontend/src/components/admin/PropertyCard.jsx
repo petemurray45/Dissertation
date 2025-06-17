@@ -26,7 +26,7 @@ function PropertyCard({ property }) {
   };
   return (
     <div>
-      <div className="card w-96 glass">
+      <div className="card w-96 glass shadow-lg">
         <figure className="relative w-full h-64 overflow-hidden">
           {hasImages ? (
             <>
