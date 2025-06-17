@@ -15,7 +15,7 @@ export const useListingStore = create((set, get) => ({
   formData: {
     title: "",
     description: "",
-    price: "",
+    price_per_month: "",
     bedrooms: "",
     location: "",
     latitude: "",
@@ -28,7 +28,7 @@ export const useListingStore = create((set, get) => ({
       formData: {
         title: "",
         description: "",
-        price: "",
+        price_per_month: "",
         bedrooms: "",
         location: "",
         latitude: "",
@@ -105,7 +105,7 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  deleteProperty: async () => {
+  updateProperty: async () => {
     set({ loading: true });
     try {
       const { formData } = get();

@@ -28,8 +28,16 @@ export const getAllProperties = async (req, res) => {
 };
 
 export const createProperty = async (req, res) => {
-  const { title, description, price, bedrooms, location, latitude, longitude } =
-    req.body;
+  const {
+    title,
+    description,
+    price,
+    bedrooms,
+    location,
+    latitude,
+    longitude,
+    image,
+  } = req.body;
 
   if (
     !title ||
@@ -38,7 +46,8 @@ export const createProperty = async (req, res) => {
     !bedrooms ||
     !location ||
     !latitude ||
-    !longitude
+    !longitude ||
+    !image
   ) {
     return res
       .status(400)
@@ -48,7 +57,7 @@ export const createProperty = async (req, res) => {
   try {
     const property = await sql`
       INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
-      VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude}) RETURNING *`;
+      VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude}), ${image} RETURNING id`;
 
     console.log("New property added", property);
     res.status(201).json({ success: true, data: property });
