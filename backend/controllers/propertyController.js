@@ -56,23 +56,23 @@ export const createProperty = async (req, res) => {
   const {
     title,
     description,
-    price,
+    price: price_per_month,
     bedrooms,
     location,
     latitude,
     longitude,
-    imageUrls,
+    images,
   } = req.body;
 
   if (
     !title ||
     !description ||
-    !price ||
+    !price_per_month ||
     !bedrooms ||
     !location ||
     !latitude ||
     !longitude ||
-    !imageUrls
+    !images
   ) {
     return res
       .status(400)
@@ -82,13 +82,13 @@ export const createProperty = async (req, res) => {
   try {
     const insertedProperties = await sql`
         INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
-        VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${latitude}, ${longitude})
+        VALUES (${title}, ${description}, ${price_per_month}, ${bedrooms}, ${location}, ${latitude}, ${longitude})
         RETURNING id;
       `;
-    const propertyId = insertedProperties[0].id; // why is this not showing results?
+    const propertyId = insertedProperties[0].id;
 
-    if (imageUrls.length > 0) {
-      const imageInsertPromises = imageUrls.map(
+    if (images.length > 0) {
+      const imageInsertPromises = images.map(
         (url) => sql`
           INSERT INTO images (property_id, image_url)
           VALUES (${propertyId}, ${url});
@@ -203,7 +203,7 @@ export const getProperty = async (req, res) => {
       SELECT image_url
       FROM images
       WHERE property_id = ${id}
-      ORDER BY id; -- Order them if you care about display order
+      ORDER BY id; 
     `;
 
     property.imageUrls = imagesResult.map((img) => img.imageUrls);

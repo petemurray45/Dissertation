@@ -11,28 +11,39 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useRef } from "react";
 
 function AddPropertyModal() {
   const { addProperty, formData, setFormData, loading, resetForm } =
     useListingStore();
 
-  const uploadImagestoCloudinary = async (files) => {
-    const uploadedUrls = [];
+  const fileInputRef = useRef();
 
-    for (const file of files) {
+  const uploadImagestoCloudinary = async (files) => {
+    const uploadPromises = files.map(async (file) => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "property-app");
       formData.append("cloud_name", "dnldppxxg");
 
-      const res = axios.post(
-        "https://api.cloudinary.com/v1_1/dnldppxxg/image/upload",
-        formData
-      );
-      const data = res.data;
-      uploadedUrls.push(data.secure_url);
-    }
-    return uploadedUrls;
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/dnldppxxg/image/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        return res.data.secure_url;
+      } catch (err) {
+        console.log("Error with cloudinary image upload", err);
+        return null;
+      }
+    });
+    const results = await Promise.all(uploadPromises);
+    return results.filter((url) => url !== null);
   };
 
   const handleSubmit = async (e) => {
@@ -40,16 +51,18 @@ function AddPropertyModal() {
     e.preventDefault();
 
     try {
-      console.log("Type of formData.images:", typeof formData.images);
-      console.log("Is Array:", Array.isArray(formData.images));
-      console.log("Contents:", formData.images);
-      const imageUrls = await uploadImagestoCloudinary(formData.images);
+      const files = Array.from(fileInputRef.current?.files || []);
+      const imageUrls = await uploadImagestoCloudinary(files);
 
-      await addProperty({
+      console.log("FORM DATA STATE:", formData);
+
+      const finalPayload = {
         ...formData,
-        images: undefined,
-        imageUrls,
-      });
+        images: imageUrls,
+      };
+      await addProperty(finalPayload);
+      console.log("Sent final payload to backend", finalPayload);
+
       resetForm();
       toast.success("Property Added!");
     } catch (err) {
@@ -87,9 +100,9 @@ function AddPropertyModal() {
                 placeholder="Enter Property Name"
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, title: e.target.value }));
+                }}
               />
             </div>
           </div>
@@ -111,7 +124,10 @@ function AddPropertyModal() {
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.description}
                 onChange={(e) => {
-                  setFormData({ ...formData, description: e.target.value });
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }));
                 }}
               />
             </div>
@@ -139,7 +155,7 @@ function AddPropertyModal() {
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.price}
                 onChange={(e) => {
-                  setFormData({ ...formData, price: e.target.value });
+                  setFormData((prev) => ({ ...prev, price: e.target.value }));
                 }}
               />
             </div>
@@ -163,7 +179,10 @@ function AddPropertyModal() {
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.bedrooms}
                 onChange={(e) => {
-                  setFormData({ ...formData, bedrooms: e.target.value });
+                  setFormData((prev) => ({
+                    ...prev,
+                    bedrooms: e.target.value,
+                  }));
                 }}
               />
             </div>
@@ -187,7 +206,10 @@ function AddPropertyModal() {
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.location}
                 onChange={(e) => {
-                  setFormData({ ...formData, location: e.target.value });
+                  setFormData((prev) => ({
+                    ...prev,
+                    location: e.target.value,
+                  }));
                 }}
               />
             </div>
@@ -205,13 +227,17 @@ function AddPropertyModal() {
 
               <input
                 type="number"
+                name="latitude"
                 min="0"
                 step="0.0001"
                 placeholder="Latitude"
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.latitude}
                 onChange={(e) => {
-                  setFormData({ ...formData, latitude: e.target.value });
+                  setFormData((prev) => ({
+                    ...prev,
+                    latitude: e.target.value,
+                  }));
                 }}
               />
             </div>
@@ -232,13 +258,17 @@ function AddPropertyModal() {
 
               <input
                 type="number"
+                name="longitude"
                 min="0"
                 step="0.0001"
                 placeholder="Longitude"
                 className="input input-bordered w-full !pl-10 py-3 focus:input-primary transition-colors duration-200"
                 value={formData.longitude}
                 onChange={(e) => {
-                  setFormData({ ...formData, longitude: e.target.value });
+                  setFormData((prev) => ({
+                    ...prev,
+                    longitude: e.target.value,
+                  }));
                 }}
               />
             </div>
@@ -259,6 +289,7 @@ function AddPropertyModal() {
               </div>
 
               <input
+                ref={fileInputRef} // used as parameter for query selector in handleSubmit
                 type="file"
                 accept="image/*"
                 multiple

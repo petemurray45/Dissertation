@@ -61,9 +61,11 @@ function AdminDashboard() {
 
       <AddPropertyModal />
 
-      <h2 className="md:text-6xl sm:text-2xl text-3xl font-bold md:py-6 text-black pl-10 text-center">
-        Current Listings
-      </h2>
+      <div className="w-full justify-center align-middle">
+        <h2 className="md:text-6xl sm:text-2xl text-3xl font-bold md:py-6 text-black pl-10 text-center">
+          Current Listings
+        </h2>
+      </div>
 
       <div className="w-full m-10 h-full">
         {error && <div className="alert alert-error mb-8">{error}</div>}

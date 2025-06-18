@@ -15,7 +15,7 @@ export const useListingStore = create((set, get) => ({
   formData: {
     title: "",
     description: "",
-    price_per_month: "",
+    price: "",
     bedrooms: "",
     location: "",
     latitude: "",
@@ -23,13 +23,17 @@ export const useListingStore = create((set, get) => ({
     images: [],
   },
 
-  setFormData: (formData) => set({ formData }),
+  setFormData: (update) => {
+    set((state) => ({
+      formData: typeof update === "function" ? update(state.formData) : update,
+    }));
+  },
   resetForm: () =>
     set({
       formData: {
         title: "",
         description: "",
-        price_per_month: "",
+        price: "",
         bedrooms: "",
         location: "",
         latitude: "",
@@ -38,15 +42,12 @@ export const useListingStore = create((set, get) => ({
       },
     }),
 
-  addProperty: async (e) => {
+  addProperty: async (payload) => {
     set({ loading: true });
 
     try {
-      const { formData } = get();
-      console.log("Payload:", {
-        ...formData,
-      });
-      await axios.post(`${BASE_URL}/api/properties`, formData);
+      console.log("Payload recieved from store", payload);
+      await axios.post(`${BASE_URL}/api/properties`, payload);
       await get().fetchProperties();
       get().resetForm();
       toast.success("Property added successfully");
