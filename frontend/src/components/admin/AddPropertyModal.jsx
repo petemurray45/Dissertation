@@ -1,4 +1,4 @@
-import { useListingStore } from "../../listings/useListingsStore";
+import { useListingStore } from "../../utils/useListingsStore";
 import {
   House,
   Text,
@@ -12,6 +12,7 @@ import {
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRef } from "react";
+import { handleSubmit } from "../../utils/handleSubmit";
 
 function AddPropertyModal() {
   const { addProperty, formData, setFormData, loading, resetForm } =
@@ -45,7 +46,7 @@ function AddPropertyModal() {
     const results = await Promise.all(uploadPromises);
     return results.filter((url) => url !== null);
   };
-
+  /*
   const handleSubmit = async (e) => {
     console.log("handleSubmit e:", e);
     e.preventDefault();
@@ -70,6 +71,8 @@ function AddPropertyModal() {
       toast.error("Property creation failed.");
     }
   };
+  */
+  await handleSubmit();
 
   return (
     <dialog id="add_property_modal" className="modal">
@@ -305,7 +308,14 @@ function AddPropertyModal() {
 
           {/* Modal Actions */}
           <div className="modal-action">
-            <button className="btn btn-ghost">Cancel</button>
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                document.getElementById("add_property_modal").close();
+              }}
+            >
+              Cancel
+            </button>
 
             <button
               type="submit"

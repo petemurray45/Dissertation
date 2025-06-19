@@ -3,7 +3,7 @@ import AddPropertyModal from "./AddPropertyModal";
 import { MdOutlineArrowCircleLeft } from "react-icons/md";
 import { MdOutlineArrowCircleRight } from "react-icons/md";
 
-function PropertyCard({ property }) {
+function PropertyTile({ property }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -26,8 +26,8 @@ function PropertyCard({ property }) {
   };
   return (
     <div>
-      <div className="card w-96 glass shadow-lg">
-        <figure className="relative w-full h-64 overflow-hidden">
+      <div className="card bg-base-100 glass hover:shadow-xl shadow-xl transition-shadow duration-300 overflow-hidden w-full gap-10">
+        <figure className="relative w-full h-64">
           {hasImages ? (
             <>
               <img
@@ -77,10 +77,9 @@ function PropertyCard({ property }) {
             </button>
           </div>
         </div>
-        <AddPropertyModal />
       </div>
     </div>
   );
 }
 
-export default PropertyCard;
+export default PropertyTile;
