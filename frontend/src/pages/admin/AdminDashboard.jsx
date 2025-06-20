@@ -9,7 +9,7 @@ import { MdBrowserUpdated } from "react-icons/md";
 import { PackageIcon } from "lucide-react";
 import { HiOutlineViewfinderCircle } from "react-icons/hi2";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useListingStore } from "../../listings/useListingsStore";
+import { useListingStore } from "../../utils/useListingsStore";
 import { useNavigate, useParams } from "react-router-dom";
 
 function AdminDashboard() {
@@ -87,7 +87,7 @@ function AdminDashboard() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
               {properties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}

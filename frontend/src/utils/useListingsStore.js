@@ -79,6 +79,7 @@ export const useListingStore = create((set, get) => ({
 
   deleteProperty: async () => {
     set({ loading: true });
+
     try {
       await axios.delete(`${BASE_URL}/api/properties/${id}`);
       set((prev) => ({
@@ -93,10 +94,11 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  fetchProperty: async () => {
+  fetchProperty: async (id) => {
     set({ loading: true });
     try {
       const response = await axios.get(`${BASE_URL}/api/properties/${id}`);
+      console.log("Fetched property:", response.data.data);
       set({
         currentProperty: response.data.data,
         formData: response.data.data, // prefills form with current product data
@@ -110,7 +112,7 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  updateProperty: async () => {
+  updateProperty: async (id) => {
     set({ loading: true });
     try {
       const { formData } = get();

@@ -205,9 +205,10 @@ export const getProperty = async (req, res) => {
       WHERE property_id = ${id}
       ORDER BY id; 
     `;
+    console.log("Fetched images for property", id, ":", imagesResult);
 
-    property.imageUrls = imagesResult.map((img) => img.imageUrls);
-    res.status(200).json({ success: true, data: property[0] });
+    fetchedProperty.images = imagesResult.map((img) => img.image_url);
+    res.status(200).json({ success: true, data: fetchedProperty });
   } catch (err) {
     console.log("Error getting product");
     res

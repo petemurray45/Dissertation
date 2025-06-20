@@ -46,7 +46,7 @@ function AddPropertyModal() {
     const results = await Promise.all(uploadPromises);
     return results.filter((url) => url !== null);
   };
-  /*
+
   const handleSubmit = async (e) => {
     console.log("handleSubmit e:", e);
     e.preventDefault();
@@ -71,8 +71,6 @@ function AddPropertyModal() {
       toast.error("Property creation failed.");
     }
   };
-  */
-  await handleSubmit();
 
   return (
     <dialog id="add_property_modal" className="modal">

@@ -2,10 +2,19 @@ import React, { useState } from "react";
 import AddPropertyModal from "./AddPropertyModal";
 import { MdOutlineArrowCircleLeft } from "react-icons/md";
 import { MdOutlineArrowCircleRight } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 function PropertyTile({ property }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const navigate = useNavigate();
+
+  const handleSelect = (property) => {
+    navigate(`/property/${property.id}`, {
+      state: { property }, // passing property object to admin product page
+    });
+  };
 
   const goToNextImage = () => {
     if (hasImages) {
@@ -70,7 +79,7 @@ function PropertyTile({ property }) {
             <button
               className="btn btn-primary"
               onClick={() => {
-                document.getElementById("add_property_modal").showModal();
+                handleSelect(property);
               }}
             >
               Select

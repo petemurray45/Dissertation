@@ -1,9 +1,10 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function AdminCard({ icon, title, description, onClick, action }) {
   return (
     <div>
-      <div className="card card-compact w-full p-5 bg-base-100 shadow-2xl">
+      <div className="card card-compact w-full p-5 bg-base-100 shadow-2xl min-w-20">
         <figure>{icon}</figure>
         <div className="card-body">
           <h2 className="card-title">{title}</h2>

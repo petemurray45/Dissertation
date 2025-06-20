@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeftIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  SaveIcon,
+  Trash2Icon,
+  House,
+  Text,
+  PoundSterling,
+  BedDouble,
+  MapPinPlusInside,
+  Compass,
+  PlusCircleIcon,
+  ImageIcon,
+} from "lucide-react";
 
-function AdminProductPage({ property }) {
+function AdminProductPage() {
   // data from lisitings store
   const {
     currentProperty,
@@ -16,32 +28,12 @@ function AdminProductPage({ property }) {
     deleteProperty,
   } = useListingStore();
 
-  const hasImages = property.imageUrls && property.imageUrls.length > 0;
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const hasImages = formData.images && formData.images.length > 0;
 
   // used to navigate to different route
   const navigate = useNavigate();
   // gets property id from url
   const { id } = useParams();
-
-  // image slider function
-  const goToNextImage = () => {
-    if (hasImages) {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % property.imageUrls.length
-      );
-    }
-  };
-
-  const goToPrevImage = () => {
-    if (hasImages) {
-      setCurrentImageIndex(
-        (prevIndex) =>
-          (prevIndex - 1 + property.imageUrls.length) %
-          property.imageUrls.length
-      );
-    }
-  };
 
   useEffect(() => {
     fetchProperty(id);
@@ -87,19 +79,17 @@ function AdminProductPage({ property }) {
     e.preventDefault();
 
     try {
-      const files = Array.from(fileInputRef.current?.files || []);
-      const imageUrls = await uploadImagestoCloudinary(files);
-
       console.log("FORM DATA STATE:", formData);
 
       const finalPayload = {
         ...formData,
-        images: imageUrls,
       };
-      await updateProperty(finalPayload);
+
+      setFormData(finalPayload);
       console.log("Sent final payload to backend", finalPayload);
 
-      resetForm();
+      await updateProperty(id);
+
       toast.success("Property Updated!");
     } catch (err) {
       console.log("Error in image upload", err);
@@ -123,41 +113,29 @@ function AdminProductPage({ property }) {
     );
   }
 
+  console.log("formData.images", formData.images);
+
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <div className="container mx-auto max-w-4xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10">
       <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
         <ArrowLeftIcon className="size-4 mr-2" />
         Back to dashboard
       </button>
 
-      <div className="flex sm:grid-cols-1 max-w-4xl mx-auto mt-20">
+      <div className="flex sm:grid-cols-2 max-w-4xl mx-auto mt-2">
         {/*Property Image */}
-        {hasImages ? (
+        {Array.isArray(formData.images) && formData.images.length > 0 ? (
           <>
-            <img
-              src={property.imageUrls[currentImageIndex]}
-              alt={property.title}
-              className="w-full h-full object-cover"
-            />
-            {/* previous button */}
-            {property.imageUrls.length > 1 && (
-              <button
-                onClick={goToPrevImage}
-                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10"
-              >
-                <MdOutlineArrowCircleLeft className="size-6" />
-              </button>
-            )}
-
-            {/* next button */}
-            {property.imageUrls.length > 1 && (
-              <button
-                onClick={goToNextImage}
-                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10"
-              >
-                <MdOutlineArrowCircleRight className="size-6" />
-              </button>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {formData.images.map((imgUrl, index) => {
+                <img
+                  key={index}
+                  src={imgUrl}
+                  alt={`Property Image ${index + 1}`}
+                  className="w-full max-h-[400px] object-cover rounded-lg"
+                />;
+              })}
+            </div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
@@ -166,12 +144,199 @@ function AdminProductPage({ property }) {
         )}
       </div>
 
-      <div className="card bg-base-100 shadow-lg max-w-md w-full">
+      <div className="card bg-base-100 w-full">
         {/*property info */}
         <div className="card-body">
           <h2 className="card-title text-2xl mb-6">Edit Property</h2>
 
-          <form onSubmit={handleSubmit}></form>
+          <form
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
+            onSubmit={handleSubmit}
+          >
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Property Title
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <House className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property title"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Property Description
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <Text className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property description"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">Price</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <PoundSterling className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property price"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.price_per_month}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      price_per_month: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Bedrooms
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <BedDouble className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property description"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.bedrooms}
+                  onChange={(e) =>
+                    setFormData({ ...formData, bedrooms: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Location
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <MapPinPlusInside className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property description"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Latitude
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <Compass className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property description"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.latitude}
+                  onChange={(e) =>
+                    setFormData({ ...formData, latitude: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Longitude
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <Compass className="size-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter property description"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({ ...formData, longitude: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Upload Images
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <ImageIcon className="size-5" />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  onChange={async (e) => {
+                    console.log("FILES:", e.target.files);
+                    const filesArray = Array.from(e.target.files);
+                    const uploadedUrls = await uploadImagestoCloudinary(
+                      filesArray
+                    );
+                    setFormData((prev) => ({
+                      ...prev,
+                      images: [...prev.images, ...uploadedUrls],
+                    }));
+                  }}
+                />
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
