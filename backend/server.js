@@ -1,3 +1,5 @@
+console.log("hello");
+
 // backend packages
 import express from "express";
 import helmet from "helmet";
@@ -8,6 +10,8 @@ import multer from "multer";
 import axios from "axios";
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
+
+console.log("server is starting");
 
 // route imports
 import propertyRoutes from "./routes/propertyRoutes.js";
@@ -22,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 // helmet used as security middleware to protect app by setting various HTTP headers
-//app.use(helmet());
+app.use(helmet());
 // morgan used to log requests
 app.use(morgan("dev"));
 // images is the name attribute applied to the input type "file" on the frontend
@@ -78,10 +82,7 @@ async function initDB() {
   }
 }
 
-app.listen(PORT, (req, res) => {
-  console.log("Server running on port:", PORT);
-});
-
+console.log("Connecting to database");
 initDB().then((success) => {
   if (success) {
     app.listen(PORT, (req, res) => {

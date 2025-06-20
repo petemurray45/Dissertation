@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useNavigate, useParams } from "react-router-dom";
+import AdminNavBar from "../../components/admin/adminNavBar";
 import {
   ArrowLeftIcon,
   SaveIcon,
@@ -14,6 +15,7 @@ import {
   PlusCircleIcon,
   ImageIcon,
 } from "lucide-react";
+import axios from "axios";
 
 function AdminProductPage() {
   // data from lisitings store
@@ -116,230 +118,274 @@ function AdminProductPage() {
   console.log("formData.images", formData.images);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10">
-      <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
-        <ArrowLeftIcon className="size-4 mr-2" />
-        Back to dashboard
-      </button>
+    <>
+      <AdminNavBar />
+      <div className="container mx-auto max-w-4xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10 mt-10">
+        <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
+          <ArrowLeftIcon className="size-4 mr-2" />
+          Back to dashboard
+        </button>
 
-      <div className="flex sm:grid-cols-2 max-w-4xl mx-auto mt-2">
-        {/*Property Image */}
-        {Array.isArray(formData.images) && formData.images.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {formData.images.map((imgUrl, index) => {
-                <img
-                  key={index}
-                  src={imgUrl}
-                  alt={`Property Image ${index + 1}`}
-                  className="w-full max-h-[400px] object-cover rounded-lg"
-                />;
-              })}
+        <div className="flex flex-wrap overflow-hidden sm:grid-cols-2 max-w-4xl mx-auto mt-2">
+          {/*Property Image */}
+          {Array.isArray(formData.images) && formData.images.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {formData.images.map((imgUrl, index) => (
+                  <img
+                    key={index}
+                    src={imgUrl}
+                    alt={`Property Image ${index + 1}`}
+                    className="size-full object-cover pl-8 pr-8"
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+              No Image Available
             </div>
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
-            No Image Available
+          )}
+        </div>
+
+        <div className="card bg-base-100 w-full">
+          {/*property info */}
+          <div className="card-body">
+            <h2 className="card-title text-2xl mb-6">Edit Property</h2>
+
+            <form
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
+              onSubmit={handleSubmit}
+            >
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Property Title
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <House className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property title"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Property Description
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Text className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property description"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Price
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <PoundSterling className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property price"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.price_per_month}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        price_per_month: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Bedrooms
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <BedDouble className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property description"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.bedrooms}
+                    onChange={(e) =>
+                      setFormData({ ...formData, bedrooms: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Location
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <MapPinPlusInside className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property description"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Latitude
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Compass className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property description"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.latitude}
+                    onChange={(e) =>
+                      setFormData({ ...formData, latitude: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Longitude
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Compass className="size-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter property description"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    value={formData.longitude}
+                    onChange={(e) =>
+                      setFormData({ ...formData, longitude: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Upload Images
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <ImageIcon className="size-5" />
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                    onChange={async (e) => {
+                      console.log("FILES:", e.target.files);
+                      const filesArray = Array.from(e.target.files);
+                      const uploadedUrls = await uploadImagestoCloudinary(
+                        filesArray
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        images: [...prev.images, ...uploadedUrls],
+                      }));
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex justify-start">
+                <button
+                  type="button"
+                  onClick={() => handleDelete()}
+                  className="btn btn-error"
+                >
+                  <Trash2Icon className="size-5" />
+                  Delete Property
+                </button>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={
+                    loading ||
+                    !formData.title ||
+                    !formData.description ||
+                    !formData.price_per_month ||
+                    !formData.bedrooms ||
+                    !formData.location ||
+                    !formData.latitude ||
+                    !formData.longitude ||
+                    formData.images.length === 0
+                  }
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner loading-sm" />
+                  ) : (
+                    <>
+                      <SaveIcon className="size-5" />
+                      Save changes
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
-
-      <div className="card bg-base-100 w-full">
-        {/*property info */}
-        <div className="card-body">
-          <h2 className="card-title text-2xl mb-6">Edit Property</h2>
-
-          <form
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
-            onSubmit={handleSubmit}
-          >
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Property Title
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <House className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property title"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Property Description
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <Text className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property description"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">Price</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <PoundSterling className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property price"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.price_per_month}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      price_per_month: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Bedrooms
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <BedDouble className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property description"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.bedrooms}
-                  onChange={(e) =>
-                    setFormData({ ...formData, bedrooms: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Location
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <MapPinPlusInside className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property description"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Latitude
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <Compass className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property description"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.latitude}
-                  onChange={(e) =>
-                    setFormData({ ...formData, latitude: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Longitude
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <Compass className="size-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter property description"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.longitude}
-                  onChange={(e) =>
-                    setFormData({ ...formData, longitude: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Upload Images
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <ImageIcon className="size-5" />
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  onChange={async (e) => {
-                    console.log("FILES:", e.target.files);
-                    const filesArray = Array.from(e.target.files);
-                    const uploadedUrls = await uploadImagestoCloudinary(
-                      filesArray
-                    );
-                    setFormData((prev) => ({
-                      ...prev,
-                      images: [...prev.images, ...uploadedUrls],
-                    }));
-                  }}
-                />
-              </div>
-            </div>
-          </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

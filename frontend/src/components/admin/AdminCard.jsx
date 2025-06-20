@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function AdminCard({ icon, title, description, onClick, action }) {
   return (
     <div>
-      <div className="card card-compact w-full p-5 bg-base-100 shadow-2xl min-w-20">
+      <div className="card card-compact w-full p-5 bg-base-100 shadow-2xl min-w-20 max-h-[300px] min-h-[300px]">
         <figure>{icon}</figure>
         <div className="card-body">
           <h2 className="card-title">{title}</h2>

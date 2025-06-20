@@ -13,7 +13,6 @@ import AdminNavBar from "./components/admin/adminNavBar";
 function App() {
   return (
     <>
-      <AdminNavBar />
       <Routes>
         <Route
           path="/admin"
