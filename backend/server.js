@@ -1,24 +1,31 @@
 console.log("hello");
-
+import dotenv from "dotenv";
+dotenv.config();
 // backend packages
+
 import express from "express";
+
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
+import cloudinary from "cloudinary";
 import multer from "multer";
 import axios from "axios";
-import { sql } from "./config/db.js";
-import { aj } from "./lib/arcjet.js";
 
-console.log("server is starting");
+import { sql } from "./config/db.js";
+//import { aj } from "./lib/arcjet.js";
 
 // route imports
 import propertyRoutes from "./routes/propertyRoutes.js";
-dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // configured multer to store files in memory
-const upload = multer({ storage: multer.memoryStorage() });
+//const upload = multer({ storage: multer.memoryStorage() });
 const app = express();
 const PORT = process.env.PORT || 3000;
 

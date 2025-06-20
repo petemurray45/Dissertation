@@ -1,14 +1,6 @@
 import { sql } from "../config/db.js";
 import axios from "axios";
-import dotenv from "dotenv";
 import cloudinary from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const API_KEY = process.env.MAPS_API_KEY;
