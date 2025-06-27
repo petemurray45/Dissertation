@@ -1,4 +1,5 @@
 import React from "react";
+import LocationAutocomplete from "../admin/LocationAutocomplete";
 
 function Search() {
   return (
@@ -22,7 +23,7 @@ function Search() {
           <input
             type="email"
             placeholder="Enter a location...."
-            class="w-full outline-none bg-white pl-4 text-lg"
+            class="w-full outline-none bg-white pl-4 text-xl text-black"
           />
           <button
             type="button"

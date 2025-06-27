@@ -14,7 +14,7 @@ function UserDashboard() {
     fetchProperties();
   }, [fetchProperties]);
   return (
-    <div className="overflow-x-hidden px-16 bg-[#F0EDCC]">
+    <div className="overflow-x-hidden px-16 bg-[#F0EDCC] overflow-hidden">
       <NavBar />
       <Hero />
       <div className="w-full">
@@ -36,7 +36,7 @@ function UserDashboard() {
           </div>
         ) : (
           <div className="w-full">
-            <PropertyCarousel properties={properties}/>
+            <PropertyCarousel properties={properties} />
           </div>
         )}
       </div>

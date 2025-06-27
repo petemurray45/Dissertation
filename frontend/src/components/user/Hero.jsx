@@ -6,7 +6,7 @@ import Search from "./Search";
 function Hero() {
   return (
     <>
-      <div className="flex justify-center h-[30vh] mx-[5rem] my-[1rem] ">
+      <div className="flex justify-center h-[20vh] mx-[5rem] my-[1rem] ">
         {/* Text Overlay */}
         <div className="inset-0 text-center flex flex-col pt-[2rem]">
           <p className="text-2xl text-black font-bold">
@@ -33,7 +33,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="h-[600px] w-full relative inset-0 bg-[#02343F] rounded-2xl">
+      <div className="h-[450px] w-full relative inset-0 bg-[#02343F] rounded-2xl">
         <div className="absolute inset-0">
           <Search />
         </div>
