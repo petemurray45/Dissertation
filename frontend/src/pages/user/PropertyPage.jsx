@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
+import ProximitySearch from "../../components/user/ProximitySearch";
 
 function PropertyPage() {
   const { properties, loading, error, fetchProperties } = useListingStore();
@@ -15,7 +16,9 @@ function PropertyPage() {
     <>
       <div className="overflow-x-hidden px-16 py-8 bg-[#F0EDCC]  h-screen">
         <NavBar />
-        <div className="bg-[#02343F] w-full h-[20%] my-8 rounded-lg"></div>
+        <div className="bg-[#02343F] w-full h-[20%] my-8 rounded-lg">
+          <ProximitySearch />
+        </div>
         <div className="w-full">
           {error && <div className="alert alert-error mb-8">{error}</div>}
           {properties.length === 0 && !loading && (
