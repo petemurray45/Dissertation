@@ -16,7 +16,7 @@ function PropertyPage() {
     <>
       <div className="overflow-x-hidden px-16 py-8 bg-[#F0EDCC]  h-screen">
         <NavBar />
-        <div className="bg-[#02343F] w-full h-[20%] my-8 rounded-lg">
+        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] my-8 rounded-lg">
           <ProximitySearch />
         </div>
         <div className="w-full">
@@ -37,7 +37,7 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-[10%]">
               {properties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}

@@ -13,10 +13,10 @@ function DropDown() {
 
       <div
         tabIndex={0}
-        className="dropdown-content mt-2 p-1 shadow-2xl bg-[#02343F] backdrop-blur-lg rounded-2xl w-80 border-base-content/10 border border-gray-400 text-white"
+        className="dropdown-content mt-2 p-1 shadow-2xl bg-white  rounded-2xl w-80  border border-gray-400 text-black"
       >
         <button
-          className="w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors hover:bg-slate-300"
+          className="w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors hover:bg-[#02343F] hover:text-white"
           onClick={() => {
             navigate("/home");
           }}
@@ -24,7 +24,7 @@ function DropDown() {
           Home
         </button>
         <button
-          className="w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors hover:bg-slate-300"
+          className="w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors hover:bg-[#02343F] hover:text-white"
           onClick={() => {
             navigate("/properties");
           }}
