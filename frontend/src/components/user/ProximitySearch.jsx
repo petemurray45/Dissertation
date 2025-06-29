@@ -8,8 +8,11 @@ function ProximitySearch({ onSearch }) {
   const [maxTravelTime, setMaxTravelTime] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const handleSearch = () => {
+    e.preventDefault();
+
     onSearch({
       location,
       maxTravelTime,
@@ -18,6 +21,7 @@ function ProximitySearch({ onSearch }) {
       minBedrooms,
       maxBedrooms,
     });
+    setSearchSubmitted(true);
   };
 
   return (

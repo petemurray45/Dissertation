@@ -42,6 +42,8 @@ export const useListingStore = create((set, get) => ({
       },
     }),
 
+  setProperties: (newProperties) => set({ properties: newProperties }),
+
   addProperty: async (payload) => {
     set({ loading: true });
 
@@ -105,7 +107,8 @@ export const useListingStore = create((set, get) => ({
     try {
       const response = await axios.get(`${BASE_URL}/api/properties/${id}`);
       console.log("Fetched property:", response.data.data);
-      set({ // prefills form data with fetched property properties
+      set({
+        // prefills form data with fetched property properties
         currentProperty: response.data.data,
         formData: {
           ...response.data.data,
@@ -113,7 +116,7 @@ export const useListingStore = create((set, get) => ({
             url,
             existing: true, // for utilising the 'x' in edit property
           })),
-        }, 
+        },
         error: null,
       });
     } catch (err) {

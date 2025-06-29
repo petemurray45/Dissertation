@@ -5,23 +5,55 @@ import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
 import Info1 from "../../components/user/Info1";
+import getTravelTimeInMinutes from "../../utils/maps";
+import { get } from "node:https";
 
 function PropertyPage() {
-  const { properties, loading, error, fetchProperties } = useListingStore();
+  const { properties, loading, error, fetchProperties, setProperties } =
+    useListingStore();
 
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
+
+  const handleSearch = async (filters) => {
+    try {
+      const { data } = await axios.get("/api/properties", {
+        params: {
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          minBedrooms: filters.minBedrooms,
+          maxBedrooms: filters.maxBedrooms,
+        },
+      });
+
+      const travelProps = await Promise.all(
+        data.map(async (property) => {
+          const time = await getTravelTimeInMinutes(
+            filters.location,
+            property.address
+          );
+          return { ...property, travelTime: time };
+        })
+      );
+
+      const filteredProps = travelProps.filter(
+        (p) => p.travelTime <= filters.maxTravelTime
+      );
+      setProperties(filteredProps);
+    } catch (err) {
+      console.log("Error fetching travel times");
+    }
+  };
 
   return (
     <>
       <div className="overflow-x-hidden px-16 py-8 bg-[#F0EDCC]  h-screen">
         <NavBar />
         <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] my-8 rounded-lg">
-          <ProximitySearch />
+          <ProximitySearch onSearch={handleSearch} />
         </div>
 
-        <Info1 />
         <div className="w-full">
           {error && <div className="alert alert-error mb-8">{error}</div>}
           {properties.length === 0 && !loading && (

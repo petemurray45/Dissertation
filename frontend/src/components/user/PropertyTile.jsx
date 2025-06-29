@@ -92,10 +92,14 @@ function PropertyTile({ property, showCar }) {
                 View
               </button>
             </div>
-            <div className="flex items-center justify-center flex-col">
-              <p className="font-bold text-2xl bg-#02343F">7 minutes</p>
-              <img src={carImage} className="h-[5rem]" />
-            </div>
+            {property.travelTime !== undefined && (
+              <div className="flex items-center justify-center flex-col">
+                <p className="font-bold text-2xl bg-#02343F">
+                  {property.travelTime} mins
+                </p>
+                <img src={carImage} className="h-[5rem]" />
+              </div>
+            )}
           </div>
         </div>
       </div>
