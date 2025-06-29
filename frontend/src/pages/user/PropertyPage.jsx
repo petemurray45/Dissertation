@@ -4,6 +4,7 @@ import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
+import Info1 from "../../components/user/Info1";
 
 function PropertyPage() {
   const { properties, loading, error, fetchProperties } = useListingStore();
@@ -19,6 +20,8 @@ function PropertyPage() {
         <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] my-8 rounded-lg">
           <ProximitySearch />
         </div>
+
+        <Info1 />
         <div className="w-full">
           {error && <div className="alert alert-error mb-8">{error}</div>}
           {properties.length === 0 && !loading && (

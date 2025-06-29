@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import { Compass } from "lucide-react";
+import { Compass, User } from "lucide-react";
+import UserAutocomplete from "./UserAutocomplete";
 
 function ProximitySearch({ onSearch }) {
   const [location, setLocation] = useState("");
@@ -42,11 +43,7 @@ function ProximitySearch({ onSearch }) {
                   <Compass className="size-5" />
                 </div>
 
-                <input
-                  type="text"
-                  placeholder="Enter an essential location..."
-                  className="input pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered w-full"
-                  value={location}
+                <UserAutocomplete
                   onChange={(e) => setLocation(e.target.value)}
                 />
               </div>
@@ -88,7 +85,7 @@ function ProximitySearch({ onSearch }) {
                   type="number"
                   placeholder="Max price"
                   className="input pl-10 py-1 focus:input-primary focus:border-[#02343F] transition-colors duration-200 input-bordered w-full"
-                  value={maxTravelTime}
+                  value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
@@ -109,7 +106,7 @@ function ProximitySearch({ onSearch }) {
                   type="number"
                   placeholder="Min price"
                   className="input pl-10 py-1 focus:input-primary focus:border-[#02343F] transition-colors duration-200 input-bordered w-full"
-                  value={maxTravelTime}
+                  value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
                 />
               </div>

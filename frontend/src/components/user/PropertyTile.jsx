@@ -5,8 +5,9 @@ import {
   MdOutlineArrowCircleLeft,
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
+import carImage from "../../assets/car.png";
 
-function PropertyTile({ property }) {
+function PropertyTile({ property, showCar }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -38,7 +39,7 @@ function PropertyTile({ property }) {
 
   return (
     <>
-      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10">
+      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10 max-h-fit">
         <div className="relative w-full h-64">
           {hasImages ? (
             <>
@@ -83,8 +84,19 @@ function PropertyTile({ property }) {
               </span>
             </div>
           </div>
-          <h2 className="card-title">{property.location}</h2>
-          <p>{property.description}</p>
+          <div className="flex justify-between">
+            <div>
+              <h2 className="card-title">{property.location}</h2>
+              <p>{property.description}</p>
+              <button className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black">
+                View
+              </button>
+            </div>
+            <div className="flex items-center justify-center flex-col">
+              <p className="font-bold text-2xl bg-#02343F">7 minutes</p>
+              <img src={carImage} className="h-[5rem]" />
+            </div>
+          </div>
         </div>
       </div>
     </>

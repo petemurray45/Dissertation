@@ -184,28 +184,45 @@ export const createProperty = async (req, res) => {
 
 export const getProperty = async (req, res) => {
   const { id } = req.params;
+  const { minPrice = 0, maxPrice = 10000 } = req.query;
 
-  try {
-    const property = await sql`
+  if (id) {
+    try {
+      const property = await sql`
     SELECT * FROM properties WHERE id = ${id}`;
 
-    const fetchedProperty = property[0];
+      const fetchedProperty = property[0];
 
-    const imagesResult = await sql`
+      const imagesResult = await sql`
       SELECT image_url
       FROM images
       WHERE property_id = ${id}
       ORDER BY id; 
     `;
-    console.log("Fetched images for property", id, ":", imagesResult);
+      console.log("Fetched images for property", id, ":", imagesResult);
 
-    fetchedProperty.images = imagesResult.map((img) => img.image_url);
-    res.status(200).json({ success: true, data: fetchedProperty });
-  } catch (err) {
-    console.log("Error getting product");
-    res
-      .status(500)
-      .json({ success: false, message: "Error getting property", id });
+      fetchedProperty.images = imagesResult.map((img) => img.image_url);
+      res.status(200).json({ success: true, data: fetchedProperty });
+    } catch (err) {
+      console.log("Error getting product");
+      res
+        .status(500)
+        .json({ success: false, message: "Error getting property", id });
+    }
+  } else {
+    try {
+      const properties = await sql(
+        `
+      SELECT * FROM properties WHERE price_per_month >= $1 AND price_per_month <= $2`,
+        [minPrice, maxPrice]
+      );
+      res.json(properties.rows);
+    } catch (err) {
+      console.log("Error getting products", err);
+      res
+        .status(500)
+        .json({ success: false, message: "Error getting properties" });
+    }
   }
 };
 
@@ -259,5 +276,3 @@ export const deleteProperty = async (req, res) => {
       .json({ success: false, message: "Error deleting property" });
   }
 };
-
-
