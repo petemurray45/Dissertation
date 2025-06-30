@@ -1,14 +1,17 @@
 import { sql } from "../config/db.js";
 import axios from "axios";
 import cloudinary from "cloudinary";
+import dotenv from "dotenv";
+dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
-const API_KEY = process.env.MAPS_API_KEY;
+const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 export const getAllProperties = async (req, res) => {
+  const { minPrice = 0, maxPrice = 10000 } = req.query;
   try {
     const properties = await sql`
-    SELECT * FROM properties
+    SELECT * FROM properties WHERE price_per_month >= ${minPrice} AND price_per_month <= ${maxPrice}
     ORDER BY created_at DESC`;
 
     let images = [];
@@ -184,45 +187,28 @@ export const createProperty = async (req, res) => {
 
 export const getProperty = async (req, res) => {
   const { id } = req.params;
-  const { minPrice = 0, maxPrice = 10000 } = req.query;
 
-  if (id) {
-    try {
-      const property = await sql`
+  try {
+    const property = await sql`
     SELECT * FROM properties WHERE id = ${id}`;
 
-      const fetchedProperty = property[0];
+    const fetchedProperty = property[0];
 
-      const imagesResult = await sql`
+    const imagesResult = await sql`
       SELECT image_url
       FROM images
       WHERE property_id = ${id}
       ORDER BY id; 
     `;
-      console.log("Fetched images for property", id, ":", imagesResult);
+    console.log("Fetched images for property", id, ":", imagesResult);
 
-      fetchedProperty.images = imagesResult.map((img) => img.image_url);
-      res.status(200).json({ success: true, data: fetchedProperty });
-    } catch (err) {
-      console.log("Error getting product");
-      res
-        .status(500)
-        .json({ success: false, message: "Error getting property", id });
-    }
-  } else {
-    try {
-      const properties = await sql(
-        `
-      SELECT * FROM properties WHERE price_per_month >= $1 AND price_per_month <= $2`,
-        [minPrice, maxPrice]
-      );
-      res.json(properties.rows);
-    } catch (err) {
-      console.log("Error getting products", err);
-      res
-        .status(500)
-        .json({ success: false, message: "Error getting properties" });
-    }
+    fetchedProperty.images = imagesResult.map((img) => img.image_url);
+    res.status(200).json({ success: true, data: fetchedProperty });
+  } catch (err) {
+    console.log("Error getting product");
+    res
+      .status(500)
+      .json({ success: false, message: "Error getting property", id });
   }
 };
 
@@ -274,5 +260,40 @@ export const deleteProperty = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Error deleting property" });
+  }
+};
+
+export const getTravelTime = async (req, res) => {
+  console.log("getTraveltime initialised");
+  const { origin, destination } = req.query;
+
+  console.log("Received origin:", origin);
+  console.log("Received destination:", destination);
+  console.log("Using API key:", process.env.GOOGLE_MAPS_API_KEY);
+
+  try {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/distancematrix/json`,
+      {
+        params: {
+          origins: origin,
+          destinations: destination,
+          key: API_KEY,
+        },
+      }
+    );
+
+    console.log("Distance matrix response", response.data);
+
+    const duration = response.data.rows[0].elements[0].duration.text;
+
+    if (!duration) {
+      return res.status(400).json({ error: "No duration returned from API" });
+    }
+
+    res.json({ travelTime: duration });
+  } catch (err) {
+    console.log("Distance API error", err.response?.data || err.message);
+    res.status(500).json({ error: "Failed to fetch travel time" });
   }
 };

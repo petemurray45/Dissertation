@@ -66,7 +66,7 @@ function AdminDashboard() {
             <button
               className="btn btn-primary"
               onClick={() => {
-                navigate("/addproperty");
+                navigate("/admin/addproperty");
               }}
             >
               <PlusCircleIcon className="size-8 mr-2" />

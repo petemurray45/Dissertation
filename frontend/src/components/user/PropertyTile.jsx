@@ -39,7 +39,7 @@ function PropertyTile({ property, showCar }) {
 
   return (
     <>
-      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10 max-h-fit">
+      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s ">
         <div className="relative w-full h-64">
           {hasImages ? (
             <>
@@ -88,7 +88,11 @@ function PropertyTile({ property, showCar }) {
             <div>
               <h2 className="card-title">{property.location}</h2>
               <p>{property.description}</p>
-              <button className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black">
+              <button
+                type="button"
+                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black"
+                onClick={() => navigate(`/admin/property/${property.id}`)}
+              >
                 View
               </button>
             </div>

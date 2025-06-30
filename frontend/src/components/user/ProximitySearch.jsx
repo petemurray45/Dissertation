@@ -2,15 +2,22 @@ import React from "react";
 import { useState } from "react";
 import { Compass, User } from "lucide-react";
 import UserAutocomplete from "./UserAutocomplete";
+import { useListingStore } from "../../utils/useListingsStore";
 
 function ProximitySearch({ onSearch }) {
-  const [location, setLocation] = useState("");
-  const [maxTravelTime, setMaxTravelTime] = useState(0);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
-  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const {
+    location,
+    setLocation,
+    maxTravelTime,
+    setMaxTravelTime,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    setSearchSubmitted,
+  } = useListingStore();
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
     e.preventDefault();
 
     onSearch({
@@ -18,8 +25,6 @@ function ProximitySearch({ onSearch }) {
       maxTravelTime,
       minPrice,
       maxPrice,
-      minBedrooms,
-      maxBedrooms,
     });
     setSearchSubmitted(true);
   };
@@ -48,7 +53,7 @@ function ProximitySearch({ onSearch }) {
                 </div>
 
                 <UserAutocomplete
-                  onChange={(e) => setLocation(e.target.value)}
+                  onPlaceSelect={(value) => setLocation(value)}
                 />
               </div>
             </div>
@@ -69,7 +74,7 @@ function ProximitySearch({ onSearch }) {
                   placeholder="Max travel time (mins)"
                   className="input pl-10 py-1 focus:input-primary focus:border-[#02343F] transition-colors duration-200 input-bordered w-full"
                   value={maxTravelTime}
-                  onChange={(e) => setMaxTravelTime(e.target.value)}
+                  onChange={(e) => setMaxTravelTime(Number(e.target.value))}
                 />
               </div>
             </div>
@@ -90,7 +95,7 @@ function ProximitySearch({ onSearch }) {
                   placeholder="Max price"
                   className="input pl-10 py-1 focus:input-primary focus:border-[#02343F] transition-colors duration-200 input-bordered w-full"
                   value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
                 />
               </div>
             </div>
@@ -111,14 +116,14 @@ function ProximitySearch({ onSearch }) {
                   placeholder="Min price"
                   className="input pl-10 py-1 focus:input-primary focus:border-[#02343F] transition-colors duration-200 input-bordered w-full"
                   value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
+                  onChange={(e) => setMinPrice(Number(e.target.value))}
                 />
               </div>
             </div>
 
             <button
               className="btn rounded-lg bg-[#02343F] text-white mt-[3%] hover:bg-[#F0EDCC] hover:text-black col-span-2 "
-              onClick={handleSearch}
+              type="submit"
             >
               Search
             </button>

@@ -2,13 +2,11 @@ import dotenv from "dotenv";
 import express from "express";
 import cloudinary from "cloudinary";
 import cors from "cors";
-import { sql} from "./config/db.js";
+import { sql } from "./config/db.js";
 
 dotenv.config();
 
 import propertyRoutes from "./routes/propertyRoutes.js";
-
-
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -34,7 +32,6 @@ async function initDB() {
     return false;
   }
 }
-
 
 console.log("Connecting to database");
 initDB().then((success) => {

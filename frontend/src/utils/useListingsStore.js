@@ -9,8 +9,13 @@ export const useListingStore = create((set, get) => ({
   properties: [],
   loading: false,
   error: null,
+  location: "",
+  searchedLocation: "",
+  maxTravelTime: 0,
+  minPrice: 0,
+  maxPrice: 0,
   currentProperty: null,
-
+  searchSubmitted: false,
   // form state
   formData: {
     title: "",
@@ -43,6 +48,62 @@ export const useListingStore = create((set, get) => ({
     }),
 
   setProperties: (newProperties) => set({ properties: newProperties }),
+  setLocation: (loc) => set({ location: loc }),
+  setMinPrice: (price) => set({ minPrice: price }),
+  setMaxPrice: (price) => set({ maxPrice: price }),
+  setMaxTravelTime: (time) => set({ maxTravelTime: time }),
+  setSearchSubmitted: (value) => set({ searchSubmitted: value }),
+
+  handleSearch: async (filters) => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/properties`, {
+        params: {
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+        },
+      });
+
+      const propsArray = Array.isArray(data) ? data : data.data;
+      console.log("API response", data);
+
+      const travelProps = await Promise.all(
+        propsArray.map(async (property) => {
+          console.log("Property:", property);
+          console.log(
+            "Fetching travel time\nOrigin:",
+            filters.location,
+            "\nDestination:",
+            property.location
+          );
+          if (!property.location) {
+            console.warn("Skipping property with missing location:", property);
+            return { ...property, travelTime: null };
+          }
+          try {
+            const res = await axios.get(`${BASE_URL}/api/properties/time`, {
+              params: {
+                origin: filters.location?.location || filters.location,
+                destination: property?.location || property.location,
+              },
+            });
+            const time = res.data.travelTime;
+            return { ...property, travelTime: time };
+          } catch (err) {
+            console.log("Travel time fetch failed", err);
+            return { ...property, travelTime: null };
+          }
+        })
+      );
+
+      set({
+        properties: travelProps,
+        searchedLocation: filters.location,
+        searchSubmitted: true,
+      });
+    } catch (err) {
+      console.log("Error fetching properties", err);
+    }
+  },
 
   addProperty: async (payload) => {
     set({ loading: true });

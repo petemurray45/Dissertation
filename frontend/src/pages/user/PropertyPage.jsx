@@ -4,47 +4,22 @@ import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
-import Info1 from "../../components/user/Info1";
-import getTravelTimeInMinutes from "../../utils/maps";
-import { get } from "node:https";
+import axios from "axios";
 
 function PropertyPage() {
-  const { properties, loading, error, fetchProperties, setProperties } =
-    useListingStore();
+  const {
+    properties,
+    loading,
+    error,
+    fetchProperties,
+    searchSubmitted,
+    searchedLocation,
+    handleSearch,
+  } = useListingStore();
 
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
-
-  const handleSearch = async (filters) => {
-    try {
-      const { data } = await axios.get("/api/properties", {
-        params: {
-          minPrice: filters.minPrice,
-          maxPrice: filters.maxPrice,
-          minBedrooms: filters.minBedrooms,
-          maxBedrooms: filters.maxBedrooms,
-        },
-      });
-
-      const travelProps = await Promise.all(
-        data.map(async (property) => {
-          const time = await getTravelTimeInMinutes(
-            filters.location,
-            property.address
-          );
-          return { ...property, travelTime: time };
-        })
-      );
-
-      const filteredProps = travelProps.filter(
-        (p) => p.travelTime <= filters.maxTravelTime
-      );
-      setProperties(filteredProps);
-    } catch (err) {
-      console.log("Error fetching travel times");
-    }
-  };
 
   return (
     <>
@@ -53,6 +28,13 @@ function PropertyPage() {
         <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] my-8 rounded-lg">
           <ProximitySearch onSearch={handleSearch} />
         </div>
+
+        {searchSubmitted && searchedLocation && (
+          <h1 className="text-2xl font-semibold text-black text-center mt-8">
+            Showing properties near
+            <span className="text-[#02343F]">{searchedLocation}</span>
+          </h1>
+        )}
 
         <div className="w-full">
           {error && <div className="alert alert-error mb-8">{error}</div>}
