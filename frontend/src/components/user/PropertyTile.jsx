@@ -5,7 +5,7 @@ import {
   MdOutlineArrowCircleLeft,
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
-import carImage from "../../assets/car.png";
+import { FaCarAlt } from "react-icons/fa";
 
 function PropertyTile({ property, showCar }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
@@ -86,7 +86,7 @@ function PropertyTile({ property, showCar }) {
           </div>
           <div className="flex justify-between">
             <div>
-              {/*<h2 className="card-title">{property.location.location}</h2>*/}
+              <h2 className="card-title">{property.location}</h2>
               <p>{property.description}</p>
               <button
                 type="button"
@@ -97,11 +97,11 @@ function PropertyTile({ property, showCar }) {
               </button>
             </div>
             {property.travelTime !== undefined && (
-              <div className="flex items-center justify-center flex-col">
-                <p className="font-bold text-2xl bg-#02343F">
-                  {property.travelTime} mins
+              <div className="flex items-center justify-center flex-row-reverse gap-2 align-middle">
+                <p className="font-bold text-md text-center mb-2 bg-#02343F">
+                  {property.travelTime}
                 </p>
-                <img src={carImage} className="h-[5rem]" />
+                <FaCarAlt className="size-10" />
               </div>
             )}
           </div>

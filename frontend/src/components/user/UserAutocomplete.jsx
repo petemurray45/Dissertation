@@ -3,12 +3,11 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const libraries = ["places"];
 
 const UserAutocomplete = ({ onPlaceSelect }) => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
-
-  const libraries = ["places"];
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,

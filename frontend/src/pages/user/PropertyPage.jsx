@@ -21,6 +21,12 @@ function PropertyPage() {
     fetchProperties();
   }, [fetchProperties]);
 
+  const sortedProperties = [...properties].sort((a, b) => {
+    return (
+      (a.travelTime?.value || Infinity) - (b.travelTime?.value || Infinity)
+    );
+  });
+
   return (
     <>
       <div className="overflow-x-hidden px-16 py-8 bg-[#F0EDCC]  h-screen">
@@ -30,9 +36,9 @@ function PropertyPage() {
         </div>
 
         {searchSubmitted && searchedLocation && (
-          <h1 className="text-2xl font-semibold text-black text-center mt-8">
-            Showing properties near
-            <span className="text-[#02343F]">{searchedLocation}</span>
+          <h1 className="text-4xl font-semibold text-black text-center mt-[8%] mb-0">
+            Showing properties near {searchedLocation.location}
+            <span className="text-[#02343F]"></span>
           </h1>
         )}
 
@@ -54,8 +60,8 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-[10%]">
-              {properties.map((property) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-[8%]">
+              {sortedProperties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}
             </div>

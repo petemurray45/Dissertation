@@ -53,6 +53,7 @@ export const useListingStore = create((set, get) => ({
   setMaxPrice: (price) => set({ maxPrice: price }),
   setMaxTravelTime: (time) => set({ maxTravelTime: time }),
   setSearchSubmitted: (value) => set({ searchSubmitted: value }),
+  setSearchedLocation: (value) => set({ searchedLocation: value }),
 
   handleSearch: async (filters) => {
     try {

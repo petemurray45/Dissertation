@@ -15,6 +15,7 @@ function ProximitySearch({ onSearch }) {
     maxPrice,
     setMaxPrice,
     setSearchSubmitted,
+    setSearchedLocation,
   } = useListingStore();
 
   const handleSearch = (e) => {
@@ -27,7 +28,9 @@ function ProximitySearch({ onSearch }) {
       minPrice,
       maxPrice,
     });
+
     setSearchSubmitted(true);
+    setSearchedLocation(location);
   };
 
   return (

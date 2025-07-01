@@ -4,6 +4,7 @@ import UserDashboard from "./pages/user/UserDashboard";
 import AdminProductPage from "./pages/admin/AdminProductPage";
 import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
+import ViewListing from "./pages/user/ViewListing";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         {/* User Routes */}
         <Route path="/home" element={<UserDashboard />} />
         <Route path="/properties" element={<PropertyPage />} />
+        <Route path="/properties/:id" element={<ViewListing />} />
 
         <Route path="/admin/addproperty" element={<AdminAddProperty />} />
 
