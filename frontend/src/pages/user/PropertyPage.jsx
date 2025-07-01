@@ -54,7 +54,7 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-[10%]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-[10%]">
               {properties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}

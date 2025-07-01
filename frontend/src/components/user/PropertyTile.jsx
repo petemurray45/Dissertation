@@ -39,7 +39,7 @@ function PropertyTile({ property, showCar }) {
 
   return (
     <>
-      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s ">
+      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[400px]">
         <div className="relative w-full h-64">
           {hasImages ? (
             <>
@@ -86,7 +86,7 @@ function PropertyTile({ property, showCar }) {
           </div>
           <div className="flex justify-between">
             <div>
-              <h2 className="card-title">{property.location}</h2>
+              {/*<h2 className="card-title">{property.location.location}</h2>*/}
               <p>{property.description}</p>
               <button
                 type="button"

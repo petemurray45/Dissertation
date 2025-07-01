@@ -11,7 +11,7 @@ function PropertyTile({ property }) {
   const navigate = useNavigate();
 
   const handleSelect = (property) => {
-    navigate(`/property/${property.id}`, {
+    navigate(`/admin/property/${property.id}`, {
       state: { property }, // passing property object to admin product page
     });
   };
@@ -35,7 +35,7 @@ function PropertyTile({ property }) {
   };
   return (
     <div>
-      <div className="card bg-base-100 glass hover:shadow-xl shadow-l transition-shadow duration-300 overflow-hidden w-full gap-10 border border-gray-400 ">
+      <div className="card bg-base-100 glass hover:shadow-xl shadow-l transition-shadow duration-300 overflow-hidden w-full gap-10 border border-gray-400 max-h-[500px] min-h-[500px] min-w-[400px] ">
         <figure className="relative w-full h-64">
           {hasImages ? (
             <>
@@ -73,12 +73,13 @@ function PropertyTile({ property }) {
         </figure>
         <div className="card-body">
           <h2 className="card-title">{property.title}</h2>
-          <p>{property.description}</p>
+          <p>{property.location}</p>
           <div className="card-actions justify-end">
             <p className="font-bold">£{property.price_per_month}</p>
             <button
               className="btn btn-primary"
-              onClick={() => {
+              type="button"
+              onClick={(e) => {
                 handleSelect(property);
               }}
             >

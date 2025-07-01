@@ -129,18 +129,29 @@ function AdminProductPage() {
           Back to dashboard
         </button>
 
-        <div className="flex flex-wrap overflow-hidden sm:grid-cols-2 max-w-4xl mx-auto mt-2">
+        <div className="flex flex-wrap overflow-hidden sm:grid-cols-2 max-w-4xl mx-auto mt-2 pl-8 pr-8">
           {/*Property Image */}
           {Array.isArray(formData.images) && formData.images.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {formData.images.map((imgUrl, index) => (
-                  <img
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden">
+                {formData.images.map((img, index) => (
+                  <div
                     key={index}
-                    src={imgUrl}
-                    alt={`Property Image ${index + 1}`}
-                    className="size-full object-cover pl-8 pr-8 rounded"
-                  />
+                    className="relative rounded-lg overflow-hidden aspect-[4/3] w-full max-w-[400px] shadow-lg"
+                  >
+                    {/* Delete image button */}
+                    <button
+                      onClick={() => handleDeleteImage(index)}
+                      className="absolute top-2 right-2 z-10 bg-white text-black-600 font-bold rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-100"
+                    >
+                      X
+                    </button>
+                    <img
+                      src={typeof img === "string" ? img : img.url}
+                      alt={`Property Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ))}
               </div>
             </>

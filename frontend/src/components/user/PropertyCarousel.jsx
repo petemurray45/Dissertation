@@ -39,14 +39,14 @@ function PropertyCarousel({ properties }) {
           {properties.map((property, index) => (
             <div
               key={index}
-              className="bg-[#02343F] text-white rounded-lg shadow-xl overflow-hidden bg-[#02343F]"
+              className="bg-[#02343F] text-white rounded-lg shadow-xl overflow-hidden max-h-[400px] min-h-[350px] min-w-[400px]"
             >
               <img
                 src={property.imageUrls[0]}
                 alt={property.title}
                 className="h-48 w-full object-cover"
               />
-              <div className="p-4">
+              <div className="p-4 py-4">
                 <h3 className="font-bold text-lg">{property.title}</h3>
                 <p className="text-white-300">{property.location}</p>
                 <p className="text-white font-semibold">

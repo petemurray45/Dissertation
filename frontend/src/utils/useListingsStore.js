@@ -69,21 +69,23 @@ export const useListingStore = create((set, get) => ({
       const travelProps = await Promise.all(
         propsArray.map(async (property) => {
           console.log("Property:", property);
-          console.log(
-            "Fetching travel time\nOrigin:",
-            filters.location,
-            "\nDestination:",
-            property.location
-          );
+          ///////
           if (!property.location) {
             console.warn("Skipping property with missing location:", property);
             return { ...property, travelTime: null };
           }
           try {
+            const destination =
+              typeof filters.location === "object"
+                ? `${filters.location.latitude},${filters.location.longitude}`
+                : filters.location;
+
+            const origin = `${property.latitude},${property.longitude}`;
+
             const res = await axios.get(`${BASE_URL}/api/properties/time`, {
               params: {
-                origin: filters.location?.location || filters.location,
-                destination: property?.location || property.location,
+                origin: origin,
+                destination: destination,
               },
             });
             const time = res.data.travelTime;

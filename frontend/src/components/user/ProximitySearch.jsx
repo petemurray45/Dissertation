@@ -19,6 +19,7 @@ function ProximitySearch({ onSearch }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    console.log("Location at search time", location);
 
     onSearch({
       location,

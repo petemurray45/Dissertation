@@ -9,11 +9,10 @@ import { getTravelTime } from "../controllers/propertyControllers.js";
 
 const router = express.Router();
 
+router.get("/time", getTravelTime);
 router.get("/", getAllProperties);
-router.get("/:id", getProperty);
 router.post("/", createProperty);
 router.put("/:id", updateProperty);
 router.delete("/:id", deleteProperty);
-router.get("/time", getTravelTime);
-
+router.get("/:id", getProperty);
 export default router;

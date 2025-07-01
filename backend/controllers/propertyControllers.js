@@ -205,7 +205,7 @@ export const getProperty = async (req, res) => {
     fetchedProperty.images = imagesResult.map((img) => img.image_url);
     res.status(200).json({ success: true, data: fetchedProperty });
   } catch (err) {
-    console.log("Error getting product");
+    console.log("Error getting property");
     res
       .status(500)
       .json({ success: false, message: "Error getting property", id });
@@ -278,7 +278,7 @@ export const getTravelTime = async (req, res) => {
         params: {
           origins: origin,
           destinations: destination,
-          key: API_KEY,
+          key: "AIzaSyCjGl3Y1aBJxqEoJKU4bssiG4Bmcot-ZKs",
         },
       }
     );

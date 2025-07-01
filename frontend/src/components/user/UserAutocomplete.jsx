@@ -21,7 +21,7 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
     autocompleteRef.current = new window.google.maps.places.Autocomplete(
       inputRef.current,
       {
-        types: ["geocode"],
+        types: ["geocode", "establishment"],
       }
     );
 
