@@ -21,6 +21,13 @@ function PropertyCarousel({ properties }) {
     },
   };
 
+  const getTransformedUrl = (url, width = 800, height = 600) => {
+    return url.replace(
+      "/upload/",
+      `/upload/w_${width},h_${height},c_fill,f_auto,q_auto/`
+    );
+  };
+
   console.log(properties);
 
   return (
@@ -42,7 +49,7 @@ function PropertyCarousel({ properties }) {
               className="bg-[#02343F] text-white rounded-lg shadow-xl overflow-hidden max-h-[400px] min-h-[350px] min-w-[400px]"
             >
               <img
-                src={property.imageUrls[0]}
+                src={getTransformedUrl(property.imageUrls[0], 250, 100)}
                 alt={property.title}
                 className="h-48 w-full object-cover"
               />

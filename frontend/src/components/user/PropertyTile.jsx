@@ -37,6 +37,13 @@ function PropertyTile({ property, showCar }) {
     }
   };
 
+  const getTransformedUrl = (url, width = 800, height = 600) => {
+    return url.replace(
+      "/upload/",
+      `/upload/w_${width},h_${height},c_fill,f_auto,q_auto/`
+    );
+  };
+
   return (
     <>
       <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
@@ -44,7 +51,11 @@ function PropertyTile({ property, showCar }) {
           {hasImages ? (
             <>
               <img
-                src={property.imageUrls[currentImageIndex]}
+                src={getTransformedUrl(
+                  property.imageUrls[currentImageIndex],
+                  350,
+                  200
+                )}
                 alt={property.title}
                 className="w-full h-full object-cover" // Ensure image covers the area
               />

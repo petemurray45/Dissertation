@@ -8,6 +8,14 @@ function ImageGallery({ images }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const handleSelect = (index) => setCurrentIndex(index);
 
+  // image transformation to increase performence
+  const getTransformedUrl = (url, width = 800, height = 600) => {
+    return url.replace(
+      "/upload/",
+      `/upload/w_${width},h_${height},c_fill,f_auto,q_auto/`
+    );
+  };
+
   // guard
   if (!images || !Array.isArray(images) || images.length === 0) {
     return <div className="text-center w-full py-8">No images available</div>;
@@ -29,13 +37,13 @@ function ImageGallery({ images }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-7xl ml-20 gap-4">
+      <div className="flex flex-col md:flex-row w-full max-w-6xl  ml-20 gap-4">
         {/* Main Image */}
 
         <>
           <div className="flex-1">
             <img
-              src={images[currentIndex]}
+              src={getTransformedUrl(images[currentIndex], 800, 600)}
               alt={`Property image ${currentIndex + 1}`}
               className="w-full h-[600px] object-cover rounded-xl"
             />
@@ -50,8 +58,10 @@ function ImageGallery({ images }) {
             {images.map((image, index) => (
               <img
                 key={index}
-                src={image}
+                src={getTransformedUrl(image, 200, 150)}
                 onClick={() => handleSelect(index)}
+                loading="lazy"
+                fetchPriority="high"
                 className={`w-full h-20 object-cover rounded-md cursor-pointer border-2 ${
                   index === currentIndex ? "border-black" : "border-transparent"
                 }`}
