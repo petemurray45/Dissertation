@@ -297,3 +297,53 @@ export const getTravelTime = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch travel time" });
   }
 };
+
+export const getPropertiesWithTravelTime = async (req, res) => {
+  const { destination, minPrice = 0, maxPrice = 10000 } = req.query;
+
+  const min = Number(minPrice);
+  const max = Number(maxPrice);
+
+  if (!destination) {
+    return res.status(400).json({ error: "Destination is required" });
+  }
+
+  try {
+    // select all properties in price range
+
+    const { rows: properties } =
+      await sql`SELECT * FROM properties WHERE price_per_month >= ${min} AND price_per_month <= ${max}`;
+    //call maps api
+    const results = await Promise.all(
+      properties.map(async (property) => {
+        if (!property.latitude || !property.longitude) {
+          return { ...property, travelTime: null };
+        }
+        console.log(property.latitude, property.longitude);
+
+        try {
+          const origin = `${property.latitude}, ${property.longitude}`;
+          const res = await axios.get(
+            "https://maps.googleapis.com/maps/api/directions/json",
+            {
+              params: {
+                origin,
+                destination,
+                key: "AIzaSyCjGl3Y1aBJxqEoJKU4bssiG4Bmcot-ZKs",
+              },
+            }
+          );
+          const travel_time =
+            res.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
+          return { ...property, travelTime: travel_time };
+        } catch (err) {
+          console.log("Error fetching travel time", err.message);
+          return { ...property, travelTime: null };
+        }
+      })
+    );
+  } catch (err) {
+    console.log("Error fetching properties", err.message);
+    res.status(500).json({ error: "Server Error" });
+  }
+};

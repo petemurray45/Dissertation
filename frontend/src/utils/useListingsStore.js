@@ -55,7 +55,9 @@ export const useListingStore = create((set, get) => ({
   setSearchSubmitted: (value) => set({ searchSubmitted: value }),
   setSearchedLocation: (value) => set({ searchedLocation: value }),
 
+  /*
   handleSearch: async (filters) => {
+    set({ loading: true });
     try {
       const { data } = await axios.get(`${BASE_URL}/api/properties`, {
         params: {
@@ -94,6 +96,8 @@ export const useListingStore = create((set, get) => ({
           } catch (err) {
             console.log("Travel time fetch failed", err);
             return { ...property, travelTime: null };
+          } finally {
+            set({ loading: false });
           }
         })
       );
@@ -105,6 +109,39 @@ export const useListingStore = create((set, get) => ({
       });
     } catch (err) {
       console.log("Error fetching properties", err);
+    }
+  },
+  */
+
+  handleSearch: async (filters) => {
+    set({ loading: true });
+
+    try {
+      const destination =
+        typeof filters.location === "object"
+          ? `${filters.location.latitude}, ${filters.location.longitude}`
+          : filters.location;
+      const { data } = await axios.get(
+        `${BASE_URL}/api/properties/travelTime`,
+        {
+          params: {
+            minPrice: filters.minPrice,
+            maxPrice: filters.maxPrice,
+            destination: destination,
+          },
+        }
+      );
+      console.log("API response with travel times", data);
+      set({
+        properties: data,
+        searchedLocation: filters.location,
+        searchSubmitted: true,
+        loading: false,
+      });
+    } catch (err) {
+      console.log("Error fetching properties with travel times", err);
+    } finally {
+      set({ loading: false });
     }
   },
 

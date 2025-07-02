@@ -4,6 +4,7 @@ import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
+
 import axios from "axios";
 
 function PropertyPage() {
