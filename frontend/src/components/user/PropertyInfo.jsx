@@ -2,7 +2,7 @@ import react from "react";
 
 function PropertyInfo({ property }) {
   return (
-    <div className="flex bg-white w-full h-full rounded-xl shadow-md mx-auto"></div>
+    <div className="flex bg-[#02343F] w-full h-full rounded-xl shadow-md  pr-20"></div>
   );
 }
 

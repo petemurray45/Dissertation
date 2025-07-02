@@ -4,7 +4,7 @@ import LocationAutocomplete from "../admin/LocationAutocomplete";
 function Search() {
   return (
     <>
-      <div className=" flex flex-col justify-center items-center mt-20 mx-52 mb-5 text-white">
+      <div className=" flex flex-col justify-center items-center mt-20 sm:mt-14 sm:mx-10 mb-5 text-white">
         <div>
           <h1 className="text-3xl font-bold">
             Find the perfect stay your way.
@@ -19,7 +19,7 @@ function Search() {
           </p>
         </div>
 
-        <div class="bg-white flex px-1 py-1 rounded-full border border-black overflow-hidden w-[80%] h-[80px] mx-auto my-14">
+        <div class="bg-white flex px-1 py-1 rounded-full border border-black overflow-hidden w-[80%] h-[80px] sm:w-[95%] mx-auto my-14">
           <input
             type="email"
             placeholder="Enter a location...."
@@ -27,7 +27,7 @@ function Search() {
           />
           <button
             type="button"
-            class="bg-gray-300 hover:bg-[#f0edcc] transition-all rounded-full px-5 py-2.5 w-[20%] text-lg text-black"
+            class="bg-gray-300 hover:bg-[#f0edcc] transition-all rounded-full px-5 py-2.5 w-[20%] sm:w-[40%] text-lg text-black"
           >
             Search
           </button>

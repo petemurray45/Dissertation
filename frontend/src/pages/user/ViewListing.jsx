@@ -39,15 +39,20 @@ function ViewListing() {
     <>
       <div className="overflow-x-hidden px-5 py-4 bg-[#F0EDCC]  h-screen w-full">
         <NavBar />
-        <div className="w-full h-[80%]  rounded-2xl mx-auto mt-5 ">
+        <div className="flex items-center w-full h-[12%] px-6">
+          <h1 className="text-6xl text-black font-medium items-center justify-center px-1">
+            {currentProperty.location}
+          </h1>
+        </div>
+        <div className="w-full h-[80%]  ounded-2xl mx-auto ">
           <button
             onClick={() => navigate("/properties")}
-            className="btn btn-ghost m-8 text-lg"
+            className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white"
           >
             <ArrowLeftIcon className="size-4 mr-2" />
             Back to dashboard
           </button>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
             <ImageGallery images={currentProperty.images} />
             <PropertyInfo />
           </div>

@@ -14,11 +14,11 @@ function Hero() {
           </p>
 
           <div className="flex justify-center items-center">
-            <p className="md:text-7xl sm:text-6xl text-4xl font-bold md:py-6">
+            <p className="md:text-7xl sm:text-3xl text-4xl font-bold md:py-6">
               Find your next
             </p>
             <ReactTyped
-              className="md:text-7xl sm:text-6xl text-4xl font-bold md:py-6 pl-2"
+              className="md:text-7xl sm:text-3xl text-4xl font-bold md:py-6 pl-2"
               strings={[
                 "holiday rental",
                 "cozy retreat",

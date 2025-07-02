@@ -3,6 +3,7 @@ import express from "express";
 import cloudinary from "cloudinary";
 import cors from "cors";
 import { sql } from "./config/db.js";
+import compression from "compression";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ cloudinary.config({
 
 const app = express();
 app.use(cors());
+app.use(compression());
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

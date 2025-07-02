@@ -18,6 +18,7 @@ function PropertyCarousel({ properties }) {
     mobile: {
       breakpoint: { max: 640, min: 0 },
       items: 1,
+      slidesToSlide: 1,
     },
   };
 
@@ -32,8 +33,10 @@ function PropertyCarousel({ properties }) {
 
   return (
     <>
-      <div className="my-8">
-        <h2 className="text-6xl font-bold py-8 px-8">Featured Properties</h2>
+      <div className="my-8 flex flex-col sm:block">
+        <h2 className="text-6xl sm:text-4xl font-bold py-8 px-8">
+          Featured Properties
+        </h2>
         <Carousel
           responsive={responsive}
           infinite
@@ -41,12 +44,12 @@ function PropertyCarousel({ properties }) {
           arrows
           keyBoardControl
           containerClass="carousel-container"
-          itemClass="px-4"
+          itemClass="px-4 sm:mb-0"
         >
           {properties.map((property, index) => (
             <div
               key={index}
-              className="bg-[#02343F] text-white rounded-lg shadow-xl overflow-hidden max-h-[400px] min-h-[350px] min-w-[400px]"
+              className="bg-[#02343F] text-white rounded-lg shadow-xl overflow-hidden max-h-[400px] min-h-[350px] min-w-[400px] sm:min-w-0 sm:min-h-full"
             >
               <img
                 src={getTransformedUrl(property.imageUrls[0], 250, 100)}

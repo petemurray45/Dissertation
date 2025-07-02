@@ -37,7 +37,7 @@ function ImageGallery({ images }) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full max-w-6xl  ml-20 gap-4">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl  ml-10 gap-4">
         {/* Main Image */}
 
         <>
