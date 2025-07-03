@@ -4,9 +4,9 @@ import DropDown from "../../components/user/DropDown";
 function NavBar() {
   return (
     <>
-      <div className="navbar  p-5">
+      <div className="navbar  p-5 bg-[#02343F] ">
         <div className="flex-1">
-          <a className="btn btn-ghost normal-case text-3xl text-[#02343F]">
+          <a className="btn btn-ghost normal-case text-3xl text-white ">
             Property-App
           </a>
         </div>

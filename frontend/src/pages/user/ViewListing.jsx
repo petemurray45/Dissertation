@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { useListingStore } from "../../utils/useListingsStore";
 import ImageGallery from "../../components/user/ImageGallery";
 import PropertyInfo from "../../components/user/PropertyInfo";
+import MapSearch from "../../components/user/MapSearch";
 import { useEffect } from "react";
 
 function ViewListing() {
@@ -37,24 +38,31 @@ function ViewListing() {
   console.log(currentProperty);
   return (
     <>
-      <div className="overflow-x-hidden px-5 py-4 bg-[#F0EDCC]  h-screen w-full">
+      <div className="overflow-x-hidden  bg-radial-fade  h-screen w-full">
         <NavBar />
-        <div className="flex items-center w-full h-[12%] px-6">
-          <h1 className="text-6xl text-black font-medium items-center justify-center px-1">
-            {currentProperty.location}
-          </h1>
-        </div>
-        <div className="w-full h-[80%]  rounded-2xl mx-auto ">
+        <div className="flex justify-between sticky top-0 z-50 items-center w-full h-[10%] px-6 bg-[#02343F] ">
           <button
             onClick={() => navigate("/properties")}
-            className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white"
+            className="btn btn-ghost m-8 text-lg hover:bg-[#F0EDCC] hover:text-black text-white"
           >
-            <ArrowLeftIcon className="size-4 mr-2" />
-            Back to dashboard
+            <ArrowLeftIcon className="size-4 mr-2 hover:text-black" />
+            Back to search
           </button>
-
+          <h1 className="text-6xl text-white font-medium items-center justify-center px-1 ">
+            {currentProperty.location}
+          </h1>
+          <p className="text-5xl text-white">
+            £{currentProperty.price_per_month}pm
+          </p>
+        </div>
+        <div className="w-full h-[80%]  rounded-2xl mx-auto ">
           <ImageGallery images={currentProperty.images} />
-          <PropertyInfo />
+          <div className="h-full ml-10">
+            <PropertyInfo property={currentProperty} key={currentProperty.id} />
+          </div>
+          <div className="w-full h-[100%]">
+            <MapSearch />
+          </div>
         </div>
       </div>
     </>

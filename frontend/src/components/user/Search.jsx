@@ -1,5 +1,4 @@
 import React from "react";
-import LocationAutocomplete from "../admin/LocationAutocomplete";
 
 function Search() {
   return (

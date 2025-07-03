@@ -2,7 +2,19 @@ import react from "react";
 
 function PropertyInfo({ property }) {
   return (
-    <div className="flex w-full h-[30%] rounded-xl shadow-md  pr-20 mt-[8%]"></div>
+    <div className=" bg-white h-[70%]  border-2 border-gray-400 mt-9 mb-10 rounded-2xl w-[30%]">
+      <div>
+        <h1 className="text-4xl text-black p-6 border-b-2">Property Info</h1>
+        <div className="grid grid-cols-2 gap-10 h-full w-[100%] p-6">
+          <p className="text-3xl">Price:</p>
+          <p className="text-3xl">£{property.price_per_month}</p>
+          <p className="text-3xl">Property Type:</p>
+          <p className="text-3xl">{/*Need to implement property type*/}</p>
+          <p className="text-3xl">En suite:</p>
+          <p>{/*Need to implement en suite option*/}</p>
+        </div>
+      </div>
+    </div>
   );
 }
 

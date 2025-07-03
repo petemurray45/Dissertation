@@ -8,12 +8,12 @@ function DropDown() {
     <div className="dropdown dropdown-end ">
       {/* Dropdown trigger */}
       <button tabIndex={0} className="btn btn-ghost btn-circle">
-        <Menu className="size-10" />
+        <Menu className="size-10 text-gray-500 hover:text-white" />
       </button>
 
       <div
         tabIndex={0}
-        className="dropdown-content mt-2 p-1 shadow-2xl bg-white  rounded-2xl w-80  border border-gray-400 text-black"
+        className="dropdown-content mt-2 p-1 shadow-2xl bg-white  rounded-2xl w-80  border border-gray-400 text-black z-[999]"
       >
         <button
           className="w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors hover:bg-[#02343F] hover:text-white"

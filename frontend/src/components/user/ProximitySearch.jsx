@@ -34,7 +34,7 @@ function ProximitySearch({ onSearch }) {
   };
 
   return (
-    <div className="relative  max-w-7xl mx-auto mt-8 ">
+    <div className="relative  max-w-7xl mx-auto ">
       <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-1/4 bg-white shadow-md rounded-lg p-6 w-11/12 max-w-full">
         <h2 className="text-4xl text-center mb-4 text-black font-medium">
           Search Properties across the UK and Ireland

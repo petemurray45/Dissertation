@@ -15,7 +15,7 @@ function UserDashboard() {
   }, [fetchProperties]);
 
   return (
-    <div className="overflow-x-hidden px-16 bg-[#F0EDCC] overflow-hidden">
+    <div className="overflow-x-hidden  bg-radial-fade overflow-hidden">
       <NavBar />
       <Hero />
       <div className="w-full">

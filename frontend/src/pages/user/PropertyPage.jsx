@@ -30,9 +30,9 @@ function PropertyPage() {
 
   return (
     <>
-      <div className="overflow-x-hidden px-16 py-8 bg-[#F0EDCC]  h-screen">
+      <div className="overflow-x-hidden   bg-radial-fade h-screen">
         <NavBar />
-        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] my-8 rounded-lg">
+        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%]  ">
           <ProximitySearch onSearch={handleSearch} />
         </div>
 
@@ -61,7 +61,7 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 my-[30%] md:my-[8%]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 my-[30%] md:my-[8%] px-10">
               {sortedProperties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}

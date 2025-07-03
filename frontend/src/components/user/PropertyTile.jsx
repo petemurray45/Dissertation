@@ -46,7 +46,7 @@ function PropertyTile({ property, showCar }) {
 
   return (
     <>
-      <div className="card bg-base-100 hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
+      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>

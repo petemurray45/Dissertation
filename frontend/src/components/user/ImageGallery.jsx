@@ -45,7 +45,7 @@ function ImageGallery({ images }) {
             <img
               src={getTransformedUrl(images[currentIndex], 1000, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="w-full sm:h-[200px] md:h-[800px] object-cover rounded-xl"
+              className="w-full sm:h-[200px] md:h-[800px] object-cover "
             />
           </div>
 

@@ -33,7 +33,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="h-[450px] w-full relative inset-0 bg-[#02343F] rounded-2xl">
+      <div className="h-[450px] w-full relative inset-0 bg-[#02343F] ">
         <div className="absolute inset-0">
           <Search />
         </div>
