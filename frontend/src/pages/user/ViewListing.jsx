@@ -57,11 +57,9 @@ function ViewListing() {
         </div>
         <div className="w-full h-[80%]  rounded-2xl mx-auto ">
           <ImageGallery images={currentProperty.images} />
-          <div className="h-full ml-10">
+          <div className="flex h-full ml-10">
             <PropertyInfo property={currentProperty} key={currentProperty.id} />
-          </div>
-          <div className="w-full h-[100%]">
-            <MapSearch />
+            <MapSearch property={currentProperty} />
           </div>
         </div>
       </div>

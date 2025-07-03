@@ -5,23 +5,25 @@ import AdminProductPage from "./pages/admin/AdminProductPage";
 import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
 import ViewListing from "./pages/user/ViewListing";
-
+import { LoadScript } from "@react-google-maps/api";
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/admin" element={<AdminDashboard />} />
-        {/* User Routes */}
-        <Route path="/home" element={<UserDashboard />} />
-        <Route path="/properties" element={<PropertyPage />} />
-        <Route path="/properties/:id" element={<ViewListing />} />
+      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+        <Routes>
+          <Route path="/admin" element={<AdminDashboard />} />
+          {/* User Routes */}
+          <Route path="/home" element={<UserDashboard />} />
+          <Route path="/properties" element={<PropertyPage />} />
+          <Route path="/properties/:id" element={<ViewListing />} />
 
-        <Route path="/admin/addproperty" element={<AdminAddProperty />} />
+          <Route path="/admin/addproperty" element={<AdminAddProperty />} />
 
-        <Route path="/admin/property/:id" element={<AdminProductPage />} />
+          <Route path="/admin/property/:id" element={<AdminProductPage />} />
 
-        <Route path="*" element={<Navigate to="/admin" />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/admin" />} />
+        </Routes>
+      </LoadScript>
     </>
   );
 }

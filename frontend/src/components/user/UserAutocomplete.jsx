@@ -10,13 +10,14 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
-
   useEffect(() => {
-    if (!isLoaded || !window.google || !inputRef.current) return;
+    if (
+      !window.google ||
+      !window.google.maps ||
+      !window.google.maps.places ||
+      !inputRef.current
+    )
+      return;
 
     autocompleteRef.current = new window.google.maps.places.Autocomplete(
       inputRef.current,
@@ -36,7 +37,7 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
       };
       onPlaceSelect(locationData);
     });
-  }, [isLoaded]);
+  }, []);
 
   return (
     <input
