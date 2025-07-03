@@ -10,7 +10,7 @@ import { getPropertiesWithTravelTime } from "../controllers/propertyControllers.
 
 const router = express.Router();
 
-router.get("/time", getTravelTime);
+//router.get("/time", getTravelTime);
 router.get("/travelTime", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 router.post("/", createProperty);

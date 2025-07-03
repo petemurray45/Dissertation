@@ -44,7 +44,7 @@ function ViewListing() {
             {currentProperty.location}
           </h1>
         </div>
-        <div className="w-full h-[80%]  ounded-2xl mx-auto ">
+        <div className="w-full h-[80%]  rounded-2xl mx-auto ">
           <button
             onClick={() => navigate("/properties")}
             className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white"
@@ -52,10 +52,9 @@ function ViewListing() {
             <ArrowLeftIcon className="size-4 mr-2" />
             Back to dashboard
           </button>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
-            <ImageGallery images={currentProperty.images} />
-            <PropertyInfo />
-          </div>
+
+          <ImageGallery images={currentProperty.images} />
+          <PropertyInfo />
         </div>
       </div>
     </>

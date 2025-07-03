@@ -13,6 +13,7 @@ function UserDashboard() {
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
+
   return (
     <div className="overflow-x-hidden px-16 bg-[#F0EDCC] overflow-hidden">
       <NavBar />

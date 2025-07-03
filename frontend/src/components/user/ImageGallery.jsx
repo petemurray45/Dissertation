@@ -37,22 +37,22 @@ function ImageGallery({ images }) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full max-w-7xl  ml-10 gap-4">
+      <div className="flex flex-col w-full max-w-screen mr-20 gap-4 ">
         {/* Main Image */}
 
         <>
           <div className="flex-1">
             <img
-              src={getTransformedUrl(images[currentIndex], 800, 600)}
+              src={getTransformedUrl(images[currentIndex], 1000, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="w-full h-[600px] object-cover rounded-xl"
+              className="w-full sm:h-[200px] md:h-[800px] object-cover rounded-xl"
             />
           </div>
 
           {/*Vertical thumbnail stack*/}
-          <div className="w-24 flex flex-col items-center gap-2">
+          <div className="w-full flex flex-row items-center justify-center gap-2 mt-5">
             <button onClick={goToPrevImage}>
-              <MdOutlineArrowCircleLeft className="w-6 h-6 text-gray-500 hover:text-black" />
+              <MdOutlineArrowCircleLeft className="w-14 h-14 text-gray-500 hover:text-black" />
             </button>
 
             {images.map((image, index) => (
@@ -62,14 +62,14 @@ function ImageGallery({ images }) {
                 onClick={() => handleSelect(index)}
                 loading="lazy"
                 fetchPriority="high"
-                className={`w-full h-20 object-cover rounded-md cursor-pointer border-2 ${
+                className={`w-[80px] h-[60px] md:w-[200px] md:h-[200px] object-cover rounded-md cursor-pointer border-2 ${
                   index === currentIndex ? "border-black" : "border-transparent"
                 }`}
               />
             ))}
 
             <button onClick={goToNextImage}>
-              <MdOutlineArrowCircleRight className="w-6 h-6 text-gray-500 hover:text-black" />
+              <MdOutlineArrowCircleRight className="w-14 h-14 text-gray-500 hover:text-black" />
             </button>
           </div>
         </>
