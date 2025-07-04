@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 function DropDown() {
   const navigate = useNavigate();
   return (
-    <div className="dropdown dropdown-end ">
+    <div className="dropdown dropdown-end  ">
       {/* Dropdown trigger */}
       <button tabIndex={0} className="btn btn-ghost btn-circle">
         <Menu className="size-10 text-gray-500 hover:text-white" />

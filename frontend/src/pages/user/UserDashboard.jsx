@@ -7,7 +7,6 @@ import React from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
-
 function UserDashboard() {
   const { properties, loading, error, fetchProperties } = useListingStore();
 
@@ -16,7 +15,7 @@ function UserDashboard() {
   }, [fetchProperties]);
 
   return (
-    <div className="overflow-x-hidden  bg-radial-fade overflow-hidden">
+    <div className="overflow-x-hidden  bg-radial-fade">
       <NavBar />
       <Hero />
       <div className="w-full">
@@ -38,8 +37,8 @@ function UserDashboard() {
           </div>
         ) : (
           <div className="w-full">
-            <Search />
             <LoginHero />
+            <Search />
             <PropertyCarousel properties={properties} />
           </div>
         )}
