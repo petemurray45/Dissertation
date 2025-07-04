@@ -2,9 +2,32 @@ import { useState } from "react";
 import { UserRound, Key } from "lucide-react";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import { AtSign } from "lucide-react";
+import { userStore } from "../../utils/useUserStore";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
   const [mode, setmode] = useState("sign-in");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassowrd, setConfirmPassword] = useState("");
+  const login = userStore((state) => state.login);
+  const register = userStore((state) => state.register);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (mode === "sign-in") {
+      await login(email, password);
+    } else {
+      if (password !== confirmPassowrd) {
+        alert("Passwords do not match");
+        return;
+      }
+      await register(name, email, password);
+    }
+    navigate("/home");
+  };
 
   return (
     <div className="relative h-[800px] w-[650px] bg-white  rounded-2xl shadow-2xl">
@@ -40,27 +63,29 @@ function Auth() {
       {mode === "sign-in" ? (
         <div className=" flex justify-center w-full h-auto">
           <div className="flex w-full h-[20rem] justify-center">
-            <form>
+            <form id="signin-form" onSubmit={handleSubmit}>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] px-9 flex items-center  mt-12">
                     <UserRound className="size-10 mr-6" />
                     <input
                       type="email"
                       placeholder="Enter email"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
                 </div>
               </div>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] px-9 flex items-center  mt-12">
                     <Key className="size-10 mr-6" />
                     <input
                       type="password"
                       placeholder="Enter password"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
                 </div>
@@ -73,7 +98,8 @@ function Auth() {
             </form>
             <button
               type="submit"
-              className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md hover:bg-[#02343F] hover:border-black"
+              form="signin-form"
+              className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
             >
               <FaArrowAltCircleRight className="size-24 shadow-2xl" />
             </button>
@@ -82,51 +108,56 @@ function Auth() {
       ) : (
         <div className=" flex justify-center w-full h-auto ">
           <div className="flex w-full justify-center ">
-            <form>
+            <form id="signup-form" onSubmit={handleSubmit}>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] h-[15px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] h-[15px] px-9 flex items-center mt-12">
                     <UserRound className="size-10 mr-6" />
                     <input
-                      type="email"
+                      type="text"
                       placeholder="Enter full name"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      onChange={(e) => setName(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
                 </div>
               </div>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] h-[15px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
                     <AtSign className="size-10 mr-6" />
                     <input
                       type="email"
                       placeholder="Enter email"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
                 </div>
               </div>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] h-[15px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] h-[15px] px-9 flex items-center   mt-12">
                     <Key className="size-10 mr-6" />
                     <input
                       type="password"
                       placeholder="Enter password"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
                 </div>
               </div>
               <div className="form-control">
                 <div>
-                  <div className="w-[500px] h-[15px] px-9 flex items-center pointer-events-none text-base-content/50 mt-12">
+                  <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
                     <Key className="size-10 mr-6" />
                     <input
                       type="password"
                       placeholder="Confirm password"
-                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors duration-200  w-full text-2xl"
+                      value={confirmPassowrd}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
                     />
                   </div>
                 </div>
@@ -135,6 +166,7 @@ function Auth() {
             </form>
             <button
               type="submit"
+              form="signup-form"
               className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md hover:bg-[#02343F] hover:border-black"
             >
               <FaArrowAltCircleRight className="size-24 shadow-2xl" />

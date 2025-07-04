@@ -3,11 +3,11 @@ import jwt from "jsonwebtoken";
 import { sql } from "../config/db.js";
 
 export const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
   try {
     const result = await sql(
-      `INSERT INTO users (email, password_hash) VALUES (${email}, ${hashed}) RETURNING id, email`
+      `INSERT INTO users (full_name, email, password_hash) VALUES (${name}, ${email}, ${hashed}) RETURNING id, email`
     );
     res.status(201).json({ user: result.rows[0] });
   } catch (err) {
