@@ -6,7 +6,7 @@ import Search from "./Search";
 function Hero() {
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 justify-center items-center h-[50vh]  mb-[10rem] ">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 justify-center items-center h-[50vh]  mb-[10rem]  ">
         {/* Text Overlay */}
         <div className="text-center flex flex-col pt-[2rem]">
           <p className="text-4xl text-black font-bold">
@@ -25,7 +25,7 @@ function Hero() {
           </div>
         </div>
         <div className="h-full  w-[100%] ">
-          <div className="h-full w-full">
+          <div className="h-full w-full border-2 border-gray-300 rounded-2xl">
             <img
               src="https://images.unsplash.com/photo-1585821569331-f071db2abd8d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="room"

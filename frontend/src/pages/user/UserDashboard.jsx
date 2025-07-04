@@ -2,6 +2,7 @@ import NavBar from "../../components/user/NavBar";
 import Hero from "../../components/user/Hero";
 import Search from "../../components/user/Search";
 import PropertyCarousel from "../../components/user/PropertyCarousel.jsx";
+import LoginHero from "../../components/user/LoginHero.jsx";
 import React from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
@@ -38,6 +39,7 @@ function UserDashboard() {
         ) : (
           <div className="w-full">
             <Search />
+            <LoginHero />
             <PropertyCarousel properties={properties} />
           </div>
         )}
