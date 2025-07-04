@@ -27,7 +27,7 @@ function Search() {
           />
           <button
             type="button"
-            class="bg-gray-300 hover:bg-[#f0edcc] transition-all rounded-3xl px-5 py-2.5  sm:w-[40%] text-lg text-black"
+            class="bg-[#02343F] text-white hover:bg-[#f0edcc] hover:text-black font-medium transition-all rounded-3xl px-5 py-2.5  sm:w-[40%] text-lg text-black"
           >
             Search
           </button>

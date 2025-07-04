@@ -29,7 +29,7 @@ function Hero() {
             <img
               src="https://images.unsplash.com/photo-1585821569331-f071db2abd8d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="room"
-              className="object-cover h-full w-full rounded-bl-2xl"
+              className="object-cover h-full w-full  sm:rounded-none md:rounded-bl-2xl"
             />
           </div>
         </div>
