@@ -13,8 +13,6 @@ const router = express.Router();
 
 //router.get("/time", getTravelTime);
 router.get("/travelTime", getPropertiesWithTravelTime);
-router.post("/login", login);
-router.post("/register", register);
 router.get("/", getAllProperties);
 router.post("/", createProperty);
 router.put("/:id", updateProperty);

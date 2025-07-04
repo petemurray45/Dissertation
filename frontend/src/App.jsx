@@ -6,7 +6,6 @@ import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
 import ViewListing from "./pages/user/ViewListing";
 import UserLogin from "./pages/user/UserLogin";
-import UserRegister from "./pages/user/UserRegister";
 import { LoadScript } from "@react-google-maps/api";
 function App() {
   return (
@@ -19,7 +18,6 @@ function App() {
           <Route path="/properties" element={<PropertyPage />} />
           <Route path="/properties/:id" element={<ViewListing />} />
           <Route path="/login" element={<UserLogin />} />
-          <Route path="/register" element={<UserRegister />} />
 
           <Route path="/admin/addproperty" element={<AdminAddProperty />} />
 

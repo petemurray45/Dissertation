@@ -1,6 +1,14 @@
 import React from "react";
+import UserAutocomplete from "./UserAutocomplete";
+import { useListingStore } from "../../utils/useListingsStore";
 
-function Search() {
+function Search({ onSearch }) {
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    setLocation(e.target.value);
+    set;
+  };
   return (
     <>
       <div className=" flex flex-col justify-center items-center mt-20 sm:mt-14 sm:mx-10 mb-5 text-black">
@@ -19,15 +27,10 @@ function Search() {
         </div>
 
         <div class="bg-white flex px-1 py-1 rounded-3xl border border-black overflow-hidden w-[60%] h-[80px] sm:w-[95%] mx-auto my-14">
-          <input
-            type="text"
-            placeholder="Enter a location...."
-            class="w-full outline-none bg-white pl-4 text-xl text-black"
-            name="search"
-          />
+          <UserAutocomplete onPlaceSelect={handleSearch} />
           <button
             type="button"
-            class="bg-[#02343F] text-white hover:bg-[#f0edcc] hover:text-black font-medium transition-all rounded-3xl px-5 py-2.5  sm:w-[40%] text-lg text-black"
+            class="bg-[#02343F] text-white hover:bg-[#f0edcc] hover:text-black font-medium transition-all rounded-3xl px-5 py-2.5  sm:w-[40%] text-lg "
           >
             Search
           </button>
