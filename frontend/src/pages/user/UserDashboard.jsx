@@ -37,8 +37,8 @@ function UserDashboard() {
           </div>
         ) : (
           <div className="w-full">
-            <LoginHero />
             <Search />
+            <LoginHero />
             <PropertyCarousel properties={properties} />
           </div>
         )}
