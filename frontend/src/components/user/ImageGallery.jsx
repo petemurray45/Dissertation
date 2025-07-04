@@ -52,7 +52,7 @@ function ImageGallery({ images }) {
           {/*Vertical thumbnail stack*/}
           <div className="w-full flex flex-row items-center justify-center gap-2 mt-5">
             <button onClick={goToPrevImage}>
-              <MdOutlineArrowCircleLeft className="w-14 h-14 text-gray-500 hover:text-black" />
+              <MdOutlineArrowCircleLeft className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
             </button>
 
             {images.map((image, index) => (
@@ -63,13 +63,15 @@ function ImageGallery({ images }) {
                 loading="lazy"
                 fetchPriority="high"
                 className={`w-[80px] h-[60px] md:w-[200px] md:h-[200px] object-cover rounded-md cursor-pointer border-2 ${
-                  index === currentIndex ? "border-black" : "border-transparent"
+                  index === currentIndex
+                    ? "border border-gray-600"
+                    : "border-transparent"
                 }`}
               />
             ))}
 
             <button onClick={goToNextImage}>
-              <MdOutlineArrowCircleRight className="w-14 h-14 text-gray-500 hover:text-black" />
+              <MdOutlineArrowCircleRight className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
             </button>
           </div>
         </>

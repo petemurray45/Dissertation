@@ -37,6 +37,7 @@ function UserDashboard() {
           </div>
         ) : (
           <div className="w-full">
+            <Search />
             <PropertyCarousel properties={properties} />
           </div>
         )}
