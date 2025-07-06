@@ -46,7 +46,7 @@ function PropertyTile({ property, showCar }) {
 
   return (
     <>
-      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
+      <div className="h-[400px] flex flex-col justify-between bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -87,7 +87,7 @@ function PropertyTile({ property, showCar }) {
           )}
         </div>
         <div className="card-body">
-          <div className="w-full rounded-xl">
+          <div className="rounded-xl flex-1 flex flex-col justify-between mt-1">
             <div className="w-[40%] h-7 flex items-center rounded-xl mb-2">
               <span className="bg-[#02343F] text-white p-2">Price</span>
               <span className="bg-[#f0edcc] p-2">
@@ -99,9 +99,10 @@ function PropertyTile({ property, showCar }) {
             <div>
               <h2 className="card-title">{property.location}</h2>
               <p>{property.description}</p>
+
               <button
                 type="button"
-                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black"
+                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black   "
                 onClick={(e) => handleSelect(property)}
               >
                 View

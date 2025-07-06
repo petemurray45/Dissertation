@@ -121,16 +121,13 @@ export const useListingStore = create((set, get) => ({
         typeof filters.location === "object"
           ? `${filters.location.latitude}, ${filters.location.longitude}`
           : filters.location;
-      const { data } = await axios.get(
-        `${BASE_URL}/api/properties/travelTime`,
-        {
-          params: {
-            minPrice: filters.minPrice,
-            maxPrice: filters.maxPrice,
-            destination: destination,
-          },
-        }
-      );
+      const { data } = await axios.get(`${BASE_URL}/api/travel-time`, {
+        params: {
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          destination: destination,
+        },
+      });
       console.log("API response with travel times", data);
       set({
         properties: data,

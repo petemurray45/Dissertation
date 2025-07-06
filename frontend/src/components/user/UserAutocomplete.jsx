@@ -10,7 +10,17 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
   useEffect(() => {
+    if (!isLoaded) {
+      console.log("Google Maps script not loaded yet");
+      return;
+    }
+
     if (
       !window.google ||
       !window.google.maps ||
@@ -37,7 +47,7 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
       };
       onPlaceSelect(locationData);
     });
-  }, []);
+  }, [isLoaded]);
 
   return (
     <input

@@ -210,10 +210,10 @@ export const getProperty = async (req, res) => {
     fetchedProperty.images = imagesResult.map((img) => img.image_url);
     res.status(200).json({ success: true, data: fetchedProperty });
   } catch (err) {
-    console.log("Error getting property");
+    console.log("Error gettingg property");
     res.status(500).json({
       success: false,
-      message: "Error getting property",
+      message: "Error gettingg property",
       error: err.message,
       id,
     });
@@ -309,6 +309,8 @@ export const getTravelTime = async (req, res) => {
 export const getPropertiesWithTravelTime = async (req, res) => {
   const { destination, minPrice = 0, maxPrice = 10000 } = req.query;
 
+  console.log("destination", destination);
+
   const min = Number(minPrice);
   const max = Number(maxPrice);
 
@@ -319,9 +321,20 @@ export const getPropertiesWithTravelTime = async (req, res) => {
   try {
     // select all properties in price range
 
-    const { rows: properties } =
+    const res =
       await sql`SELECT * FROM properties WHERE price_per_month >= ${min} AND price_per_month <= ${max}`;
+    console.log("SQL result:", res);
+    console.log("typeof result:", typeof res);
+    console.dir(res, { depth: null });
+
+    const properties = res.rows || res;
+    console.log("Properties", properties);
+
     //call maps api
+    if (!Array.isArray(properties)) {
+      console.log("No properties returned or not an array", res);
+      return res.status(500).json({ error: "Failed to load properties" });
+    }
     const results = await Promise.all(
       properties.map(async (property) => {
         if (!property.latitude || !property.longitude) {
@@ -337,12 +350,14 @@ export const getPropertiesWithTravelTime = async (req, res) => {
               params: {
                 origin,
                 destination,
-                key: "AIzaSyCjGl3Y1aBJxqEoJKU4bssiG4Bmcot-ZKs",
+                key: API_KEY,
               },
             }
           );
+
           const travel_time =
             res.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
+
           return { ...property, travelTime: travel_time };
         } catch (err) {
           console.log("Error fetching travel time", err.message);
@@ -351,7 +366,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
       })
     );
   } catch (err) {
-    console.log("Error fetching properties", err.message);
+    console.log("Error fetching properties ", err.message);
     res.status(500).json({ error: "Server Error" });
   }
 };

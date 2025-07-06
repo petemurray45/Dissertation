@@ -41,16 +41,16 @@ function ImageGallery({ images }) {
         {/* Main Image */}
 
         <>
-          <div className="flex-1">
+          <div className="flex px-16">
             <img
               src={getTransformedUrl(images[currentIndex], 1000, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="w-full sm:h-[200px] md:h-[800px] object-cover "
+              className="sm:h-[200px] md:h-[800px] object-cover "
             />
           </div>
 
           {/*Vertical thumbnail stack*/}
-          <div className="w-full flex flex-row items-center justify-center gap-2 mt-5">
+          <div className="w-[100%] justify-center flex flex-row items-center   gap-2 mt-5">
             <button onClick={goToPrevImage}>
               <MdOutlineArrowCircleLeft className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
             </button>

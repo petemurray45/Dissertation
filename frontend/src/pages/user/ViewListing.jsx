@@ -38,7 +38,7 @@ function ViewListing() {
   console.log(currentProperty);
   return (
     <>
-      <div className="overflow-x-hidden  bg-radial-fade  h-screen w-full">
+      <div className="overflow-x-hidden    h-screen w-full">
         <NavBar />
         <div className="flex justify-between sticky top-0 z-50 items-center w-full h-[10%] px-6 bg-[#02343F] ">
           <button
