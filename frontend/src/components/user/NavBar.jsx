@@ -4,9 +4,9 @@ import DropDown from "../../components/user/DropDown";
 function NavBar() {
   return (
     <>
-      <div className="navbar flex   h-16 md:h-20 w-full max-w-[1800px] mx-auto  my-10 bg-[#02343F] rounded-xl ">
-        <div className="flex-1">
-          <a className="btn btn-ghost normal-case text-3xl text-white ">
+      <div className="navbar  bg-gradient-to-b from-[#02343F]/90 via-[#02343F]/60 h-16 md:h-20 w-full  mx-auto mb-5     ">
+        <div className="flex justify-between items-center mx-auto">
+          <a className="btn btn-ghost normal-case text-5xl  text-gray-200 text-shadow-md ">
             Property-App
           </a>
         </div>

@@ -9,7 +9,6 @@ dotenv.config();
 
 import propertyRoutes from "./routes/propertyRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
-import { log } from "console";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

@@ -7,8 +7,8 @@ function DropDown() {
   return (
     <div className="dropdown dropdown-end  ">
       {/* Dropdown trigger */}
-      <button tabIndex={0} className="btn btn-ghost btn-circle">
-        <Menu className="size-10 text-gray-500 hover:text-white" />
+      <button tabIndex={0} className="btn bg-transparent ">
+        <Menu className="size-10 text-white hover:text-[#02343F]" />
       </button>
 
       <div

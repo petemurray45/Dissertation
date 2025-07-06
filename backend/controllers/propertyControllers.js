@@ -17,6 +17,7 @@ export const getAllProperties = async (req, res) => {
     let images = [];
 
     const propertyIds = properties.map((p) => Number(p.id));
+    console.log("property ids", propertyIds);
 
     if (propertyIds.length > 0) {
       console.log("Type of first property ID:", typeof propertyIds[0]);
@@ -42,8 +43,12 @@ export const getAllProperties = async (req, res) => {
     console.log("Fetched Properties", propertyWithImages);
     res.status(200).json({ success: true, data: propertyWithImages });
   } catch (err) {
-    console.log("Error fetching properties", err);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.log("Error fetching properties");
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: err.message,
+    });
   }
 };
 
@@ -206,9 +211,12 @@ export const getProperty = async (req, res) => {
     res.status(200).json({ success: true, data: fetchedProperty });
   } catch (err) {
     console.log("Error getting property");
-    res
-      .status(500)
-      .json({ success: false, message: "Error getting property", id });
+    res.status(500).json({
+      success: false,
+      message: "Error getting property",
+      error: err.message,
+      id,
+    });
   }
 };
 

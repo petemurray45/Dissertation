@@ -168,7 +168,7 @@ export const useListingStore = create((set, get) => ({
   fetchProperties: async () => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}/api/properties`);
+      const response = await axios.get(`${BASE_URL}/api/`);
       set({ properties: response.data.data, error: null });
     } catch (err) {
       console.log("Error fetching properties", err);
@@ -206,7 +206,7 @@ export const useListingStore = create((set, get) => ({
   fetchProperty: async (id) => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}/api/properties/${id}`);
+      const response = await axios.get(`${BASE_URL}/api/${id}`);
       console.log("Fetched property:", response.data.data);
       set({
         // prefills form data with fetched property properties

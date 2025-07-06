@@ -2,7 +2,7 @@ import NavBar from "../../components/user/NavBar";
 import Hero from "../../components/user/Hero";
 import Search from "../../components/user/Search";
 import PropertyCarousel from "../../components/user/PropertyCarousel.jsx";
-import LoginHero from "../../components/user/LoginHero.jsx";
+import LocationCarousel from "../../components/user/LocationCarousel.jsx";
 import React from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
@@ -15,10 +15,10 @@ function UserDashboard() {
   }, [fetchProperties]);
 
   return (
-    <div className="overflow-x-hidden  bg-radial-fade">
+    <div className="overflow-x-hidden ">
       <NavBar />
       <Hero />
-      <div className="w-full">
+      <div className="w-full pt-[14rem]">
         {error && <div className="alert alert-error mb-8">{error}</div>}
         {properties.length === 0 && !loading && (
           <div className="flex flex-col justify-center items-center h-96 space-y-4">
@@ -36,10 +36,11 @@ function UserDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className="w-full">
+          <div className="w-full ">
             <Search />
-            <LoginHero />
             <PropertyCarousel properties={properties} />
+            <div className="divider my-10" />
+            <LocationCarousel />
           </div>
         )}
       </div>
