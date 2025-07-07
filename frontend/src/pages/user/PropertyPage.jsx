@@ -22,11 +22,12 @@ function PropertyPage() {
     fetchProperties();
   }, [fetchProperties]);
 
-  const sortedProperties = [...properties].sort((a, b) => {
-    return (
-      (a.travelTime?.value || Infinity) - (b.travelTime?.value || Infinity)
-    );
-  });
+  const sortedProperties = properties
+    .map((property) => ({
+      ...property,
+      travelTimeMinutes: parseInt(property.travelTime) || 0, // fallback for null
+    }))
+    .sort((a, b) => b.travelTimeMinutes - a.travelTimeMinutes);
 
   return (
     <>

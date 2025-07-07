@@ -321,22 +321,48 @@ export const getPropertiesWithTravelTime = async (req, res) => {
   try {
     // select all properties in price range
 
-    const res =
+    const response =
       await sql`SELECT * FROM properties WHERE price_per_month >= ${min} AND price_per_month <= ${max}`;
-    console.log("SQL result:", res);
-    console.log("typeof result:", typeof res);
-    console.dir(res, { depth: null });
 
-    const properties = res.rows || res;
+    const properties = response.rows || response;
     console.log("Properties", properties);
 
+    // get property ids
+    const propertyIds = properties.map((p) => Number(p.id));
+    let images = [];
+
+    if (propertyIds.length === 0) {
+      console.log("No property ids");
+    }
+
+    if (propertyIds.length > 0) {
+      images = await sql`SELECT property_id, image_url
+      FROM images
+      WHERE property_id = ANY(${propertyIds}::integer[])
+      ORDER BY property_id, id;`;
+    }
+
+    const propertiesWithImages = properties.map((property) => {
+      const propertyImages = images
+        .filter((img) => img.property_id === property.id)
+        .map((img) => img.image_url);
+
+      return {
+        ...property,
+        imageUrls: propertyImages,
+      };
+    });
+
     //call maps api
-    if (!Array.isArray(properties)) {
-      console.log("No properties returned or not an array", res);
+    if (!Array.isArray(propertiesWithImages)) {
+      console.log(
+        "No properties returned or not an array",
+        propertiesWithImages
+      );
       return res.status(500).json({ error: "Failed to load properties" });
     }
     const results = await Promise.all(
-      properties.map(async (property) => {
+      propertiesWithImages.map(async (property) => {
         if (!property.latitude || !property.longitude) {
           return { ...property, travelTime: null };
         }
@@ -344,7 +370,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
 
         try {
           const origin = `${property.latitude}, ${property.longitude}`;
-          const res = await axios.get(
+          const apiRes = await axios.get(
             "https://maps.googleapis.com/maps/api/directions/json",
             {
               params: {
@@ -356,7 +382,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
           );
 
           const travel_time =
-            res.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
+            apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
 
           return { ...property, travelTime: travel_time };
         } catch (err) {
@@ -365,6 +391,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
         }
       })
     );
+    res.json(results);
   } catch (err) {
     console.log("Error fetching properties ", err.message);
     res.status(500).json({ error: "Server Error" });
