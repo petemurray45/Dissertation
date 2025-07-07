@@ -36,10 +36,9 @@ function UserDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className="w-full ">
-            <Search />
+          <div className="w-full pt-20 ">
             <PropertyCarousel properties={properties} />
-            <div className="divider my-10" />
+            <div className="divider my-10 bg-gray-00 h-[2px]" />
             <LocationCarousel />
           </div>
         )}

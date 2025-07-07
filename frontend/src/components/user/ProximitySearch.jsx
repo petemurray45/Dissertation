@@ -35,8 +35,8 @@ function ProximitySearch({ onSearch }) {
 
   return (
     <div className="relative  max-w-7xl mx-auto ">
-      <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-1/4 bg-white shadow-md rounded-lg p-6 w-11/12 max-w-full">
-        <h2 className="text-4xl text-center mb-4 text-black font-medium">
+      <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-1/4 bg-white shadow-xl border-2 border-gray-300 rounded-lg p-6 w-11/12 max-w-full">
+        <h2 className="text-4xl text-center mb-4 text-black font-raleway font-medium">
           Search Properties across the UK and Ireland
         </h2>
         <div>
@@ -47,7 +47,7 @@ function ProximitySearch({ onSearch }) {
             {/* Essential Location */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base text-black">
+                <span className="label-text text-base text-black font-raleway font-semibold">
                   Enter Location
                 </span>
               </label>
@@ -64,7 +64,7 @@ function ProximitySearch({ onSearch }) {
             {/*Max Travel Time */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base text-black">
+                <span className="label-text text-base text-black font-raleway font-semibold">
                   Max travel time
                 </span>
               </label>
@@ -85,7 +85,7 @@ function ProximitySearch({ onSearch }) {
             {/* Price filters */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base text-black">
+                <span className="label-text text-base text-black font-raleway font-semibold">
                   Max price
                 </span>
               </label>
@@ -106,7 +106,7 @@ function ProximitySearch({ onSearch }) {
 
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base text-black">
+                <span className="label-text text-base text-black font-raleway font-semibold">
                   Min price
                 </span>
               </label>
@@ -126,7 +126,7 @@ function ProximitySearch({ onSearch }) {
             </div>
 
             <button
-              className="btn rounded-lg bg-[#02343F] text-white mt-[3%] hover:bg-[#F0EDCC] hover:text-black col-span-2 "
+              className="btn rounded-lg bg-[#02343F] text-white mt-[3%] hover:bg-[#F0EDCC] hover:text-black col-span-2 font-raleway "
               type="submit"
             >
               Search

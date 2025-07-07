@@ -35,40 +35,44 @@ function ImageGallery({ images }) {
     }
   };
 
+  const galleryWidthClass = "max-w-[900px]";
+
   return (
     <>
-      <div className="flex flex-col w-full max-w-screen mr-20 gap-4 ">
+      <div className={`flex flex-col w-full gap-4 ${galleryWidthClass}`}>
         {/* Main Image */}
 
         <>
-          <div className="flex px-16">
+          <div className="flex">
             <img
               src={getTransformedUrl(images[currentIndex], 1000, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="sm:h-[200px] md:h-[800px] object-cover "
+              className="sm:h-[200px] md:h-[800px] object-cover rounded-lg border-2 "
             />
           </div>
 
           {/*Vertical thumbnail stack*/}
-          <div className="w-[100%] justify-center flex flex-row items-center   gap-2 mt-5">
+          <div className="w-full justify-center flex flex-row items-center   gap-2 mt-5">
             <button onClick={goToPrevImage}>
               <MdOutlineArrowCircleLeft className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
             </button>
 
-            {images.map((image, index) => (
-              <img
-                key={index}
-                src={getTransformedUrl(image, 200, 150)}
-                onClick={() => handleSelect(index)}
-                loading="lazy"
-                fetchPriority="high"
-                className={`w-[80px] h-[60px] md:w-[200px] md:h-[200px] object-cover rounded-md cursor-pointer border-2 ${
-                  index === currentIndex
-                    ? "border border-gray-600"
-                    : "border-transparent"
-                }`}
-              />
-            ))}
+            <div className="flex overflow-x-auto gap-2 scrollbar-hide">
+              {images.map((image, index) => (
+                <img
+                  key={index}
+                  src={getTransformedUrl(image, 200, 150)}
+                  onClick={() => handleSelect(index)}
+                  loading="lazy"
+                  fetchPriority="high"
+                  className={`w-[80px] h-[60px] md:w-[200px] md:h-[200px] object-cover rounded-md cursor-pointer border-2 ${
+                    index === currentIndex
+                      ? "border border-gray-600"
+                      : "border-transparent"
+                  }`}
+                />
+              ))}
+            </div>
 
             <button onClick={goToNextImage}>
               <MdOutlineArrowCircleRight className="w-14 h-14 text-[#02343F] hover:text-gray-400" />

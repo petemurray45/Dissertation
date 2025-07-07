@@ -41,7 +41,7 @@ function PropertyCarousel({ properties }) {
 
   return (
     <div className="my-8 mx-36 flex flex-col sm:block">
-      <h2 className="text-5xl sm:text-5xl font-bold py-12 px-8 text-center">
+      <h2 className="text-5xl sm:text-5xl font-bold py-12 px-8 text-center font-raleway font-thin">
         Featured Properties
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -65,7 +65,7 @@ function PropertyCarousel({ properties }) {
                 </p>
                 <div className="flex justify-end">
                   <button
-                    className="btn rounded-lg px-5 py-4 bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black"
+                    className="btn rounded-lg px-5 py-4 bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway font-thin"
                     onClick={() => handleSelect(property)}
                   >
                     View
@@ -80,7 +80,7 @@ function PropertyCarousel({ properties }) {
         <div className="flex justify-center mt-8">
           <button
             onClick={() => setShowAll(true)}
-            className="px-9 py-4 bg-[#02343F] text-white text-4xl rounded-md hover:bg-[#F0EDCC] hover:text-black hover:border transition mb-10"
+            className="px-9 py-4 bg-[#02343F] text-white text-4xl rounded-md hover:bg-[#F0EDCC] hover:text-black hover:border transition mb-10 font-raleway"
           >
             View More
           </button>

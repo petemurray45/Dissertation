@@ -46,7 +46,7 @@ function PropertyTile({ property, showCar }) {
 
   return (
     <>
-      <div className="h-[400px] flex flex-col justify-between bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px]">
+      <div className="h-[400px] flex flex-col justify-between bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px] border-2 border-gray-200 rounded-lg">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -57,7 +57,7 @@ function PropertyTile({ property, showCar }) {
                   200
                 )}
                 alt={property.title}
-                className="w-full h-full object-cover" // Ensure image covers the area
+                className="w-full h-full object-cover rounded-bl-none rounded-br-none shadow-xl" // Ensure image covers the area
               />
 
               {/* Previous Button */}
@@ -81,7 +81,7 @@ function PropertyTile({ property, showCar }) {
               )}
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 font-raleway">
               No Image Available
             </div>
           )}
@@ -89,20 +89,22 @@ function PropertyTile({ property, showCar }) {
         <div className="card-body">
           <div className="rounded-xl flex-1 flex flex-col justify-between mt-1">
             <div className="w-[40%] h-7 flex items-center rounded-xl mb-2">
-              <span className="bg-[#02343F] text-white p-2">Price</span>
-              <span className="bg-[#f0edcc] p-2">
+              <span className="bg-[#02343F] text-white p-2 font-raleway">
+                Price
+              </span>
+              <span className="bg-[#f0edcc] p-2 font-raleway font-semibold">
                 £{property.price_per_month}pm
               </span>
             </div>
           </div>
           <div className="flex justify-between">
             <div>
-              <h2 className="card-title">{property.location}</h2>
-              <p>{property.description}</p>
+              <h2 className="card-title font-raleway">{property.location}</h2>
+              <p className="font-raleway">{property.description}</p>
 
               <button
                 type="button"
-                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black   "
+                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black font-raleway   "
                 onClick={(e) => handleSelect(property)}
               >
                 View
@@ -110,7 +112,7 @@ function PropertyTile({ property, showCar }) {
             </div>
             {property.travelTime !== undefined && (
               <div className="flex items-center justify-center flex-row-reverse gap-2 align-middle">
-                <p className="font-bold text-md text-center mb-2 bg-#02343F">
+                <p className="font-bold text-md text-center mb-2 bg-#02343F font-raleway">
                   {property.travelTime}
                 </p>
                 <FaCarAlt className="size-10" />

@@ -8,7 +8,7 @@ function MapSearch({ property }) {
   };
   return (
     <>
-      <div className="h-[70%] w-full bg-white  border-2 mb-10 mt-9 mx-9 rounded-2xl">
+      <div className="h-[70%] w-full bg-white  border-2 mb-10 mt-9 mx-9 rounded-2xl font-raleway">
         <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full p-8 gap-10 ">
           {/* sidebar for inputs */}
 

@@ -23,11 +23,20 @@ function PropertyPage() {
   }, [fetchProperties]);
 
   const sortedProperties = properties
-    .map((property) => ({
-      ...property,
-      travelTimeMinutes: parseInt(property.travelTime) || 0, // fallback for null
-    }))
-    .sort((a, b) => b.travelTimeMinutes - a.travelTimeMinutes);
+    .map((property) => {
+      const travelTimeStr = property.travelTime ?? "";
+      const travelTimeParsed = parseInt(
+        travelTimeStr.replace(/[^\d]/g, ""),
+        10
+      );
+      return {
+        ...property,
+        travelTimeMinutes: isNaN(travelTimeParsed)
+          ? Infinity
+          : travelTimeParsed,
+      };
+    })
+    .sort((a, b) => a.travelTimeMinutes - b.travelTimeMinutes);
 
   return (
     <>
@@ -38,7 +47,7 @@ function PropertyPage() {
         </div>
 
         {searchSubmitted && searchedLocation && (
-          <h1 className="text-4xl font-semibold text-black text-center mt-[8%] mb-0">
+          <h1 className="text-4xl font-semibold text-black text-center mt-[4%]  sm:mt-[6%] font-raleway font-thin">
             Showing properties near {searchedLocation.location}
             <span className="text-[#02343F]"></span>
           </h1>
@@ -62,7 +71,7 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 my-[30%] md:my-[8%] px-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10  md:my-[4%] px-10">
               {sortedProperties.map((property) => (
                 <PropertyTile property={property} key={property.id} />
               ))}

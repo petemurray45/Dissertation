@@ -1,30 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { FaHeart } from "react-icons/fa6";
-import searchIcon from "../../assets/search.png";
-import Carousel from "react-multi-carousel";
+import { Link } from "react-router-dom";
 import "react-multi-carousel/lib/styles.css";
-import { Car } from "lucide-react";
 
 function LocationCarousel({ properties }) {
-  const navigate = useNavigate();
-
-  const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-      slidesToSlide: 1,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 640 },
-      items: 2,
-    },
-    mobile: {
-      breakpoint: { max: 640, min: 0 },
-      items: 1,
-      slidesToSlide: 1,
-    },
-  };
-
   const getTransformedUrl = (url, width = 800, height = 600) => {
     return url.replace(
       "/upload/",
@@ -51,91 +29,47 @@ function LocationCarousel({ properties }) {
     "https://images.unsplash.com/photo-1726410238762-2388af04eadb?q=80&w=1843&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   );
 
+  const cities = [
+    { name: "Belfast", image: belfastUrl, colSpan: "3", rowSpan: "2" },
+    { name: "Liverpool", image: liverpoolUrl, colSpan: "3", rowSpan: "1" },
+    { name: "Lisburn", image: lisburnUrl, colSpan: "3", rowSpan: "1" },
+    { name: "Dublin", image: dubUrl, colSpan: "2", rowSpan: "3" },
+    { name: "Manchester", image: manUrl, colSpan: "2", rowSpan: "3" },
+    { name: "London", image: londonUrl, colSpan: "2", rowSpan: "3" },
+  ];
+
   return (
     <div className="my-8 mx-36 flex flex-col sm:block">
       <div className=" flex flex-col sm:block w-full ">
-        <h2 className="text-5xl sm:text-5xl font-bold py-12  text-center">
+        <h2 className="text-5xl sm:text-5xl font-bold py-12  text-center font-raleway font-thin">
           Popular Locations
         </h2>
-        <div className="grid grid-cols-6 gap-4 h-[800px]  mx-auto ">
+        <div className="grid grid-cols-6 grid-rows-3 gap-4 h-[900px]   mx-auto ">
           {/* Large Card - spans 3 cols and 2 rows */}
-          <div
-            className=" col-span-3 row-span-2  p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${belfastUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl font-semibold text-white absolute text-shadow-lg ">
-              Belfast
-            </h3>
-          </div>
+          {cities.map(({ name, image, colSpan, rowSpan }) => (
+            <>
+              <Link
+                key={name}
+                to={`/properties?destination=${encodeURIComponent(
+                  name
+                )}&maxPrice=10000`}
+                className={`p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer col-span-${colSpan} row-span-${rowSpan}`}
+                style={{
+                  backgroundImage: `url(${image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                <div className="flex justify-center items-center">
+                  <div className="absolute inset-0 bg-black opacity-20 mix-blend-multiply z-10"></div>
 
-          {/* Smaller Cards */}
-          <div
-            className="col-span-3 bg-white p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${liverpoolUrl}})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl text-white text-shadow-lg font-semibold absolute">
-              Liverpool
-            </h3>
-          </div>
-
-          <div
-            className="col-span-3 bg-white p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${lisburnUrl}})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl text-white text-shadow-lg font-semibold absolute">
-              Lisburn
-            </h3>
-          </div>
-
-          <div
-            className="row-span-3 col-span-2 bg-white p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${dubUrl}})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl text-white text-shadow-lg absolute font-semibold ">
-              Dublin
-            </h3>
-          </div>
-
-          <div
-            className="row-span-3 col-span-2 bg-white p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${manUrl}})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl text-white text-shadow-lg absolute font-semibold ">
-              Manchester
-            </h3>
-          </div>
-          <div
-            className="col-span-2 row-span-3 bg-white p-4 shadow rounded-lg flex items-center justify-center relative transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            style={{
-              backgroundImage: `url(${londonUrl}})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <h3 className="text-6xl text-white text-shadow-lg absolute font-semibold ">
-              London
-            </h3>
-          </div>
+                  <h3 className="text-6xl font-normal text-white absolute text-shadow-lg z-20 font-raleway">
+                    {name}
+                  </h3>
+                </div>
+              </Link>
+            </>
+          ))}
         </div>
       </div>
     </div>

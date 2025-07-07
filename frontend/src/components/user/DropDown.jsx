@@ -7,7 +7,7 @@ function DropDown() {
   return (
     <div className="dropdown dropdown-end  ">
       {/* Dropdown trigger */}
-      <button tabIndex={0} className="btn bg-transparent ">
+      <button tabIndex={0} className="btn bg-transparent mr-5 ">
         <Menu className="size-10 text-white hover:text-[#02343F]" />
       </button>
 
