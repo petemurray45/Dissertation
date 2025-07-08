@@ -7,9 +7,11 @@ import ImageGallery from "../../components/user/ImageGallery";
 import PropertyInfo from "../../components/user/PropertyInfo";
 import MapSearch from "../../components/user/MapSearch";
 import { useEffect } from "react";
+import { useTravelStore } from "../../utils/useTravelStore";
 
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
+  const { getTravelTimeForProperty } = useTravelStore();
   const navigate = useNavigate();
 
   const { id } = useParams();
