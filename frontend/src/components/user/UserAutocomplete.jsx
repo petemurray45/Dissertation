@@ -6,7 +6,7 @@ import axios from "axios";
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
 
-const UserAutocomplete = ({ onPlaceSelect }) => {
+const UserAutocomplete = ({ onPlaceSelect, className = "" }) => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
@@ -54,7 +54,7 @@ const UserAutocomplete = ({ onPlaceSelect }) => {
       type="text"
       placeholder="Enter an essential loaction..."
       ref={inputRef}
-      className="input pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered w-full"
+      className={`input pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered w-full ${className}`}
     />
   );
 };

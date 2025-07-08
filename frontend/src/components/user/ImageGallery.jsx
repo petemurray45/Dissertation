@@ -35,7 +35,7 @@ function ImageGallery({ images }) {
     }
   };
 
-  const galleryWidthClass = "max-w-[900px]";
+  const galleryWidthClass = "max-w-[1100px]";
 
   return (
     <>
@@ -43,40 +43,32 @@ function ImageGallery({ images }) {
         {/* Main Image */}
 
         <>
-          <div className="flex">
+          <div className="flex relative w-fit">
             <img
-              src={getTransformedUrl(images[currentIndex], 1000, 800)}
+              src={getTransformedUrl(images[currentIndex], 1300, 800)}
               alt={`Property image ${currentIndex + 1}`}
               className="sm:h-[200px] md:h-[800px] object-cover rounded-lg border-2 "
             />
-          </div>
 
-          {/*Vertical thumbnail stack*/}
-          <div className="w-full justify-center flex flex-row items-center   gap-2 mt-5">
-            <button onClick={goToPrevImage}>
-              <MdOutlineArrowCircleLeft className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
-            </button>
+            {/* Previous Button */}
+            {images.length > 1 && (
+              <button
+                onClick={goToPrevImage}
+                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10 mx-5"
+              >
+                <MdOutlineArrowCircleLeft className="size-10" />
+              </button>
+            )}
 
-            <div className="flex overflow-x-auto gap-2 scrollbar-hide">
-              {images.map((image, index) => (
-                <img
-                  key={index}
-                  src={getTransformedUrl(image, 200, 150)}
-                  onClick={() => handleSelect(index)}
-                  loading="lazy"
-                  fetchPriority="high"
-                  className={`w-[80px] h-[60px] md:w-[200px] md:h-[200px] object-cover rounded-md cursor-pointer border-2 ${
-                    index === currentIndex
-                      ? "border border-gray-600"
-                      : "border-transparent"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button onClick={goToNextImage}>
-              <MdOutlineArrowCircleRight className="w-14 h-14 text-[#02343F] hover:text-gray-400" />
-            </button>
+            {/* Next Button */}
+            {images.length > 1 && (
+              <button
+                onClick={goToNextImage}
+                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10 mx-5"
+              >
+                <MdOutlineArrowCircleRight className="size-10" />
+              </button>
+            )}
           </div>
         </>
       </div>

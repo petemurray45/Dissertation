@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useTravelStore } from "./useTravelStore";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -117,24 +118,17 @@ export const useListingStore = create((set, get) => ({
     set({ loading: true });
 
     try {
-      const destination =
-        typeof filters.location === "object"
-          ? `${filters.location.latitude}, ${filters.location.longitude}`
-          : filters.location;
-      const { data } = await axios.get(`${BASE_URL}/api/travel-time`, {
-        params: {
-          minPrice: filters.minPrice,
-          maxPrice: filters.maxPrice,
-          destination: destination,
-        },
-      });
-      console.log("API response with travel times", data);
+      const data = await useTravelStore
+        .getState()
+        .getPropertiesWithTravelTime(filters);
+      console.log(data);
       set({
         properties: data,
         searchedLocation: filters.location,
         searchSubmitted: true,
         loading: false,
       });
+      console.log(properties);
     } catch (err) {
       console.log("Error fetching properties with travel times", err);
     } finally {

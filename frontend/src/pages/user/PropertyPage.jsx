@@ -22,6 +22,8 @@ function PropertyPage() {
     fetchProperties();
   }, [fetchProperties]);
 
+  console.log(properties);
+
   const sortedProperties = properties
     .map((property) => {
       const travelTimeStr = property.travelTime ?? "";
@@ -40,14 +42,14 @@ function PropertyPage() {
 
   return (
     <>
-      <div className="overflow-x-hidden  h-screen">
-        <NavBar />
-        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%]  ">
+      <div className="reltaive overflow-x-hidden  h-screen">
+        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] top-0 left-0 z-20  ">
+          <NavBar />
           <ProximitySearch onSearch={handleSearch} />
         </div>
 
         {searchSubmitted && searchedLocation && (
-          <h1 className="text-4xl font-semibold text-black text-center mt-[4%]  sm:mt-[6%] font-raleway font-thin">
+          <h1 className="text-4xl  text-black text-center mt-[4%]  sm:mt-[6%] font-raleway font-thin">
             Showing properties near {searchedLocation.location}
             <span className="text-[#02343F]"></span>
           </h1>

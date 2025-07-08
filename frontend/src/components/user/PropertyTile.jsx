@@ -6,14 +6,18 @@ import {
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
 import { FaCarAlt } from "react-icons/fa";
+import { useTravelStore } from "../../utils/useTravelStore";
 
-function PropertyTile({ property, showCar }) {
+function PropertyTile({ property }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { getTravelTimeForProperty, setSelectedTravelTime } = useTravelStore();
 
   const navigate = useNavigate();
 
   const handleSelect = (property) => {
+    const TravelTime = getTravelTimeForProperty(property.id);
+    setSelected;
     navigate(`/properties/${property.id}`, {
       state: { property }, // passing property object to user property page
     });

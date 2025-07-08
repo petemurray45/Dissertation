@@ -40,29 +40,29 @@ function ViewListing() {
     <>
       <div className="overflow-x-hidden    h-screen w-full">
         <NavBar />
-        <div className="flex justify-between sticky top-0 z-50 items-center w-full h-[10%] px-6 bg-[#02343F] ">
+        <div className="flex justify-between mt-20   items-center w-full h-[10%] px-6  ">
           <button
             onClick={() => navigate("/properties")}
-            className="btn btn-ghost m-8 text-lg hover:bg-[#F0EDCC] hover:text-black text-white font-raleway font-thin"
+            className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white text-black font-raleway font-thin"
           >
             <ArrowLeftIcon className="size-4 mr-2 hover:text-black" />
             Back to search
           </button>
-          <h1 className="text-5xl text-white  items-center justify-center px-1 font-raleway font-extralight">
-            {currentProperty.location}
-          </h1>
-          <p className="text-5xl text-white font-raleway">
-            £{currentProperty.price_per_month}pm
-          </p>
         </div>
-        <div className="flex flex-row gap-10 w-full h-[80%]  rounded-2xl mx-auto px-20 py-20">
-          <ImageGallery images={currentProperty.images} />
-          <PropertyInfo property={currentProperty} key={currentProperty.id} />
+        <div className="flex flex-row gap-10 w-full h-[80%]  rounded-2xl mx-auto px-20 py-5">
+          <div className="w-full md:w-2/3">
+            <ImageGallery images={currentProperty.images} />
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <PropertyInfo property={currentProperty} key={currentProperty.id} />
+          </div>
         </div>
 
-        <div className="flex h-full mt-72">
-          <div className="divider bg-gray-300" />
-          <MapSearch property={currentProperty} />
+        <MapSearch property={currentProperty} />
+
+        <div className="flex h-full mt-5">
+          {/*<MapSearch property={currentProperty} />*/}
         </div>
       </div>
     </>
