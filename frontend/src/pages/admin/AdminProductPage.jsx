@@ -248,7 +248,7 @@ function AdminProductPage() {
               <div className="form-control">
                 <label className="label">
                   <span className="label-text text-base font-medium">
-                    Bedrooms
+                    Bed Type
                   </span>
                 </label>
                 <div className="relative">

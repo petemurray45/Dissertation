@@ -22,7 +22,9 @@ export const useListingStore = create((set, get) => ({
     title: "",
     description: "",
     price_per_month: "",
-    bedrooms: "",
+    propertyType: "",
+    ensuite: false,
+    bedType: "",
     location: "",
     latitude: "",
     longitude: "",
@@ -40,7 +42,11 @@ export const useListingStore = create((set, get) => ({
         title: "",
         description: "",
         price_per_month: "",
-        bedrooms: "",
+        propertyType: "",
+        ensuite: false,
+        bedType: "",
+        wifi: false,
+        pets: false,
         location: "",
         latitude: "",
         longitude: "",
@@ -55,64 +61,6 @@ export const useListingStore = create((set, get) => ({
   setMaxTravelTime: (time) => set({ maxTravelTime: time }),
   setSearchSubmitted: (value) => set({ searchSubmitted: value }),
   setSearchedLocation: (value) => set({ searchedLocation: value }),
-
-  /*
-  handleSearch: async (filters) => {
-    set({ loading: true });
-    try {
-      const { data } = await axios.get(`${BASE_URL}/api/properties`, {
-        params: {
-          minPrice: filters.minPrice,
-          maxPrice: filters.maxPrice,
-        },
-      });
-
-      const propsArray = Array.isArray(data) ? data : data.data;
-      console.log("API response", data);
-
-      const travelProps = await Promise.all(
-        propsArray.map(async (property) => {
-          console.log("Property:", property);
-          ///////
-          if (!property.location) {
-            console.warn("Skipping property with missing location:", property);
-            return { ...property, travelTime: null };
-          }
-          try {
-            const destination =
-              typeof filters.location === "object"
-                ? `${filters.location.latitude},${filters.location.longitude}`
-                : filters.location;
-
-            const origin = `${property.latitude},${property.longitude}`;
-
-            const res = await axios.get(`${BASE_URL}/api/properties/time`, {
-              params: {
-                origin: origin,
-                destination: destination,
-              },
-            });
-            const time = res.data.travelTime;
-            return { ...property, travelTime: time };
-          } catch (err) {
-            console.log("Travel time fetch failed", err);
-            return { ...property, travelTime: null };
-          } finally {
-            set({ loading: false });
-          }
-        })
-      );
-
-      set({
-        properties: travelProps,
-        searchedLocation: filters.location,
-        searchSubmitted: true,
-      });
-    } catch (err) {
-      console.log("Error fetching properties", err);
-    }
-  },
-  */
 
   handleSearch: async (filters) => {
     set({ loading: true });
