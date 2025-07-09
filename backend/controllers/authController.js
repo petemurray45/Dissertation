@@ -5,6 +5,8 @@ import { sql } from "../config/db.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
+  console.log("REGISTER INPUT", { name, email, hashed });
+
   try {
     const result =
       await sql`INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (${name}, ${email}, ${hashed}, 'user', NOW()) RETURNING id, email`;

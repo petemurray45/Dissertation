@@ -10,7 +10,7 @@ function Auth() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassowrd, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const login = useUserStore((state) => state.login);
   const register = useUserStore((state) => state.register);
   const navigate = useNavigate();
@@ -20,10 +20,11 @@ function Auth() {
     if (mode === "sign-in") {
       await login(email, password);
     } else {
-      if (password !== confirmPassowrd) {
+      if (password !== confirmPassword) {
         alert("Passwords do not match");
         return;
       }
+      console.log(name, email, password);
       await register(name, email, password);
     }
     navigate("/home");
@@ -97,8 +98,8 @@ function Auth() {
               </div>
             </form>
             <button
-              type="submit"
-              form="signin-form"
+              type="button"
+              onClick={handleSubmit}
               className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
             >
               <FaArrowAltCircleRight className="size-24 shadow-2xl" />
@@ -116,7 +117,9 @@ function Auth() {
                     <input
                       type="text"
                       placeholder="Enter full name"
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
                       className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                     />
                   </div>
@@ -155,7 +158,7 @@ function Auth() {
                     <input
                       type="password"
                       placeholder="Confirm password"
-                      value={confirmPassowrd}
+                      value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
                     />
@@ -165,9 +168,9 @@ function Auth() {
               <div className="w-full text-center mt-[6rem] mb-[2rem]"></div>
             </form>
             <button
-              type="submit"
-              form="signup-form"
+              type="button"
               className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md hover:bg-[#02343F] hover:border-black"
+              onClick={handleSubmit}
             >
               <FaArrowAltCircleRight className="size-24 shadow-2xl" />
             </button>

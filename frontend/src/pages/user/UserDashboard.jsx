@@ -43,8 +43,8 @@ function UserDashboard() {
         ) : (
           <div className="w-full pt-20 ">
             <Search />
-            <LocationCarousel />
             <PropertyCarousel properties={properties} />
+            <LocationCarousel />
             <div className="divider my-20 bg-gray-00 h-[10px]" />
             <DashboardInfo />
           </div>
