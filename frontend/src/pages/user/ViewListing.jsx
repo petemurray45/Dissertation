@@ -11,7 +11,7 @@ import { useTravelStore } from "../../utils/useTravelStore";
 
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
-  const { getTravelTimeForProperty } = useTravelStore();
+
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -37,7 +37,7 @@ function ViewListing() {
       </div>
     );
   }
-  console.log(currentProperty);
+
   return (
     <>
       <div className="overflow-x-hidden    h-screen w-full">

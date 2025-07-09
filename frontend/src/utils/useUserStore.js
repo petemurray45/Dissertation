@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:3000";
 
-export const userStore = create((set) => ({
+export const useUserStore = create((set) => ({
   user: null,
   token: localStorage.getItem("token") || null,
 
@@ -37,11 +37,12 @@ export const userStore = create((set) => ({
         email,
         password,
       });
+      console.log("Register response:", res.data);
       const { token, user } = res.data;
       localStorage.setItem("token", token);
       set({ user, token });
     } catch (err) {
-      console.error("User already exists", err);
+      console.error("failed to register", err);
     }
   },
 

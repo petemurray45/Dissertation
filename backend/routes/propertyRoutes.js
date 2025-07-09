@@ -6,7 +6,6 @@ import { getProperty } from "../controllers/propertyControllers.js";
 import { updateProperty } from "../controllers/propertyControllers.js";
 import { deleteProperty } from "../controllers/propertyControllers.js";
 import { getPropertiesWithTravelTime } from "../controllers/propertyControllers.js";
-import { register, login } from "../controllers/authController.js";
 
 const router = express.Router();
 

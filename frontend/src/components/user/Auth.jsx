@@ -2,7 +2,7 @@ import { useState } from "react";
 import { UserRound, Key } from "lucide-react";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import { AtSign } from "lucide-react";
-import { userStore } from "../../utils/useUserStore";
+import { useUserStore } from "../../utils/useUserStore";
 import { useNavigate } from "react-router-dom";
 
 function Auth() {
@@ -11,8 +11,8 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassowrd, setConfirmPassword] = useState("");
-  const login = userStore((state) => state.login);
-  const register = userStore((state) => state.register);
+  const login = useUserStore((state) => state.login);
+  const register = useUserStore((state) => state.register);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

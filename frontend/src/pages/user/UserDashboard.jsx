@@ -8,11 +8,15 @@ import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
 import DashboardInfo from "../../components/user/DashboardInfo.jsx";
+import { useUserStore } from "../../utils/useUserStore.js";
 function UserDashboard() {
   const { properties, loading, error, fetchProperties } = useListingStore();
 
+  const { user, isLoggedIn } = useUserStore();
+
   useEffect(() => {
     fetchProperties();
+    console.log("Logged in user", user);
   }, [fetchProperties]);
 
   return (
@@ -22,7 +26,7 @@ function UserDashboard() {
       <div className="w-full">
         {error && <div className="alert alert-error mb-8">{error}</div>}
         {properties.length === 0 && !loading && (
-          <div className="flex flex-col justify-center items-center h-96 space-y-4">
+          <div className="flex flex-col justify-center items-center h-96">
             <div className="bg-base-100 rounded-full p-6">
               <PackageIcon className="size-12" />
             </div>

@@ -14,6 +14,8 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
 
 function MapSearch({ property }) {
+  const travelResults = useTravelStore((state) => state.travelResults);
+
   const [selectedTransport, setSelectedTransport] = useState([
     null,
     null,
