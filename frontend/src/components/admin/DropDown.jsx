@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 function DropDown() {
   const navigate = useNavigate();
   return (
-    <div className="dropdown dropdown-end">
+    <div className="dropdown dropdown-end font-raleway">
       {/* Dropdown trigger */}
       <button tabIndex={0} className="btn btn-ghost btn-circle">
         <Menu className="size-5" />

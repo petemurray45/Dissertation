@@ -4,7 +4,6 @@ import axios from "axios";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-
 const LocationAutocomplete = ({ onPlaceSelect }) => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
@@ -22,7 +21,7 @@ const LocationAutocomplete = ({ onPlaceSelect }) => {
     autocompleteRef.current = new window.google.maps.places.Autocomplete(
       inputRef.current,
       {
-        types: ["geocode"], 
+        types: ["geocode"],
       }
     );
 
@@ -44,7 +43,7 @@ const LocationAutocomplete = ({ onPlaceSelect }) => {
       type="text"
       placeholder="Enter location"
       ref={inputRef}
-      className="input input-bordered w-full pl-10"
+      className="input input-bordered w-full pl-10 font-raleway"
     />
   );
 };

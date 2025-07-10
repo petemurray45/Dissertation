@@ -57,7 +57,11 @@ export const createProperty = async (req, res) => {
     title,
     description,
     price_per_month,
-    bedrooms,
+    propertyType,
+    ensuite,
+    bedType,
+    wifi,
+    pets,
     location,
     latitude,
     longitude,
@@ -68,7 +72,11 @@ export const createProperty = async (req, res) => {
     !title ||
     !description ||
     !price_per_month ||
-    !bedrooms ||
+    !propertyType ||
+    !ensuite ||
+    !bedType ||
+    !wifi ||
+    !pets ||
     !location ||
     !latitude ||
     !longitude ||
@@ -81,8 +89,8 @@ export const createProperty = async (req, res) => {
 
   try {
     const insertedProperties = await sql`
-        INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
-        VALUES (${title}, ${description}, ${price_per_month}, ${bedrooms}, ${location}, ${latitude}, ${longitude})
+        INSERT INTO properties (title, description, price_per_month,  location, latitude, longitude, bed_type, ensuite, wifi, pets, property_type)
+        VALUES (${title}, ${description}, ${price_per_month},  ${location}, ${latitude}, ${longitude}, ${bedType}, ${ensuite}, ${wifi}, ${pets}, ${propertyType})
         RETURNING id;
       `;
     const propertyId = insertedProperties[0].id;
@@ -105,89 +113,6 @@ export const createProperty = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error creating property" });
   }
-
-  /*
-  const {
-    title,
-    description,
-    price,
-    bedrooms,
-    street_address1,
-    streed_address2,
-    city,
-    county,
-    postcode,
-    country,
-  } = req.body;
-
-  // files stored in req.files due to multer middleware
-  const files = req.files;
-
-  if (!files || files.length === 0) {
-    return res.status(400).json({ message: "At least one image is required" });
-  }
-
-  if (
-    !title ||
-    !description ||
-    !price ||
-    !bedrooms ||
-    !street_address1 ||
-    !city ||
-    !postcode ||
-    !country
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please fill in required fields" });
-  }
-
-  // extract address details for geocode API to get lat/long
-  const addressComponents = [
-    street_address1,
-    streed_address2,
-    city,
-    county,
-    postcode,
-    country,
-  ].filter(Boolean); // removes any falsy values (null, undefined, empty strings)
-
-  const location = addressComponents.join(", "); // joins with a comma and space
-  console.log("Concatonated Address for Geocoding", location);
-
-  // code to get geocoded coordinates from address entered on form and push property details to database
-  try {
-    const response = await axios.get(
-      `${GEOCODE_BASE_URL}?address=${encodeURIComponent(
-        location
-      )}&key=${API_KEY}`
-    );
-
-    const results = response.data.results;
-    if (!results || results.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Could not geocode provided address" });
-    }
-    const { lat, long } = results[0].geometry.location;
-  } catch (err) {
-    console.log("Error geocoding address");
-  }
-
-  try {
-    const propertyResult = await sql`
-    INSERT INTO properties (title, description, price_per_month, bedrooms, location, latitude, longitude)
-    VALUES (${title}, ${description}, ${price}, ${bedrooms}, ${location}, ${lat}, ${long}, NOW())
-    RETURNING id;`;
-
-    const propertyID = propertyResult[0].id;
-
-    /////// need to loop and upload images and then insert into images
-  } catch (err) {
-    console.log("Error adding property to database");
-  }
-
-  */
 };
 
 export const getProperty = async (req, res) => {
@@ -227,16 +152,26 @@ export const updateProperty = async (req, res) => {
     title,
     description,
     price_per_month,
-    bedrooms,
+    propertyType,
+    ensuite,
+    bedType,
+    wifi,
+    pets,
     location,
     latitude,
     longitude,
     imageUrls,
   } = req.body;
 
+  console.log("propertyType:", propertyType, typeof propertyType);
+  console.log(
+    "Char codes:",
+    propertyType.split("").map((c) => c.charCodeAt(0))
+  );
+
   try {
     const updatedProperty = await sql`
-      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price_per_month}, bedrooms=${bedrooms}, location=${location}, latitude=${latitude}, longitude=${longitude} WHERE id=${id} RETURNING *`;
+      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price_per_month},  location=${location}, latitude=${latitude}, longitude=${longitude}, ensuite=${ensuite}, bed_type=${bedType}, wifi=${wifi}, pets=${pets}, property_type=${propertyType} WHERE id=${id} RETURNING *`;
 
     if (updatedProperty.length === 0) {
       return res
@@ -268,41 +203,6 @@ export const deleteProperty = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Error deleting property" });
-  }
-};
-
-export const getTravelTime = async (req, res) => {
-  console.log("getTraveltime initialised");
-  const { origin, destination } = req.query;
-
-  console.log("Received origin:", origin);
-  console.log("Received destination:", destination);
-  console.log("Using API key:", process.env.GOOGLE_MAPS_API_KEY);
-
-  try {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/distancematrix/json`,
-      {
-        params: {
-          origins: origin,
-          destinations: destination,
-          key: "AIzaSyCjGl3Y1aBJxqEoJKU4bssiG4Bmcot-ZKs",
-        },
-      }
-    );
-
-    console.log("Distance matrix response", response.data);
-
-    const duration = response.data.rows[0].elements[0].duration.text;
-
-    if (!duration) {
-      return res.status(400).json({ error: "No duration returned from API" });
-    }
-
-    res.json({ travelTime: duration });
-  } catch (err) {
-    console.log("Distance API error", err.response?.data || err.message);
-    res.status(500).json({ error: "Failed to fetch travel time" });
   }
 };
 

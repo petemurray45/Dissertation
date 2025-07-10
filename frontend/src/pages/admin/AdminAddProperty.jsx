@@ -21,7 +21,6 @@ import {
   Toilet,
 } from "lucide-react";
 import axios from "axios";
-import { set } from "lodash";
 
 function AdminProductPage() {
   // data from lisitings store
@@ -40,10 +39,10 @@ function AdminProductPage() {
         description: "",
         price_per_month: "",
         propertyType: "",
-        ensuite: false,
+        ensuite: "",
         bedType: "",
-        wifi: false,
-        pets: false,
+        wifi: "",
+        pets: "",
         location: "",
         latitude: "",
         longitude: "",
@@ -94,7 +93,6 @@ function AdminProductPage() {
 
       const finalPayload = {
         ...formData,
-        bedrooms: Number(formData.bedrooms),
         price_per_month: Number(formData.price_per_month),
       };
 
@@ -127,6 +125,7 @@ function AdminProductPage() {
   }
 
   console.log("formData.images", formData.images);
+  console.log(formData);
 
   return (
     <>
@@ -252,7 +251,7 @@ function AdminProductPage() {
                   >
                     <option className="font-raleway" disabled selected></option>
                     <option value="Bungalow">Bungalow</option>
-                    <option value="Semi-Detatched">Semi Detatched</option>
+                    <option value="Semi Detached">Semi Detached</option>
                     <option value="Detached">Detached</option>
                     <option value="Terrace">Terrace</option>
                     <option value="Flat">Flat</option>
@@ -436,7 +435,13 @@ function AdminProductPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50"></div>
-                  <textarea className="textarea textarea-bordered w-full h-36"></textarea>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-36"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                  ></textarea>
                 </div>
               </div>
 
@@ -452,10 +457,12 @@ function AdminProductPage() {
                     !formData.title ||
                     !formData.description ||
                     !formData.price_per_month ||
-                    !formData.bedrooms ||
+                    !formData.bedType ||
+                    !formData.wifi ||
+                    !formData.pets ||
+                    !formData.ensuite ||
+                    !formData.propertyType ||
                     !formData.location ||
-                    !formData.latitude ||
-                    !formData.longitude ||
                     formData.images.length === 0
                   }
                 >

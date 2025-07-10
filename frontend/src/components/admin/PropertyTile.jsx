@@ -35,7 +35,7 @@ function PropertyTile({ property }) {
   };
   return (
     <div>
-      <div className="card bg-base-100 glass hover:shadow-xl shadow-l transition-shadow duration-300 overflow-hidden w-full gap-10 border border-gray-400 max-h-[500px] min-h-[500px] min-w-[400px] ">
+      <div className="card bg-base-100 glass hover:shadow-xl shadow-l transition-shadow duration-300 overflow-hidden w-full gap-10 border border-gray-400 max-h-[500px] min-h-[500px] min-w-[400px] font-raleway">
         <figure className="relative w-full h-64">
           {hasImages ? (
             <>

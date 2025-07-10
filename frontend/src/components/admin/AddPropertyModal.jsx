@@ -72,7 +72,7 @@ function AddPropertyModal() {
   };
 
   return (
-    <dialog id="add_property_modal" className="modal">
+    <dialog id="add_property_modal" className="modal font-raleway">
       <div className="modal-box">
         {/* Close Button */}
         <form method="dialog">

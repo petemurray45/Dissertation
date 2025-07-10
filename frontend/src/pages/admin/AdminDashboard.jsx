@@ -28,7 +28,7 @@ function AdminDashboard() {
       <AdminNavBar />
       <AdminHero />
       <div className="flex flex-col  overflow-x-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 m-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 m-10 font-raleway">
           <AdminCard
             title="Add a property"
             icon={<IoCreateOutline className="size-11" />}
@@ -61,7 +61,7 @@ function AdminDashboard() {
           />
         </div>
 
-        <div className="flex items-center justify-center pl-10 pr-10">
+        <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center ">
             <button
               className="btn btn-primary"

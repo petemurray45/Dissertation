@@ -14,6 +14,9 @@ import {
   MapPinPlusInside,
   Compass,
   ImageIcon,
+  Wifi,
+  Toilet,
+  Dog,
 } from "lucide-react";
 import axios from "axios";
 
@@ -124,11 +127,12 @@ function AdminProductPage() {
   }
 
   console.log("formData.images", formData.images);
+  console.log("Formdata:", formData);
 
   return (
     <>
       <AdminNavBar />
-      <div className="container mx-auto max-w-4xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10 mt-10">
+      <div className="container mx-auto max-w-7xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10 mt-10 font-raleway">
         <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
           <ArrowLeftIcon className="size-4 mr-2" />
           Back to dashboard
@@ -173,7 +177,7 @@ function AdminProductPage() {
             <h2 className="card-title text-2xl mb-6">Edit Property</h2>
 
             <form
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
+              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-7 items-start"
               onSubmit={handleSubmit}
             >
               <div className="form-control">
@@ -193,28 +197,6 @@ function AdminProductPage() {
                     value={formData.title}
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text text-base font-medium">
-                    Property Description
-                  </span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                    <Text className="size-5" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Enter property description"
-                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
                     }
                   />
                 </div>
@@ -248,6 +230,38 @@ function AdminProductPage() {
               <div className="form-control">
                 <label className="label">
                   <span className="label-text text-base font-medium">
+                    Property Type
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Text className="size-5" />
+                  </div>
+                  <select
+                    name="propertyType"
+                    className="select select-bordered w-full pl-10"
+                    value={formData.property_type}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        propertyType: e.target.value,
+                      })
+                    }
+                  >
+                    <option disabled selected></option>
+                    <option value="Bungalow">Bungalow</option>
+                    <option value="Semi Detached">Semi Detatched</option>
+                    <option value="Detached">Detached</option>
+                    <option value="Terrace">Terrace</option>
+                    <option value="Flat">Flat</option>
+                    <option value="Cottage">Cottage</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
                     Bed Type
                   </span>
                 </label>
@@ -255,15 +269,103 @@ function AdminProductPage() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                     <BedDouble className="size-5" />
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Enter property description"
-                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                    value={formData.bedrooms}
+                  <select
+                    name="bedType"
+                    className="select select-bordered w-full pl-10"
+                    value={formData.bed_type}
                     onChange={(e) =>
-                      setFormData({ ...formData, bedrooms: e.target.value })
+                      setFormData({ ...formData, bedType: e.target.value })
                     }
-                  />
+                  >
+                    <option disabled selected></option>
+                    <option value="Double">Double</option>
+                    <option value="Single">Single</option>
+                    <option value="Bunk">Bunk Bed</option>
+                    <option value="Queen">Queen</option>
+                    <option value="King">King</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    En Suite
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3  flex items-center pointer-events-none text-base-content/50">
+                    <Toilet className="size-5" />
+                  </div>
+                  <select
+                    name="enSuite"
+                    className="select select-bordered w-full pl-10"
+                    value={formData.ensuite ? "Yes" : "No"}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        ensuite: e.target.value === "Yes",
+                      })
+                    }
+                  >
+                    <option className="font-raleway" disabled selected></option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">Wifi</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Wifi className="size-5" />
+                  </div>
+
+                  <select
+                    name="wifi"
+                    className="select select-bordered w-full pl-10"
+                    value={formData.wifi ? "Yes" : "No"}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        wifi: e.target.value === "Yes",
+                      });
+                    }}
+                  >
+                    <option className="font-raleway" disabled selected></option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-base font-medium">Pets</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <Dog className="size-5" />
+                  </div>
+
+                  <select
+                    name="pets"
+                    className="select select-bordered w-full pl-10"
+                    value={formData.pets ? "Yes" : "No"}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        pets: e.target.value === "Yes",
+                      });
+                    }}
+                  >
+                    <option className="font-raleway" disabled selected></option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
                 </div>
               </div>
 
@@ -284,50 +386,6 @@ function AdminProductPage() {
                     value={formData.location}
                     onChange={(e) =>
                       setFormData({ ...formData, location: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text text-base font-medium">
-                    Latitude
-                  </span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                    <Compass className="size-5" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Enter property description"
-                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                    value={formData.latitude}
-                    onChange={(e) =>
-                      setFormData({ ...formData, latitude: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text text-base font-medium">
-                    Longitude
-                  </span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                    <Compass className="size-5" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Enter property description"
-                    className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                    value={formData.longitude}
-                    onChange={(e) =>
-                      setFormData({ ...formData, longitude: e.target.value })
                     }
                   />
                 </div>
@@ -362,6 +420,24 @@ function AdminProductPage() {
                 </div>
               </div>
 
+              <div className="form-control col-span-3 row-span-3">
+                <label className="label">
+                  <span className="label-text text-base font-medium">
+                    Property Description
+                  </span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50"></div>
+                  <textarea
+                    className="textarea textarea-bordered w-full h-36"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                  ></textarea>
+                </div>
+              </div>
+
               {/* Form Actions */}
               <div className="flex justify-start">
                 <button
@@ -383,7 +459,11 @@ function AdminProductPage() {
                     !formData.title ||
                     !formData.description ||
                     !formData.price_per_month ||
-                    !formData.bedrooms ||
+                    !formData.bedType ||
+                    formData.ensuite === null ||
+                    formData.wifi === null ||
+                    formData.pets === null ||
+                    !formData.propertyType ||
                     !formData.location ||
                     !formData.latitude ||
                     !formData.longitude ||
