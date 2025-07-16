@@ -15,6 +15,7 @@ export const useListingStore = create((set, get) => ({
   maxTravelTime: 0,
   minPrice: 0,
   maxPrice: 0,
+  ensuite: 0,
   currentProperty: null,
   searchSubmitted: false,
   // form state
@@ -31,6 +32,26 @@ export const useListingStore = create((set, get) => ({
     latitude: "",
     longitude: "",
     images: [],
+  },
+
+  searchFilters: {
+    location: "",
+    maxPrice: 0,
+    minPrice: 0,
+    propertyType: "",
+    bedType: "",
+    ensuite: "",
+    pets: "",
+    wifi: "",
+  },
+
+  setSearchFilters: (update) => {
+    set((state) => ({
+      searchFilters: {
+        ...state.searchFilters,
+        ...update,
+      },
+    }));
   },
 
   setFormData: (update) => {
@@ -61,6 +82,7 @@ export const useListingStore = create((set, get) => ({
   setMinPrice: (price) => set({ minPrice: price }),
   setMaxPrice: (price) => set({ maxPrice: price }),
   setMaxTravelTime: (time) => set({ maxTravelTime: time }),
+
   setSearchSubmitted: (value) => set({ searchSubmitted: value }),
   setSearchedLocation: (value) => set({ searchedLocation: value }),
 

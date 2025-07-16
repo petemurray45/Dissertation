@@ -21,18 +21,7 @@ import {
 
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
-  const {
-    location,
-    setLocation,
-    maxTravelTime,
-    setMaxTravelTime,
-    minPrice,
-    setMinPrice,
-    maxPrice,
-    setMaxPrice,
-    setSearchSubmitted,
-    setSearchedLocation,
-  } = useListingStore();
+  const { searchFilters, setSearchFilters } = useListingStore();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -57,24 +46,25 @@ function SearchDrawer() {
       >
         {open ? (
           <span className="flex items-center gap-2 font-raleway font-thin">
-            SEARCH <FaArrowUp className="size-6" />
+            Refine Search <FaArrowUp className="size-6" />
           </span>
         ) : (
           <span className="flex items-center gap-2 font-raleway font-thin">
-            SEARCH <FaArrowDown className="size-6" />
+            Refine Search <FaArrowDown className="size-6" />
           </span>
         )}
       </button>
 
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          open ? "max-h-96 py-4" : "max-h-0"
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+          open ? "max-h-auto py-4" : "max-h-0"
         } bg-gray-100 px-4 rounded-b-lg`}
       >
-        <div className="w-full">
+        <div className="w-full flex flex-col">
           <form
-            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-7 items-start"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
             onSubmit={handleSearch}
+            id="advancedSearch"
           >
             <div className="form-control">
               <label className="label">
@@ -87,7 +77,36 @@ function SearchDrawer() {
                   <House className="size-5" />
                 </div>
                 <UserAutocomplete
-                  onPlaceSelect={(value) => setLocation(value)}
+                  onPlaceSelect={({ location, latitude, longitude }) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      location,
+                      latitude,
+                      longitude,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
+                  Max Price
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <PoundSterling className="size-5" />
+                </div>
+                <input
+                  type="number"
+                  placeholder="Max Price"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={searchFilters.maxPrice}
+                  onChange={(e) =>
+                    setSearchFilters({ maxPrice: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -102,49 +121,16 @@ function SearchDrawer() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                   <PoundSterling className="size-5" />
                 </div>
+
                 <input
-                  type="text"
-                  placeholder="0"
+                  type="number"
+                  placeholder="Max Price"
                   className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={formData.price_per_month}
+                  value={searchFilters.minPrice}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      price_per_month: e.target.value,
-                    })
+                    setSearchFilters({ minPrice: e.target.value })
                   }
                 />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Property Type
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <PoundSterling className="size-5" />
-                </div>
-
-                <select
-                  name="propertyType"
-                  className="select select-bordered w-full pl-10"
-                  placeholder="Pick a bed type"
-                  value={formData.propertyType || ""}
-                  onChange={(e) =>
-                    setFormData({ ...formData, propertyType: e.target.value })
-                  }
-                >
-                  <option className="font-raleway" disabled selected></option>
-                  <option value="Bungalow">Bungalow</option>
-                  <option value="Semi Detached">Semi Detached</option>
-                  <option value="Detached">Detached</option>
-                  <option value="Terrace">Terrace</option>
-                  <option value="Flat">Flat</option>
-                  <option value="Cottage">Cottage</option>
-                </select>
               </div>
             </div>
 
@@ -162,9 +148,9 @@ function SearchDrawer() {
                   name="bedType"
                   className="select select-bordered w-full pl-10"
                   placeholder="Pick a bed type"
-                  value={formData.bedType || ""}
+                  value={searchFilters.bedType}
                   onChange={(e) =>
-                    setFormData({ ...formData, bedType: e.target.value })
+                    setSearchFilters({ bedType: e.target.value })
                   }
                 >
                   <option
@@ -185,6 +171,37 @@ function SearchDrawer() {
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-medium">
+                  Property Type
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <PoundSterling className="size-5" />
+                </div>
+
+                <select
+                  name="propertyType"
+                  className="select select-bordered w-full pl-10"
+                  placeholder="Pick a bed type"
+                  value={searchFilters.propertyType}
+                  onChange={(e) =>
+                    setSearchFilters({ propertyType: e.target.value })
+                  }
+                >
+                  <option className="font-raleway" disabled selected></option>
+                  <option value="Bungalow">Bungalow</option>
+                  <option value="Semi Detached">Semi Detached</option>
+                  <option value="Detached">Detached</option>
+                  <option value="Terrace">Terrace</option>
+                  <option value="Flat">Flat</option>
+                  <option value="Cottage">Cottage</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-medium">
                   En Suite
                 </span>
               </label>
@@ -195,9 +212,9 @@ function SearchDrawer() {
                 <select
                   name="ensuite"
                   className="select select-bordered w-full pl-10"
-                  value={formData.ensuite || ""}
+                  value={searchFilters.ensuite}
                   onChange={(e) => {
-                    setFormData({ ...formData, ensuite: e.target.value });
+                    setSearchFilters({ ensuite: e.target.value });
                   }}
                 >
                   <option className="font-raleway" disabled selected></option>
@@ -219,9 +236,9 @@ function SearchDrawer() {
                 <select
                   name="wifi"
                   className="select select-bordered w-full pl-10"
-                  value={formData.wifi || ""}
+                  value={searchFilters.wifi}
                   onChange={(e) => {
-                    setFormData({ ...formData, wifi: e.target.value });
+                    setSearchFilters({ wifi: e.target.value });
                   }}
                 >
                   <option
@@ -247,9 +264,9 @@ function SearchDrawer() {
                 <select
                   name="pets"
                   className="select select-bordered w-full pl-10"
-                  value={formData.pets || ""}
+                  value={searchFilters.pets}
                   onChange={(e) => {
-                    setFormData({ ...formData, pets: e.target.value });
+                    setSearchFilters({ pets: e.target.value });
                   }}
                 >
                   <option className="font-raleway" disabled selected></option>
@@ -259,61 +276,17 @@ function SearchDrawer() {
               </div>
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Location
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <MapPinPlusInside className="size-5" />
-                </div>
-                <UserAutocomplete
-                  onPlaceSelect={({ location, latitude, longitude }) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      location,
-                      latitude,
-                      longitude,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-base font-medium">
-                  Upload Images
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                  <ImageIcon className="size-5" />
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  onChange={async (e) => {
-                    console.log("FILES:", e.target.files);
-                    const filesArray = Array.from(e.target.files);
-                    const uploadedUrls = await uploadImagestoCloudinary(
-                      filesArray
-                    );
-                    setFormData((prev) => ({
-                      ...prev,
-                      images: [...prev.images, ...uploadedUrls],
-                    }));
-                  }}
-                />
-              </div>
-            </div>
-
             {/* Form Actions */}
-            <div className="flex justify-start"></div>
           </form>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              form="advancedSearch"
+              className="btn h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black"
+            >
+              Apply
+            </button>
+          </div>
         </div>
       </div>
     </div>

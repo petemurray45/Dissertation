@@ -5,7 +5,6 @@ import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
 import SearchDrawer from "../../components/user/SearchDrawer";
-import PropertySearchBar from "../../components/user/PropertySearchBar";
 
 import axios from "axios";
 
@@ -45,9 +44,9 @@ function PropertyPage() {
   return (
     <>
       <div className="relative overflow-x-hidden  h-screen">
-        <div className=" bg-[url('https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] top-0 left-0 z-20  ">
+        <div className=" bg-[url('https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-no-repeat bg-cover bg-top w-full h-[40%] top-0 left-0 z-20  ">
           <NavBar />
-          <div className="w-full pt-36">
+          <div className="w-full pt-48">
             <div className="flex flex-col justify-center">
               <h1 className="text-6xl text-center text-white font-raleway font-bold text-shadow-xl">
                 Designed to find a room that suits ALL of your life.
@@ -60,11 +59,11 @@ function PropertyPage() {
           </div>
         </div>
 
-        <div className="h-32 w-full   px-4 py-3 flex items-center gap-3 max-w-full shadow-sm  bg-[#02343F]">
+        <div className="h-32 w-full   px-10 py-3 flex items-center gap-3 max-w-full shadow-sm  bg-[#02343F]">
           <input
             type="text"
             placeholder="Queens University Belfast...."
-            className="flex-grow h-20 px-2 text-3xl py-2 rounded-md border border-gray-300 placeholder-gray-500 focus:outline-none placeholder:text-3xl placeholder:items-center"
+            className="flex-grow h-20 px-6 text-3xl py-2 rounded-md border border-gray-300 placeholder-gray-500 focus:outline-none placeholder:text-3xl placeholder:items-center"
           />
           <button className="btn mx-auto h-20 rounded-md w-60 hover:bg-[#F0EDCC] hover:text-black text-3xl font-raleway font-thin">
             Search
