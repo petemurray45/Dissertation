@@ -9,10 +9,11 @@ import UserLogin from "./pages/user/UserLogin";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 function App() {
-  const { rehydrate, user } = useUserStore();
+  const { rehydrate, user, fetchLikedProperties } = useUserStore();
 
   useEffect(() => {
     rehydrate();
+    fetchLikedProperties();
   }, []);
 
   useEffect(() => {

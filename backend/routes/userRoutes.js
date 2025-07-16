@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.post("/likes", authenticate, addToLikes);
 router.get("/checkLikes", authenticate, checkLikes);
-router.get("/getLikes", getAllLikedProperties);
+router.get("/getLikes", authenticate, getAllLikedProperties);
 
 export default router;

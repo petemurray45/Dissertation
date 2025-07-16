@@ -15,7 +15,7 @@ function PropertyTile({ property }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const { getTravelTimeForProperty, setSelectedTravelTime } = useTravelStore();
-  const { user } = useUserStore();
+  const { user, addToLikes, fetchLikedProperties } = useUserStore();
 
   const navigate = useNavigate();
 
@@ -48,22 +48,9 @@ function PropertyTile({ property }) {
   const toggleLike = async () => {
     if (!user) return;
     try {
-      if (liked) {
-        await axios.delete("/api/likes", {
-          data: {
-            userId: user.id,
-            propertyId: property.id,
-          },
-        });
-      } else {
-        await axios.post("/api/user/likes", {
-          userId: user.id,
-          propertyId: property.id,
-        });
-      }
-      setLiked(!liked);
+      addToLikes(property);
     } catch (err) {
-      console.log("Failed to toggle like", err);
+      console.log("Failed to like property", property.id);
     }
   };
 

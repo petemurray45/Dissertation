@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:3000";
 
-export const useUserStore = create((set) => ({
+export const useUserStore = create((set, get) => ({
   user: null,
   token: localStorage.getItem("token") || null,
   isLoggedIn: !!localStorage.getItem("token"),
@@ -56,6 +56,7 @@ export const useUserStore = create((set) => ({
   rehydrate: async () => {
     const token = localStorage.getItem("token");
     if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       try {
         console.log("Sending token:", token);
         const res = await axios.get(`${BASE_URL}/api/auth/me`, {
@@ -80,7 +81,7 @@ export const useUserStore = create((set) => ({
 
     try {
       //check if liked
-      const res = await axios.post(`${BASE_URL}/api/user/likes`, {
+      const res = await axios.get(`${BASE_URL}/api/user/checkLikes`, {
         params: {
           userId: user.id,
           propertyId: property.id,
