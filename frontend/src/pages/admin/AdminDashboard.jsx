@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import AdminNavBar from "../../components/admin/AdminNavBar";
 import AdminHero from "../../components/admin/AdminHero";
 import AdminCard from "../../components/admin/AdminCard";
-import AddPropertyModal from "../../components/admin/AddPropertyModal.jsx";
+import AddPropertyModal from "../../components/admin/AddPropertyModel.jsx";
 import PropertyTile from "../../components/admin/PropertyTile";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdBrowserUpdated } from "react-icons/md";

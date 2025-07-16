@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AddPropertyModal from "./AddPropertyModal";
+import AddPropertyModal from "./AddPropertyModel";
 import { MdOutlineArrowCircleLeft } from "react-icons/md";
 import { MdOutlineArrowCircleRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";

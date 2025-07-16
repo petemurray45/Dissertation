@@ -4,6 +4,8 @@ import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import ProximitySearch from "../../components/user/ProximitySearch";
+import SearchDrawer from "../../components/user/SearchDrawer";
+import PropertySearchBar from "../../components/user/PropertySearchBar";
 
 import axios from "axios";
 
@@ -42,10 +44,35 @@ function PropertyPage() {
 
   return (
     <>
-      <div className="reltaive overflow-x-hidden  h-screen">
-        <div className=" bg-[url('https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] top-0 left-0 z-20  ">
+      <div className="relative overflow-x-hidden  h-screen">
+        <div className=" bg-[url('https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] w-full h-[40%] top-0 left-0 z-20  ">
           <NavBar />
-          <ProximitySearch onSearch={handleSearch} />
+          <div className="w-full pt-36">
+            <div className="flex flex-col justify-center">
+              <h1 className="text-6xl text-center text-white font-raleway font-bold text-shadow-xl">
+                Designed to find a room that suits ALL of your life.
+              </h1>
+              <h2 className="text-4xl text-center text-white text-shadow-xl pt-5">
+                Open our tailored search function below to begin!
+              </h2>
+              <h3 className="text-3xl text-center text-white text-shadow-lg pt-10"></h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-32 w-full   px-4 py-3 flex items-center gap-3 max-w-full shadow-sm  bg-[#02343F]">
+          <input
+            type="text"
+            placeholder="Queens University Belfast...."
+            className="flex-grow h-20 px-2 text-3xl py-2 rounded-md border border-gray-300 placeholder-gray-500 focus:outline-none placeholder:text-3xl placeholder:items-center"
+          />
+          <button className="btn mx-auto h-20 rounded-md w-60 hover:bg-[#F0EDCC] hover:text-black text-3xl font-raleway font-thin">
+            Search
+          </button>
+        </div>
+
+        <div>
+          <SearchDrawer />
         </div>
 
         {searchSubmitted && searchedLocation && (
