@@ -7,6 +7,7 @@ export const useUserStore = create((set) => ({
   user: null,
   token: localStorage.getItem("token") || null,
   isLoggedIn: !!localStorage.getItem("token"),
+  likedPropertyIds: [],
 
   setUser: (user) => set({ user }),
   setToken: (token) => set({ token }),
@@ -70,6 +71,55 @@ export const useUserStore = create((set) => ({
         localStorage.removeItem("token");
         set({ user: null, token: null, isLoggedIn: false });
       }
+    }
+  },
+
+  addToLikes: async (property) => {
+    const { user } = get();
+    if (!user) return;
+
+    try {
+      //check if liked
+      const res = await axios.post(`${BASE_URL}/api/user/likes`, {
+        params: {
+          userId: user.id,
+          propertyId: property.id,
+        },
+      });
+
+      const alreadyLiked = res.data.liked;
+
+      if (alreadyLiked) {
+        await axios.delete(`${BASE_URL}/api/user/checkLikes`, {
+          data: {
+            userId: user.id,
+            propertyId: property.id,
+          },
+        });
+      } else {
+        await axios.post(`${BASE_URL}/api/user/likes`, {
+          userId: user.id,
+          propertyId: property.id,
+        });
+      }
+    } catch (err) {
+      console.log("Failed to toggle like", err);
+    }
+  },
+
+  fetchLikedProperties: async () => {
+    const { user } = get();
+
+    if (!user) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/api/user/getLikes`, {
+        params: { userId: user.id },
+      });
+
+      set({ likedPropertyIds: res.data.liked });
+    } catch (err) {
+      console.log("Failed to fetch liked properties");
     }
   },
 }));
