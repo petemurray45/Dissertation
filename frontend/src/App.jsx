@@ -12,8 +12,9 @@ function App() {
   const { rehydrate, user, fetchLikedProperties } = useUserStore();
 
   useEffect(() => {
-    rehydrate();
-    fetchLikedProperties();
+    (async () => {
+      await rehydrate();
+    })();
   }, []);
 
   useEffect(() => {

@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
-import ProximitySearch from "../../components/user/ProximitySearch";
 import SearchDrawer from "../../components/user/SearchDrawer";
+import { useUserStore } from "../../utils/useUserStore";
 
 import axios from "axios";
 
@@ -19,9 +19,21 @@ function PropertyPage() {
     handleSearch,
   } = useListingStore();
 
+  const { addToLikes, likedPropertyIds, user } = useUserStore();
+
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
+
+  const toggleLike = async (property) => {
+    if (!user) return;
+    try {
+      await addToLikes(property);
+      console.log("property liked:", property.id);
+    } catch (err) {
+      console.log("Failed to like property", property.id);
+    }
+  };
 
   console.log(properties);
 
@@ -101,7 +113,12 @@ function PropertyPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10  md:my-[4%] px-10">
               {sortedProperties.map((property) => (
-                <PropertyTile property={property} key={property.id} />
+                <PropertyTile
+                  property={property}
+                  key={property.id}
+                  onToggleLike={() => toggleLike(property)}
+                  isLiked={likedPropertyIds.includes(property.id)}
+                />
               ))}
             </div>
           )}

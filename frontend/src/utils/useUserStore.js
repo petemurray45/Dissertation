@@ -11,6 +11,7 @@ export const useUserStore = create((set, get) => ({
 
   setUser: (user) => set({ user }),
   setToken: (token) => set({ token }),
+  setLikedPropertyIds: (ids) => set({ likedPropertyIds: ids }),
   logout: () => set({ user: null, token: null }),
 
   login: async (email, password) => {
@@ -67,6 +68,7 @@ export const useUserStore = create((set, get) => ({
           user: res.data.user,
           isLoggedIn: true,
         });
+        await get().fetchLikedProperties();
       } catch (err) {
         console.log("Rehydration Failed", err);
         localStorage.removeItem("token");
@@ -76,7 +78,7 @@ export const useUserStore = create((set, get) => ({
   },
 
   addToLikes: async (property) => {
-    const { user } = get();
+    const { user, likedPropertyIds, setLikedPropertyIds } = get();
     if (!user) return;
 
     try {
@@ -87,24 +89,43 @@ export const useUserStore = create((set, get) => ({
           propertyId: property.id,
         },
       });
+      console.log("Check like result", res.data);
 
-      const alreadyLiked = res.data.liked;
-
-      if (alreadyLiked) {
-        await axios.delete(`${BASE_URL}/api/user/checkLikes`, {
-          data: {
+      if (res.data.liked) {
+        await axios.delete(`${BASE_URL}/api/user/removelike`, {
+          params: {
             userId: user.id,
             propertyId: property.id,
           },
         });
+        console.log("Removed from likes");
+
+        // update ui straight away
+        setLikedPropertyIds(
+          likedPropertyIds.filter((id) => id !== property.id)
+        );
       } else {
         await axios.post(`${BASE_URL}/api/user/likes`, {
           userId: user.id,
           propertyId: property.id,
         });
+
+        // update ui straight away
+        setLikedPropertyIds([...likedPropertyIds, property.id]);
       }
     } catch (err) {
-      console.log("Failed to toggle like", err);
+      console.error("💥 Error in addToLikes:");
+      console.error("Full error:", err);
+      if (err.response) {
+        console.error("Response data:", err.response.data);
+        console.error("Status:", err.response.status);
+        console.error("Headers:", err.response.headers);
+      } else if (err.request) {
+        console.error("No response received:", err.request);
+      } else {
+        console.error("Error message:", err.message);
+      }
+      throw err;
     }
   },
 

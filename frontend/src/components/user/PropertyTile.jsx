@@ -1,4 +1,4 @@
-import react from "react";
+import react, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -6,16 +6,22 @@ import {
   MdOutlineArrowCircleLeft,
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
-import { FaCarAlt, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaCarAlt } from "react-icons/fa";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+
 import { useTravelStore } from "../../utils/useTravelStore";
 import { useUserStore } from "../../utils/useUserStore";
 
-function PropertyTile({ property }) {
+function PropertyTile({ property, isLiked, onToggleLike }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const { getTravelTimeForProperty, setSelectedTravelTime } = useTravelStore();
-  const { user, addToLikes, fetchLikedProperties } = useUserStore();
+  const { user } = useUserStore();
+
+  useEffect(() => {
+    setLiked(isLiked);
+  }, [isLiked]);
 
   const navigate = useNavigate();
 
@@ -25,6 +31,11 @@ function PropertyTile({ property }) {
     navigate(`/properties/${property.id}`, {
       state: { property }, // passing property object to user property page
     });
+  };
+
+  const handleLikeClick = () => {
+    setLiked(!liked);
+    onToggleLike(property);
   };
 
   const goToNextImage = () => {
@@ -42,15 +53,6 @@ function PropertyTile({ property }) {
           (prevIndex - 1 + property.imageUrls.length) %
           property.imageUrls.length
       );
-    }
-  };
-
-  const toggleLike = async () => {
-    if (!user) return;
-    try {
-      addToLikes(property);
-    } catch (err) {
-      console.log("Failed to like property", property.id);
     }
   };
 
@@ -99,13 +101,13 @@ function PropertyTile({ property }) {
 
               {user && (
                 <button
-                  onClick={toggleLike}
+                  onClick={handleLikeClick}
                   className="absolute top-2 right-2 text-xl"
                 >
                   {liked ? (
-                    <FaHeart className="bg-red-500 drop-shadow-sm text-4xl" />
+                    <AiFillHeart className="text-red-500 drop-shadow-sm text-4xl" />
                   ) : (
-                    <FaRegHeart className="text-gray-400 hover:text-red-500 text-4xl" />
+                    <AiOutlineHeart className=" hover:text-red-500 text-4xl" />
                   )}
                 </button>
               )}
