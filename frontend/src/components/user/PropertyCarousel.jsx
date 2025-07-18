@@ -1,11 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useUserStore } from "../../utils/useUserStore";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import PropertyTile from "./PropertyTile";
+
 function PropertyCarousel({ properties }) {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
+  const { addToLikes, likedPropertyIds, user } = useUserStore();
 
   const responsive = {
     desktop: {
@@ -22,6 +26,16 @@ function PropertyCarousel({ properties }) {
       items: 1,
       slidesToSlide: 1,
     },
+  };
+
+  const toggleLike = async (property) => {
+    if (!user) return;
+    try {
+      await addToLikes(property);
+      console.log("property liked:", property.id);
+    } catch (err) {
+      console.log("Failed to like property", property.id);
+    }
   };
 
   const handleSelect = (property) => {
@@ -48,31 +62,12 @@ function PropertyCarousel({ properties }) {
         {properties
           .slice(0, showAll ? properties.length : 6)
           .map((property) => (
-            <div
+            <PropertyTile
+              property={property}
               key={property.id}
-              className="border rounded-md shadow-md overflow-hidden transform transition duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
-            >
-              <img
-                src={getTransformedUrl(property.imageUrls[0], 600, 400)}
-                alt={property.name}
-                className="w-full h-60 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{property.location}</h3>
-                <p className="text-lg">{property.description}</p>
-                <p className="text-xl text-gray-600 font-bold ">
-                  £{property.price_per_month}
-                </p>
-                <div className="flex justify-end">
-                  <button
-                    className="btn rounded-lg px-5 py-4 bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway font-thin"
-                    onClick={() => handleSelect(property)}
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
+              onToggleLike={() => toggleLike(property)}
+              isLiked={likedPropertyIds.includes(property.id)}
+            />
           ))}
       </div>
 

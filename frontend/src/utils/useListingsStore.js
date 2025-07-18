@@ -35,7 +35,28 @@ export const useListingStore = create((set, get) => ({
   },
 
   searchFilters: {
-    location: "",
+    location1: {
+      name: "",
+      lat1: "",
+      lat2: "",
+      lat3: "",
+      maxTravelTime: "",
+    },
+    location2: {
+      name: "",
+      lat1: "",
+      lat2: "",
+      lat3: "",
+      maxTravelTime: "",
+    },
+    location3: {
+      name: "",
+      lat1: "",
+      lat2: "",
+      lat3: "",
+      maxTravelTime: "",
+    },
+
     maxPrice: 0,
     minPrice: 0,
     propertyType: "",

@@ -5,6 +5,8 @@ import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import SearchDrawer from "../../components/user/SearchDrawer";
 import { useUserStore } from "../../utils/useUserStore";
+import { MapPinPlusInside } from "lucide-react";
+import MainSearch from "../../components/user/MainSearch";
 
 import axios from "axios";
 
@@ -17,6 +19,8 @@ function PropertyPage() {
     searchSubmitted,
     searchedLocation,
     handleSearch,
+    searchFilters,
+    setSearchFilters,
   } = useListingStore();
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
@@ -71,16 +75,7 @@ function PropertyPage() {
           </div>
         </div>
 
-        <div className="h-32 w-full   px-10 py-3 flex items-center gap-3 max-w-full shadow-sm  bg-[#02343F]">
-          <input
-            type="text"
-            placeholder="Queens University Belfast...."
-            className="flex-grow h-20 px-6 text-3xl py-2 rounded-md border border-gray-300 placeholder-gray-500 focus:outline-none placeholder:text-3xl placeholder:items-center"
-          />
-          <button className="btn mx-auto h-20 rounded-md w-60 hover:bg-[#F0EDCC] hover:text-black text-3xl font-raleway font-thin">
-            Search
-          </button>
-        </div>
+        <MainSearch />
 
         <div>
           <SearchDrawer />

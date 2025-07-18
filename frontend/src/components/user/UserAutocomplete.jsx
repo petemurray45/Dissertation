@@ -54,7 +54,7 @@ const UserAutocomplete = ({ onPlaceSelect, className = "" }) => {
       type="text"
       placeholder="Enter an essential loaction..."
       ref={inputRef}
-      className={`input pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered w-full ${className}`}
+      className={`input pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered  ${className}`}
     />
   );
 };
