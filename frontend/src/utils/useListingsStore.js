@@ -68,10 +68,8 @@ export const useListingStore = create((set, get) => ({
 
   setSearchFilters: (update) => {
     set((state) => ({
-      searchFilters: {
-        ...state.searchFilters,
-        ...update,
-      },
+      searchFilters:
+        typeof update === "function" ? update(state.searchFilters) : update,
     }));
   },
 

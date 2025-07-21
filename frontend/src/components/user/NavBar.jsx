@@ -56,14 +56,14 @@ function NavBar() {
             {user?.name && (
               <li>
                 <NavLink
-                  to="/saved"
+                  to="/profile"
                   className={({ isActive }) =>
                     isActive
                       ? "border-b-4 border-b-[#02343F] shadow-lg text-3xl"
                       : "hover:border-b-4 border-b-[#02343F] text-3xl text-shadow-lg"
                   }
                 >
-                  Saved Listings
+                  Profile
                 </NavLink>
               </li>
             )}

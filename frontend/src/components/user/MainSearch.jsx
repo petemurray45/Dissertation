@@ -18,6 +18,7 @@ function MainSearch() {
     2: "How long would you be willing to travel to each location?",
   };
   const currentHeading = stepHeading[step] || "Start your search";
+  console.log("Search filters:", searchFilters);
   return (
     <div className="h-64  mx-10 my-5 rounded-md px-10 py-3 flex items-center gap-3  shadow-sm  bg-[#02343F]">
       <div className="w-full h-full flex flex-col justify-start items-center py-8">
@@ -168,8 +169,6 @@ function MainSearch() {
                               })
                             }
                           />
-
-                          <TransportSelector />
                         </div>
                       </div>
                     </div>

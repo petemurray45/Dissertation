@@ -5,10 +5,7 @@ import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import SearchDrawer from "../../components/user/SearchDrawer";
 import { useUserStore } from "../../utils/useUserStore";
-import { MapPinPlusInside } from "lucide-react";
 import MainSearch from "../../components/user/MainSearch";
-
-import axios from "axios";
 
 function PropertyPage() {
   const {

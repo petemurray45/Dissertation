@@ -6,6 +6,7 @@ import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
 import ViewListing from "./pages/user/ViewListing";
 import UserLogin from "./pages/user/UserLogin";
+import Profile from "./pages/user/Profile";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/properties" element={<PropertyPage />} />
         <Route path="/properties/:id" element={<ViewListing />} />
         <Route path="/login" element={<UserLogin />} />
+        <Route path="/profile" element={<Profile />} />
 
         <Route path="/admin/addproperty" element={<AdminAddProperty />} />
 
