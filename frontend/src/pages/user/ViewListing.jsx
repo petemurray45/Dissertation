@@ -8,10 +8,13 @@ import PropertyInfo from "../../components/user/PropertyInfo";
 import MapSearch from "../../components/user/MapSearch";
 import Description from "../../components/user/Description";
 import SecondaryNav from "../../components/user/navs/secondaryNav";
+import PlacesSection from "../../components/user/PlacesSection";
 import { useEffect, useState } from "react";
 import { useUserStore } from "../../utils/useUserStore";
+import { useTravelStore } from "../../utils/useTravelStore";
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
+  const { fetchNearbyPlaces } = useTravelStore();
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const [activeTab, setActiveTab] = useState("traveltimes");
 
@@ -21,21 +24,29 @@ function ViewListing() {
   const tabSelectors = [
     { key: "traveltimes", label: "Travel Times" },
     { key: "routePlanner", label: "Plan your routes" },
+    { key: "nearbyPlaces", label: "Places nearby" },
     { key: "notes", label: "Make a note" },
     { key: "enquire", label: "Enquire about this room" },
   ];
 
-  {
-    const tabComponents = {
-      routePlanner: <MapSearch />,
-    };
-  }
+  const tabComponents = {
+    routePlanner: <MapSearch property={currentProperty} />,
+    nearbyPlaces: <PlacesSection />,
+  };
 
   useEffect(() => {
     if (!currentProperty || currentProperty.id !== Number(id)) {
       fetchProperty(id);
     }
-  }, [id]);
+
+    if (currentProperty?.latitude && currentProperty?.longitude) {
+      fetchNearbyPlaces({
+        lat: currentProperty.latitude,
+        lng: currentProperty.longitude,
+        type: "tourist_attraction",
+      });
+    }
+  }, [id, currentProperty]);
 
   if (loading || !currentProperty) {
     return (

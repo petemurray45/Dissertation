@@ -5,9 +5,12 @@ const BASE_URL = "http://localhost:3000";
 
 export const useTravelStore = create((set, get) => ({
   travelResults: [],
-  searchedDestination: null,
   searchDestinations: [],
+  nearbyPlaces: [],
+  placesLoading: false,
+  placesError: null,
   selectedTravelTime: null,
+  searchedDestination: null,
 
   addDestination: (destination) => {
     const current = get().searchDestinations;
@@ -100,6 +103,23 @@ export const useTravelStore = create((set, get) => ({
       return parsedResults;
     } catch (err) {
       console.error("Unexpected error fetching travel times", err);
+    }
+  },
+
+  fetchNearbyPlaces: async ({ lat, lng, type = "tourist_attraction" }) => {
+    set({ placesLoading: true, placesError: null });
+
+    try {
+      const response = await axios.get(`${BASE_URL}/api/properties/places`, {
+        params: { lat, lng, type },
+      });
+
+      set({ nearbyPlaces: response.data.places });
+    } catch (err) {
+      console.error("Failed to fetch nearby places", err);
+      set({ placesError: "Failed to fetch places", nearbyPlaces: [] });
+    } finally {
+      set({ placesLoading: false });
     }
   },
 }));

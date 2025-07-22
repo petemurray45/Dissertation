@@ -302,3 +302,55 @@ export const getPropertiesWithTravelTime = async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 };
+
+export const getPlaces = async (req, res) => {
+  console.log("Incoming query:", req.query);
+  return res.json({ message: "working" });
+
+  {
+    /*}
+  console.log("Incoming query:", req.query);
+  const { lat, lng, type = "tourist_attraction" } = req.query;
+
+  if (!lat || !lng) {
+    return res
+      .status(400)
+      .json({ error: "Latitude and longitude are required" });
+  }
+
+  try {
+    const radius = 1500; //metres
+
+    const googleUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
+    const response = await axios.get(googleUrl, {
+      params: {
+        location: `${lat},${lng}`,
+        radius,
+        type,
+        key: API_KEY,
+      },
+    });
+
+    if (!response.data.results) {
+      return res
+        .status(500)
+        .json({ error: "Unexpected response from Google Places API" });
+    }
+
+    const places = response.data.results.map((place) => ({
+      place_id: place.place_id,
+      name: place.name,
+      rating: place.rating,
+      vicinity: place.vicinity,
+      types: place.types,
+      photo_reference: place.photos?.[0]?.photo_reference || null,
+    }));
+
+    res.json({ places });
+  } catch (err) {
+    console.error("Error fetching places", err);
+    res.status(500).json({ error: "Failed to get nearby places" });
+  }
+    */
+  }
+};
