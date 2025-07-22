@@ -7,10 +7,10 @@ import ImageGallery from "../../components/user/ImageGallery";
 import PropertyInfo from "../../components/user/PropertyInfo";
 import MapSearch from "../../components/user/MapSearch";
 import { useEffect } from "react";
-import { useTravelStore } from "../../utils/useTravelStore";
-
+import { useUserStore } from "../../utils/useUserStore";
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
+  const { addToLikes, likedPropertyIds, user } = useUserStore();
 
   const navigate = useNavigate();
 
@@ -38,6 +38,16 @@ function ViewListing() {
     );
   }
 
+  const toggleLike = async (property) => {
+    if (!user) return;
+    try {
+      await addToLikes(property);
+      console.log("property liked:", property.id);
+    } catch (err) {
+      console.log("Failed to like property", property.id);
+    }
+  };
+
   return (
     <>
       <div className="overflow-x-hidden    h-screen w-full">
@@ -57,7 +67,12 @@ function ViewListing() {
           </div>
 
           <div className="w-full md:w-1/3">
-            <PropertyInfo property={currentProperty} key={currentProperty.id} />
+            <PropertyInfo
+              property={currentProperty}
+              key={currentProperty.id}
+              onToggleLike={() => toggleLike(currentProperty)}
+              isLiked={likedPropertyIds.includes(currentProperty.id)}
+            />
           </div>
         </div>
 

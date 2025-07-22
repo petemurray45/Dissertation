@@ -43,11 +43,11 @@ function ImageGallery({ images }) {
         {/* Main Image */}
 
         <>
-          <div className="flex relative w-fit">
+          <div className="aspect-[13/8] w-full max-w-[1300px] relative overflow-hidden">
             <img
               src={getTransformedUrl(images[currentIndex], 1300, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="sm:h-[200px] md:h-[800px] object-cover rounded-lg border-2 "
+              className="w-full h-full object-cover rounded-lg border-2"
             />
 
             {/* Previous Button */}
