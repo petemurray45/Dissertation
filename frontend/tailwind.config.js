@@ -20,6 +20,15 @@ export default {
       fontFamily: {
         raleway: ["Raleway", "sans-serif"],
       },
+      keyframes: {
+        beat: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.1)" },
+        },
+      },
+      animation: {
+        beat: "beat 0.6s ease-in-out infinite",
+      },
     },
   },
   plugins: [require("daisyui"), require("tailwindcss-textshadow")],

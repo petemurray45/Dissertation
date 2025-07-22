@@ -132,7 +132,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           <div className="flex justify-between">
             <div>
               <h2 className="card-title font-raleway">{property.location}</h2>
-              <p className="font-raleway">{property.description}</p>
+              <p className="font-raleway">{property.title}</p>
 
               <button
                 type="button"

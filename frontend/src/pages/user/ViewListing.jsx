@@ -6,15 +6,30 @@ import { useListingStore } from "../../utils/useListingsStore";
 import ImageGallery from "../../components/user/ImageGallery";
 import PropertyInfo from "../../components/user/PropertyInfo";
 import MapSearch from "../../components/user/MapSearch";
-import { useEffect } from "react";
+import Description from "../../components/user/Description";
+import SecondaryNav from "../../components/user/navs/secondaryNav";
+import { useEffect, useState } from "react";
 import { useUserStore } from "../../utils/useUserStore";
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
   const { addToLikes, likedPropertyIds, user } = useUserStore();
+  const [activeTab, setActiveTab] = useState("traveltimes");
 
   const navigate = useNavigate();
-
   const { id } = useParams();
+
+  const tabSelectors = [
+    { key: "traveltimes", label: "Travel Times" },
+    { key: "routePlanner", label: "Plan your routes" },
+    { key: "notes", label: "Make a note" },
+    { key: "enquire", label: "Enquire about this room" },
+  ];
+
+  {
+    const tabComponents = {
+      routePlanner: <MapSearch />,
+    };
+  }
 
   useEffect(() => {
     if (!currentProperty || currentProperty.id !== Number(id)) {
@@ -24,7 +39,7 @@ function ViewListing() {
 
   if (loading || !currentProperty) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center overflow-hidden">
         <div className="loading loading-spinner loading-lg" />
       </div>
     );
@@ -61,7 +76,7 @@ function ViewListing() {
             Back to search
           </button>
         </div>
-        <div className="flex flex-row gap-10 w-full h-[80%]  rounded-2xl mx-auto px-20 py-5">
+        <div className="flex flex-row gap-10 w-full rounded-2xl mx-auto px-20 py-2 max-h-[750px]">
           <div className="w-full md:w-2/3">
             <ImageGallery images={currentProperty.images} />
           </div>
@@ -76,7 +91,21 @@ function ViewListing() {
           </div>
         </div>
 
-        <MapSearch property={currentProperty} />
+        <div className="w-full items-center px-20 pt-10 ">
+          <Description property={currentProperty} />
+        </div>
+
+        <div className="mt-24">
+          <SecondaryNav
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            tabs={tabSelectors}
+          />
+        </div>
+
+        <div className="mx-20">
+          {tabComponents[activeTab] ?? <p>No tab found</p>}
+        </div>
 
         <div className="flex h-full mt-5">
           {/*<MapSearch property={currentProperty} />*/}

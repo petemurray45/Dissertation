@@ -1,13 +1,26 @@
 import NavBar from "../../components/user/NavBar";
 import { useUserStore } from "../../utils/useUserStore";
 import { useState } from "react";
-
+import SecondaryNav from "../../components/user/navs/secondaryNav";
 import Overview from "../../components/user/profile/Overview";
 import LikedProperties from "../../components/user/profile/LikedProperties";
 
 function Profile() {
   const { user } = useUserStore();
   const [activeTab, setActiveTab] = useState("overview");
+
+  const tabComponents = {
+    overview: <Overview />,
+    likedProperties: <LikedProperties />,
+  };
+
+  const tabSelectors = [
+    { key: "overview", label: "Overview" },
+    { key: "likedProperties", label: "Liked Properties" },
+    { key: "saved", label: "Saved Searches" },
+    { key: "edit", label: "Edit Profile" },
+    { key: "notes", label: "Notes" },
+  ];
 
   return (
     <div className="relative overflow-hidden">
@@ -28,58 +41,11 @@ function Profile() {
           </div>
         </div>
 
-        <div className="w-full h-24 bg-[#02343F] px-4">
-          <div className="flex flex-wrap justify-between items-stretch h-full max-w-6xl mx-auto text-white font-raleway text-lg sm:text-xl md:text-2xl">
-            <div
-              className={`cursor-pointer flex flex-1 items-center justify-center text-3xl hover:bg-white hover:text-[#02343F] h-full ${
-                activeTab === "overview"
-                  ? "bg-white text-[#02343F]"
-                  : "text-white"
-              } `}
-              onClick={() => setActiveTab("overview")}
-            >
-              Overview
-            </div>
-            <div className="w-px h-full bg-white hidden sm:block" />
-            <div
-              className={`cursor-pointer flex px-10 flex-1 justify-center items-center text-3xl hover:bg-white hover:text-[#02343F] h-full whitespace-nowrap ${
-                activeTab === "likedProperties"
-                  ? "bg-white text-[#02343F]"
-                  : "text-white"
-              }`}
-              onClick={() => setActiveTab("likedProperties")}
-            >
-              Liked Properties
-            </div>
-            <div className="w-px h-full bg-white hidden sm:block" />
-            <div
-              className={`cursor-pointer flex px-10 flex-1 justify-center items-center text-3xl hover:bg-white hover:text-[#02343F] h-full whitespace-nowrap ${
-                activeTab === "saved" ? "bg-white text-[#02343F]" : "text-white"
-              }`}
-              onClick={() => setActiveTab("saved")}
-            >
-              Saved Searches
-            </div>
-            <div className="w-px h-full bg-white hidden sm:block" />
-            <div
-              className={`cursor-pointer flex px-10 flex-1 justify-center items-center text-3xl hover:bg-white hover:text-[#02343F] h-full whitespace-nowrap ${
-                activeTab === "edit" ? "bg-white text-[#02343F]" : "text-white"
-              }`}
-              onClick={() => setActiveTab("edit")}
-            >
-              Edit Profile
-            </div>
-            <div className="w-px h-full bg-white hidden sm:block" />
-            <div
-              className={`cursor-pointer flex flex-1 justify-center items-center text-3xl hover:bg-white hover:text-[#02343F] h-full ${
-                activeTab === "notes" ? "bg-white text-[#02343F]" : "text-white"
-              }`}
-              onClick={() => setActiveTab("notes")}
-            >
-              Notes
-            </div>
-          </div>
-        </div>
+        <SecondaryNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tabs={tabSelectors}
+        />
 
         <div className="p-10">
           {activeTab === "overview" && <Overview />}
