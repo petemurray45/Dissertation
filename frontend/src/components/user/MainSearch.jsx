@@ -25,7 +25,101 @@ function MainSearch() {
         <h1 className="text-white text-4xl font-raleway text-center">
           {currentHeading}
         </h1>
+        <div className="pt-10">
+          <form className="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-24">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-thin font-raleway text-white">
+                  Location 1
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <MapPinPlusInside />
+                </div>
+                <UserAutocomplete
+                  onPlaceSelect={({ location, latitude, longitude }) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      location1: {
+                        ...prev.location1,
+                        name: location,
+                        lat: latitude,
+                        lng: longitude,
+                      },
+                    }))
+                  }
+                  className="w-96 h-16 rounded-md"
+                  placeholder="e.g. Workplace"
+                />
+              </div>
+            </div>
 
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-thin font-raleway text-white">
+                  Location 2
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <MapPinPlusInside />
+                </div>
+                <UserAutocomplete
+                  onPlaceSelect={({ location, latitude, longitude }) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      location2: {
+                        ...prev.location2,
+                        name: location,
+                        lat: latitude,
+                        lng: longitude,
+                      },
+                    }))
+                  }
+                  className="w-96 h-16 rounded-md"
+                  placeholder="e.g. School"
+                />
+              </div>
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-base font-thin font-raleway text-white">
+                  Location 3
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <MapPinPlusInside />
+                </div>
+                <UserAutocomplete
+                  onPlaceSelect={({ location, latitude, longitude }) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      location3: {
+                        ...prev.location3,
+                        name: location,
+                        lat: latitude,
+                        lng: longitude,
+                      },
+                    }))
+                  }
+                  className="w-96 h-16 rounded-md"
+                  placeholder="e.g. Gym"
+                />
+              </div>
+            </div>
+            <div className="flex justify-center items-center pt-10 ">
+              <button
+                type="button"
+                className="btn w-44 h-16 rounded-md font-raleway"
+              >
+                Next
+              </button>
+            </div>
+          </form>
+        </div>
+        {/*}
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
@@ -35,104 +129,11 @@ function MainSearch() {
               exit={{ x: -300, opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="pt-10">
-                <form className="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-24">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text text-base font-thin font-raleway text-white">
-                        Location 1
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                        <MapPinPlusInside />
-                      </div>
-                      <UserAutocomplete
-                        onPlaceSelect={({ location, latitude, longitude }) =>
-                          setSearchFilters((prev) => ({
-                            ...prev,
-                            location1: {
-                              ...prev.location1,
-                              name: location,
-                              lat: latitude,
-                              lng: longitude,
-                            },
-                          }))
-                        }
-                        className="w-96 h-16 rounded-md"
-                        placeholder="e.g. Workplace"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text text-base font-thin font-raleway text-white">
-                        Location 2
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                        <MapPinPlusInside />
-                      </div>
-                      <UserAutocomplete
-                        onPlaceSelect={({ location, latitude, longitude }) =>
-                          setSearchFilters((prev) => ({
-                            ...prev,
-                            location2: {
-                              ...prev.location2,
-                              name: location,
-                              lat: latitude,
-                              lng: longitude,
-                            },
-                          }))
-                        }
-                        className="w-96 h-16 rounded-md"
-                        placeholder="e.g. School"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text text-base font-thin font-raleway text-white">
-                        Location 3
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                        <MapPinPlusInside />
-                      </div>
-                      <UserAutocomplete
-                        onPlaceSelect={({ location, latitude, longitude }) =>
-                          setSearchFilters((prev) => ({
-                            ...prev,
-                            location3: {
-                              ...prev.location3,
-                              name: location,
-                              lat: latitude,
-                              lng: longitude,
-                            },
-                          }))
-                        }
-                        className="w-96 h-16 rounded-md"
-                        placeholder="e.g. Gym"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-center items-center pt-10 ">
-                    <button
-                      onClick={() => setStep(2)}
-                      type="button"
-                      className="btn w-44 h-16 rounded-md font-raleway"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </form>
-              </div>
+              
             </motion.div>
           )}
-
+            */}
+        {/*}
           {step === 2 && (
             <motion.div
               key="step2"
@@ -177,7 +178,9 @@ function MainSearch() {
               </div>
             </motion.div>
           )}
+            
         </AnimatePresence>
+        */}
       </div>
     </div>
   );

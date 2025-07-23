@@ -2,6 +2,7 @@ import { sql } from "../config/db.js";
 import axios from "axios";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
+import { type } from "os";
 dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
@@ -212,7 +213,7 @@ export const deleteProperty = async (req, res) => {
 };
 
 export const getPropertiesWithTravelTime = async (req, res) => {
-  const { destinations, modes = ["DRIVING"] } = req.query;
+  const { destinations, modes = ["DRIVING"] } = req.body;
 
   console.log("destinations", destinations);
 
@@ -242,7 +243,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
     // combine properties with images
     const propertiesWithImages = properties.map((p) => {
       const propertyImages = images
-        .filter((img) => img.property_id === p_id)
+        .filter((img) => img.property_id === p.id)
         .map((img) => img.image_url);
 
       return {
@@ -251,42 +252,67 @@ export const getPropertiesWithTravelTime = async (req, res) => {
       };
     });
 
-    // google directions api to calculate travel times for each destination
-
-    const travelResults = await Promise.all(
+    const travelTimes = await Promise.all(
       propertiesWithImages.map(async (property) => {
         if (!property.latitude || !property.longitude) {
           return { ...property, travelTimes: [] };
         }
-
         const origin = `${property.latitude},${property.longitude}`;
-        const travelTimes = await Promise.all(
-          destinations.map(async (destination) => {
+
+        const travelResults = [];
+
+        for (const destination of destinations) {
+          const destinationLabel =
+            typeof destination === "string"
+              ? destination
+              : destination.label ||
+                `${destination.latitude},${destination.longitude}`;
+
+          const destCoordinates =
+            typeof destination === "string"
+              ? destination
+              : `${destination.latitude},${destination.longitude}`;
+
+          for (const mode of modes) {
             try {
               const apiRes = await axios.get(
                 "https://maps.googleapis.com/maps/api/directions/json",
                 {
                   params: {
                     origin,
-                    destination,
-                    mode: modes[0],
+                    destination: destCoordinates,
+                    mode,
                     key: API_KEY,
                   },
                 }
               );
               const duration =
                 apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
-              return { destination, mode: modes[0], duration };
+              travelResults.push({
+                destination: destinationLabel,
+                mode: mode.toLowerCase(),
+                duration,
+              });
             } catch (err) {
-              console.error("Failed to fetch travel time", err.message);
-              return { destination, mode: modes[0], duration: null };
+              console.error(
+                `Error fetching ${mode} time to ${destinationLabel}`,
+                err.message
+              );
+              travelResults.push({
+                destination: destinationLabel,
+                mode: mode.toLowerCase(),
+                duration: null,
+              });
             }
-          })
-        );
-        return { ...property, travelTimes };
+          }
+        }
+        return { ...property, travelTimes: travelResults };
       })
     );
-    res.status(200).json(travelResults);
+
+    // google directions api to calculate travel times for each destination
+
+    res.status(200).json(travelTimes);
   } catch (err) {
     console.error("Error calculating travel time", err);
     res.status(500).json({ error: "Server error" });

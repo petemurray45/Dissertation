@@ -11,7 +11,7 @@ import { getPlaces } from "../controllers/propertyControllers.js";
 const router = express.Router();
 
 //router.get("/time", getTravelTime);
-router.get("/travel-time", getPropertiesWithTravelTime);
+router.post("/travel-time", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 router.post("/", createProperty);
 router.get("/places", getPlaces);
