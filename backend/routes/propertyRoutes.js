@@ -14,8 +14,9 @@ const router = express.Router();
 router.get("/travel-time", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 router.post("/", createProperty);
+router.get("/places", getPlaces);
 router.put("/:id", updateProperty);
 router.delete("/:id", deleteProperty);
 router.get("/:id", getProperty);
-router.get("/places", getPlaces);
+
 export default router;

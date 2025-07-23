@@ -305,11 +305,6 @@ export const getPropertiesWithTravelTime = async (req, res) => {
 
 export const getPlaces = async (req, res) => {
   console.log("Incoming query:", req.query);
-  return res.json({ message: "working" });
-
-  {
-    /*}
-  console.log("Incoming query:", req.query);
   const { lat, lng, type = "tourist_attraction" } = req.query;
 
   if (!lat || !lng) {
@@ -341,16 +336,17 @@ export const getPlaces = async (req, res) => {
       place_id: place.place_id,
       name: place.name,
       rating: place.rating,
+      user_ratings_total: place.user_ratings_total,
       vicinity: place.vicinity,
       types: place.types,
-      photo_reference: place.photos?.[0]?.photo_reference || null,
+      photoUrl: place.photos?.[0]?.photo_reference
+        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${API_KEY}`
+        : null,
     }));
-
+    console.log("Google places response", response.data);
     res.json({ places });
   } catch (err) {
     console.error("Error fetching places", err);
     res.status(500).json({ error: "Failed to get nearby places" });
-  }
-    */
   }
 };

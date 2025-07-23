@@ -1,20 +1,46 @@
-function PlaceTile({ name, photoUrl, rating, vicinity, types }) {
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+
+const renderStars = (rating) => {
+  if (typeof rating !== "number" || rating < 0) {
+    return <p className="text-gray-400 text-sm">No rating</p>;
+  }
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  const empty = 5 - full - (half ? 1 : 0);
+
   return (
-    <div className="w-64 bg-white shadow-lg rounded-lg p-4 text-center font-raleway">
+    <div className="flex items-center gap-1 text-yellow-500">
+      {Array(full).fill(<FaStar />)}
+      {half && <FaStarHalfAlt />}
+      {Array(empty).fill(<FaRegStar />)}
+    </div>
+  );
+};
+
+function PlaceTile({ name, photoUrl, rating, vicinity, ratingsTotal }) {
+  return (
+    <div className="flex flex-col bg-white border-2 border-gray-100 rounded-lg p-4 min-w-[400px] min-h-[300px] text-center font-raleway">
       <img
         src={photoUrl}
         alt={name}
         className="w-full h-40 object-cover rounded-md"
       />
-      <h3 className="text-lg font-bold mt-2">{name}</h3>
-      <p className="text-md text-gray-500">{vicinity}</p>
-      <p className="text-md text-yellow-500 mt-1">{rating}</p>
-      <div className="mt-2 flex flex-wrap justify-center gap-1 text-xs text-gray-600">
-        {types.map((type, index) => (
-          <span key={index} className="bg-gray-200 rounded px-2 py-1">
-            {type.replace("_", " ")}
-          </span>
-        ))}
+      <div className="flex flex-col flex-grow justify-between mt-4">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-xl font-semibold">{name}</h3>
+          <p className="text-lg text-gray-500">{vicinity}</p>
+
+          <div className="flex justify-center items-center gap-1 text-yellow-500">
+            {renderStars(rating)}
+            <span className="text-md text-gray-600">({ratingsTotal})</span>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button className="rounded-lg shadow-md w-full bg-[#02343F] hover:bg-[#F0EDCC] hover:text-black text-white py-3 text-lg">
+            Learn more
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -31,7 +31,11 @@ export default {
       },
     },
   },
-  plugins: [require("daisyui"), require("tailwindcss-textshadow")],
+  plugins: [
+    require("daisyui"),
+    require("tailwindcss-textshadow"),
+    require("tailwind-scrollbar-hide"),
+  ],
   daisyui: {
     themes: ["pastel"],
   },

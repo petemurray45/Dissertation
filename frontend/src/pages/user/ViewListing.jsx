@@ -11,10 +11,9 @@ import SecondaryNav from "../../components/user/navs/secondaryNav";
 import PlacesSection from "../../components/user/PlacesSection";
 import { useEffect, useState } from "react";
 import { useUserStore } from "../../utils/useUserStore";
-import { useTravelStore } from "../../utils/useTravelStore";
+
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
-  const { fetchNearbyPlaces } = useTravelStore();
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const [activeTab, setActiveTab] = useState("traveltimes");
 
@@ -29,22 +28,9 @@ function ViewListing() {
     { key: "enquire", label: "Enquire about this room" },
   ];
 
-  const tabComponents = {
-    routePlanner: <MapSearch property={currentProperty} />,
-    nearbyPlaces: <PlacesSection />,
-  };
-
   useEffect(() => {
     if (!currentProperty || currentProperty.id !== Number(id)) {
       fetchProperty(id);
-    }
-
-    if (currentProperty?.latitude && currentProperty?.longitude) {
-      fetchNearbyPlaces({
-        lat: currentProperty.latitude,
-        lng: currentProperty.longitude,
-        type: "tourist_attraction",
-      });
     }
   }, [id, currentProperty]);
 
@@ -63,6 +49,16 @@ function ViewListing() {
       </div>
     );
   }
+
+  const tabComponents = {
+    routePlanner: <MapSearch property={currentProperty} />,
+    nearbyPlaces: (
+      <PlacesSection
+        lat={currentProperty.latitude}
+        lng={currentProperty.longitude}
+      />
+    ),
+  };
 
   const toggleLike = async (property) => {
     if (!user) return;

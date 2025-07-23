@@ -106,7 +106,7 @@ export const useTravelStore = create((set, get) => ({
     }
   },
 
-  fetchNearbyPlaces: async ({ lat, lng, type = "tourist_attraction" }) => {
+  fetchNearbyPlaces: async ({ lat, lng, type }) => {
     set({ placesLoading: true, placesError: null });
 
     try {
