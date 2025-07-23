@@ -4,7 +4,15 @@ import axios from "axios";
 const BASE_URL = "http://localhost:3000";
 
 export const useTravelStore = create((set, get) => ({
-  travelResults: [],
+  travelResults: {
+    [propertyId]: {
+      [destinationLabel]: {
+        driving: "",
+        walking: "",
+        cycling: "",
+      },
+    },
+  },
   searchDestinations: [],
   nearbyPlaces: [],
   placesLoading: false,

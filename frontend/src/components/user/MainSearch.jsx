@@ -145,8 +145,8 @@ function MainSearch() {
                 <form className="w-full grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cold-3 gap-16">
                   {locationEntries.map((location, index) => (
                     <div key={location.key} className="form-control">
-                      <label className="label text-white font-raleway">
-                        Travel time to:{" "}
+                      <label className="label flex justify-center text-gray-600 font-raleway bg-gray-100 rounded-lg mb-5 ">
+                        {" "}
                         {location.name || "Location " + (index + 1)}
                       </label>
 
@@ -154,7 +154,7 @@ function MainSearch() {
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                           <Clock />
                         </div>
-                        <div className="flex">
+                        <div className="flex justify-center">
                           <input
                             type="number"
                             value={location.maxTravelTime}

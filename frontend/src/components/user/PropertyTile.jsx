@@ -6,6 +6,7 @@ import {
   MdOutlineArrowCircleLeft,
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { FaCarAlt } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
@@ -16,6 +17,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [showTimes, setShowTimes] = useState(false);
   const { getTravelTimeForProperty, setSelectedTravelTime } = useTravelStore();
   const { user } = useUserStore();
 
@@ -65,7 +67,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="h-[400px] flex flex-col justify-between bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px] border-2 border-gray-200 rounded-lg">
+      <div className="h-[400px] flex flex-col flex-grow relative bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px] border-2 border-gray-200 rounded-lg">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -118,39 +120,34 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
             </div>
           )}
         </div>
+        <button
+          onClick={() => setShowTimes(!showTimes)}
+          className="w-full h-[50px] bg-[#02343F] text-white text-xl py-1  flex items-center justify-center gap-1 font-raleway"
+        >
+          {showTimes ? "Hide Travel Times" : "Show Travel Times"}
+          {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </button>
         <div className="card-body">
-          <div className="rounded-xl flex-1 flex flex-col justify-between mt-1">
-            <div className="w-[40%] h-7 flex items-center rounded-xl mb-2">
-              <span className="bg-[#02343F] text-white p-2 font-raleway">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-3xl font-raleway">{property.location}</h2>
+            <div className="flex items-center">
+              <span className="bg-[#02343F] text-white px-2 py-1 text-xl font-raleway">
                 Price
               </span>
-              <span className="bg-[#f0edcc] p-2 font-raleway font-semibold">
+              <span className="bg-[#f0edcc] px-2 py-1 text-xl font-semibold font-raleway">
                 £{property.price_per_month}pm
               </span>
             </div>
           </div>
-          <div className="flex justify-between">
-            <div>
-              <h2 className="card-title font-raleway">{property.location}</h2>
-              <p className="font-raleway">{property.title}</p>
+          <p className="font-raleway text-2xl mb-4">{property.title}</p>
 
-              <button
-                type="button"
-                className="btn btn-primary rounded-md bg-[#02343F] text-white mt-4 w-32 hover:bg-[#F0EDCC] hover:text-black font-raleway   "
-                onClick={(e) => handleSelect(property)}
-              >
-                View
-              </button>
-            </div>
-            {property.travelTime !== undefined && (
-              <div className="flex items-center justify-center flex-row-reverse gap-2 align-middle">
-                <p className="font-bold text-md text-center mb-2 bg-#02343F font-raleway">
-                  {property.travelTime}
-                </p>
-                <FaCarAlt className="size-10" />
-              </div>
-            )}
-          </div>
+          <button
+            type="button"
+            className="absolute bottom-4 right-7 rounded-md w-32 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-xl font-thin"
+            onClick={() => handleSelect(property)}
+          >
+            View
+          </button>
         </div>
       </div>
     </>

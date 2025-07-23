@@ -212,28 +212,100 @@ export const deleteProperty = async (req, res) => {
 };
 
 export const getPropertiesWithTravelTime = async (req, res) => {
-  const { destination, minPrice = 0, maxPrice = 10000 } = req.query;
+  const { destinations, modes = ["DRIVING"] } = req.query;
 
-  console.log("destination", destination);
+  console.log("destinations", destinations);
 
-  const min = Number(minPrice);
-  const max = Number(maxPrice);
-
-  if (!destination) {
-    return res.status(400).json({ error: "Destination is required" });
+  if (
+    !destinations ||
+    !Array.isArray(destinations) ||
+    destinations.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "At least one destination is required" });
   }
 
+  try {
+    const properties =
+      await sql`SELECT * FROM properties ORDER BY created_at DESC`;
+
+    // fetch properties with images
+    const propertyIds = properties.map((property) => Number(property.id));
+    let images = [];
+
+    if (propertyIds.length > 0) {
+      images =
+        await sql`SELECT property_id, image_url FROM images WHERE property_id = ANY(${propertyIds}::integer[]) ORDER BY property_id, id;`;
+    }
+
+    // combine properties with images
+    const propertiesWithImages = properties.map((p) => {
+      const propertyImages = images
+        .filter((img) => img.property_id === p_id)
+        .map((img) => img.image_url);
+
+      return {
+        ...p,
+        imageUrls: propertyImages,
+      };
+    });
+
+    // google directions api to calculate travel times for each destination
+
+    const travelResults = await Promise.all(
+      propertiesWithImages.map(async (property) => {
+        if (!property.latitude || !property.longitude) {
+          return { ...property, travelTimes: [] };
+        }
+
+        const origin = `${property.latitude},${property.longitude}`;
+        const travelTimes = await Promise.all(
+          destinations.map(async (destination) => {
+            try {
+              const apiRes = await axios.get(
+                "https://maps.googleapis.com/maps/api/directions/json",
+                {
+                  params: {
+                    origin,
+                    destination,
+                    mode: modes[0],
+                    key: API_KEY,
+                  },
+                }
+              );
+              const duration =
+                apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
+              return { destination, mode: modes[0], duration };
+            } catch (err) {
+              console.error("Failed to fetch travel time", err.message);
+              return { destination, mode: modes[0], duration: null };
+            }
+          })
+        );
+        return { ...property, travelTimes };
+      })
+    );
+    res.status(200).json(travelResults);
+  } catch (err) {
+    console.error("Error calculating travel time", err);
+    res.status(500).json({ error: "Server error" });
+  }
+  {
+    /*}
   try {
     // select all properties in price range
 
     const response =
-      await sql`SELECT * FROM properties WHERE price_per_month >= ${min} AND price_per_month <= ${max}`;
+      await sql`SELECT * FROM properties ORDER BY created_at DESC`;
 
     const properties = response.rows || response;
     console.log("Properties", properties);
 
     // get property ids
-    const propertyIds = properties.map((p) => Number(p.id));
+    const responseResults = await Promise.all(
+      pro
+    )
     let images = [];
 
     if (propertyIds.length === 0) {
@@ -297,9 +369,7 @@ export const getPropertiesWithTravelTime = async (req, res) => {
       })
     );
     res.json(results);
-  } catch (err) {
-    console.log("Error fetching properties ", err.message);
-    res.status(500).json({ error: "Server Error" });
+    */
   }
 };
 
