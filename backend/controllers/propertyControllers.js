@@ -214,6 +214,7 @@ export const deleteProperty = async (req, res) => {
 
 export const getPropertiesWithTravelTime = async (req, res) => {
   const { destinations, modes = ["DRIVING"] } = req.body;
+  console.log("Recieved", modes);
 
   console.log("destinations", destinations);
 
@@ -275,6 +276,14 @@ export const getPropertiesWithTravelTime = async (req, res) => {
 
           for (const mode of modes) {
             try {
+              console.log(
+                "Mode =",
+                mode,
+                "Destination =",
+                destination,
+                "Origin =",
+                origin
+              );
               const apiRes = await axios.get(
                 "https://maps.googleapis.com/maps/api/directions/json",
                 {
@@ -286,6 +295,18 @@ export const getPropertiesWithTravelTime = async (req, res) => {
                   },
                 }
               );
+              console.log(
+                "API response:",
+                JSON.stringify(apiRes.data, null, 2)
+              );
+              console.log(
+                `Google returned:`,
+                apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text,
+                "for mode:",
+                mode
+              );
+              console.log("Full URL:", apiRes.request?.path);
+
               const duration =
                 apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
               travelResults.push({
@@ -293,6 +314,9 @@ export const getPropertiesWithTravelTime = async (req, res) => {
                 mode: mode.toLowerCase(),
                 duration,
               });
+              console.log(
+                `Got duration: ${duration} for mode: ${mode}, destination: ${destinationLabel}`
+              );
             } catch (err) {
               console.error(
                 `Error fetching ${mode} time to ${destinationLabel}`,

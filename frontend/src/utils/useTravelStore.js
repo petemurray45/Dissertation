@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useListingStore } from "./useListingsStore";
 import axios from "axios";
 
 const BASE_URL = "http://localhost:3000";
@@ -12,7 +13,7 @@ export const useTravelStore = create((set, get) => ({
   selectedTravelTime: null,
   searchedDestination: null,
 
-  addDestination: (destination) => {
+  setDestinations: (destination) => {
     const current = get().searchDestinations;
     // prevent dupes
     if (!current.includes(destination)) {
@@ -20,26 +21,29 @@ export const useTravelStore = create((set, get) => ({
     }
   },
 
-  resetOrigins: () => set({ searchDestinations: [] }),
+  resetSearchDestinations: () => set({ searchDestinations: [] }),
 
   setSelectedTravelTime: (travelTime) =>
     set({ selectedTravelTime: travelTime }),
 
-  getPropertiesWithTravelTime: async () => {
+  getPropertiesWithTravelTime: async (modes) => {
     try {
       const destinations = get().searchDestinations;
-      const modes = ["DRIVING", "WALKING", "CYCLING"];
+      console.log(destinations);
 
-      const { data } = await axios.post(`${BASE_URL}/api/travel-time`, {
-        destinations: destinations.map((destination) =>
-          typeof destination === "string"
-            ? destination
-            : `${destination.latitude},${destination.longitude}`
-        ),
-        modes,
-      });
+      const { data } = await axios.post(
+        `${BASE_URL}/api/properties/travel-time`,
+        {
+          destinations: destinations.map((destination) =>
+            typeof destination === "string"
+              ? destination
+              : `${destination.latitude},${destination.longitude}`
+          ),
+          modes,
+        }
+      );
       console.log("API response with travel times", data);
-      set({ travelResults: data });
+      useListingStore.getState().updatePropertyTravelTimes(data);
       return data;
     } catch (err) {
       console.log("Error fetching travel times from backend", err);

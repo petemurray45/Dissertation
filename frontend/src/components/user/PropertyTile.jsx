@@ -9,7 +9,7 @@ import {
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { FaCarAlt } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { useTravelStore } from "../../utils/useTravelStore";
 import { useUserStore } from "../../utils/useUserStore";
 
@@ -18,7 +18,11 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const [showTimes, setShowTimes] = useState(false);
-  const { getTravelTimeForProperty, setSelectedTravelTime } = useTravelStore();
+  const {
+    getTravelTimeForProperty,
+    setSelectedTravelTime,
+    searchDestinations,
+  } = useTravelStore();
   const { user } = useUserStore();
 
   useEffect(() => {
@@ -64,6 +68,10 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
       `/upload/w_${width},h_${height},c_fill,f_auto,q_60/`
     );
   };
+
+  console.log("Rendered property ID:", property.id);
+  console.log("Travel Times for this property:", property.travelTimes);
+  console.log("Search Destinations:", searchDestinations);
 
   return (
     <>
@@ -119,15 +127,47 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               No Image Available
             </div>
           )}
+
+          <button
+            onClick={() => setShowTimes(!showTimes)}
+            className="w-full h-[50px] bg-[#02343F] text-white text-xl py-1  flex items-center justify-center gap-1 font-raleway"
+          >
+            {showTimes ? "Hide Travel Times" : "Show Travel Times"}
+            {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
         </div>
-        <button
-          onClick={() => setShowTimes(!showTimes)}
-          className="w-full h-[50px] bg-[#02343F] text-white text-xl py-1  flex items-center justify-center gap-1 font-raleway"
-        >
-          {showTimes ? "Hide Travel Times" : "Show Travel Times"}
-          {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-        </button>
-        <div className="card-body">
+
+        <AnimatePresence initial={false}>
+          {showTimes && (
+            <motion.div
+              key="travel-times"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="absolute w-full top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-gray-100 px-4 py-2 space-y-2 text-lg text-gray-800 border-t border-gray-300 font-raleway"
+            >
+              {property.travelTimes && property.travelTimes.length > 0 ? (
+                <ul className="space-y-1">
+                  {property.travelTimes.map((time, index) => (
+                    <li key={index} className="pt-2">
+                      <span className="text-2xl pr-5">
+                        {time.duration} to{}
+                      </span>
+                      <span className="italic text-2xl">
+                        {searchDestinations[index]?.label || time.destination}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No travel time available</p>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="card-body mt-10">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-3xl font-raleway">{property.location}</h2>
             <div className="flex items-center">

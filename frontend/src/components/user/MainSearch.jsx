@@ -2,23 +2,30 @@ import { MapPinPlusInside, Clock } from "lucide-react";
 import UserAutocomplete from "./UserAutocomplete";
 import { useState } from "react";
 import { useListingStore } from "../../utils/useListingsStore";
+import { useTravelStore } from "../../utils/useTravelStore";
 import { motion, AnimatePresence } from "framer-motion";
 import TransportSelector from "./TransportSelector";
 
 function MainSearch() {
   const [step, setStep] = useState(1);
-  const { searchFilters, setSearchFilters } = useListingStore();
-  const locationEntries = [
-    { key: "location1", ...searchFilters.location1 },
-    { key: "location2", ...searchFilters.location2 },
-    { key: "location3", ...searchFilters.location3 },
-  ];
+  const {
+    setDestinations,
+    getPropertiesWithTravelTime,
+    resetSearchDestinations,
+  } = useTravelStore();
+
+  const modes = ["DRIVING"];
+
+  const handleSearch = async () => {
+    const results = await getPropertiesWithTravelTime(modes);
+    console.log("Properties with Travel Time", results);
+  };
+
   const stepHeading = {
     1: "Help us find the right room for you by adding locations you want to be near.",
     2: "How long would you be willing to travel to each location?",
   };
   const currentHeading = stepHeading[step] || "Start your search";
-  console.log("Search filters:", searchFilters);
   return (
     <div className="h-64  mx-10 my-5 rounded-md px-10 py-3 flex items-center gap-3  shadow-sm  bg-[#02343F]">
       <div className="w-full h-full flex flex-col justify-start items-center py-8">
@@ -39,15 +46,11 @@ function MainSearch() {
                 </div>
                 <UserAutocomplete
                   onPlaceSelect={({ location, latitude, longitude }) =>
-                    setSearchFilters((prev) => ({
-                      ...prev,
-                      location1: {
-                        ...prev.location1,
-                        name: location,
-                        lat: latitude,
-                        lng: longitude,
-                      },
-                    }))
+                    setDestinations({
+                      label: location,
+                      latitude,
+                      longitude,
+                    })
                   }
                   className="w-96 h-16 rounded-md"
                   placeholder="e.g. Workplace"
@@ -67,15 +70,11 @@ function MainSearch() {
                 </div>
                 <UserAutocomplete
                   onPlaceSelect={({ location, latitude, longitude }) =>
-                    setSearchFilters((prev) => ({
-                      ...prev,
-                      location2: {
-                        ...prev.location2,
-                        name: location,
-                        lat: latitude,
-                        lng: longitude,
-                      },
-                    }))
+                    setDestinations({
+                      label: location,
+                      latitude,
+                      longitude,
+                    })
                   }
                   className="w-96 h-16 rounded-md"
                   placeholder="e.g. School"
@@ -94,15 +93,11 @@ function MainSearch() {
                 </div>
                 <UserAutocomplete
                   onPlaceSelect={({ location, latitude, longitude }) =>
-                    setSearchFilters((prev) => ({
-                      ...prev,
-                      location3: {
-                        ...prev.location3,
-                        name: location,
-                        lat: latitude,
-                        lng: longitude,
-                      },
-                    }))
+                    setDestinations({
+                      label: location,
+                      latitude,
+                      longitude,
+                    })
                   }
                   className="w-96 h-16 rounded-md"
                   placeholder="e.g. Gym"
@@ -113,6 +108,7 @@ function MainSearch() {
               <button
                 type="button"
                 className="btn w-44 h-16 rounded-md font-raleway"
+                onClick={handleSearch}
               >
                 Next
               </button>

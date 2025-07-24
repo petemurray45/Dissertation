@@ -58,7 +58,7 @@ function PropertyCarousel({ properties }) {
       <h2 className="text-5xl sm:text-5xl py-12 px-8 text-center font-raleway font-thin">
         Featured Properties
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
         {properties
           .slice(0, showAll ? properties.length : 6)
           .map((property) => (

@@ -66,6 +66,14 @@ export const useListingStore = create((set, get) => ({
     wifi: "",
   },
 
+  updatePropertyTravelTimes: (travelTimeResults) => {
+    const updated = get().properties.map((property) => {
+      const match = travelTimeResults.find((p) => p.id === property.id);
+      return match ? { ...property, travelTimes: match.travelTimes } : property;
+    });
+    set({ properties: updated });
+  },
+
   setSearchFilters: (update) => {
     set((state) => ({
       searchFilters:
