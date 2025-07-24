@@ -22,6 +22,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
     getTravelTimeForProperty,
     setSelectedTravelTime,
     searchDestinations,
+    setSearchedDestination,
   } = useTravelStore();
   const { user } = useUserStore();
 
@@ -75,7 +76,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="h-[400px] flex flex-col flex-grow relative bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s max-h-[500px] min-h-[500px] min-w-[300px] border-2 border-gray-200 rounded-lg">
+      <div className="h-auto flex flex-col flex-grow relative bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s border-2 border-gray-200 rounded-lg">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -130,7 +131,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
           <button
             onClick={() => setShowTimes(!showTimes)}
-            className="w-full h-[50px] bg-[#02343F] text-white text-xl py-1  flex items-center justify-center gap-1 font-raleway"
+            className="w-full sm:h-12 md:h-12 bg-[#02343F] text-white sm:text-sm md:text-xl py-1  flex items-center justify-center gap-1 font-raleway"
           >
             {showTimes ? "Hide Travel Times" : "Show Travel Times"}
             {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -145,7 +146,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute w-full top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-gray-100 px-4 py-2 space-y-2 text-lg text-gray-800 border-t border-gray-300 font-raleway"
+              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 py-2 space-y-2 text-lg text-white border-t border-gray-300 font-raleway"
             >
               {property.travelTimes && property.travelTimes.length > 0 ? (
                 <ul className="space-y-1">
@@ -167,23 +168,27 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           )}
         </AnimatePresence>
 
-        <div className="card-body mt-10">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-3xl font-raleway">{property.location}</h2>
-            <div className="flex items-center">
-              <span className="bg-[#02343F] text-white px-2 py-1 text-xl font-raleway">
+        <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left px-4 pt-6">
+          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2">
+            <h2 className="w-full flex flex-col sm:flex-row sm:text-xl md:text-4xl justify-between items-center gap-2 mb-2 sm:mt-5 md:mt-20">
+              {property.location}
+            </h2>
+            <div className="sm:h-8 flex items-center">
+              <span className="bg-[#02343F] text-white px-2 py-1 text-sm sm:text-md md:text-xl font-raleway">
                 Price
               </span>
-              <span className="bg-[#f0edcc] px-2 py-1 text-xl font-semibold font-raleway">
+              <span className="bg-[#f0edcc] px-2 py-1 text-sm sm:text-md md:text-xl font-semibold font-raleway">
                 £{property.price_per_month}pm
               </span>
             </div>
           </div>
-          <p className="font-raleway text-2xl mb-4">{property.title}</p>
+          <p className="font-raleway sm:text-xl md:text-2xl sm:mb-2 md:mb-4 text-center">
+            {property.title}
+          </p>
 
           <button
             type="button"
-            className="absolute bottom-4 right-7 rounded-md w-32 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-xl font-thin"
+            className="w-full sm:w-96 md:w-32 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-md md:text-xl font-thin mt-2 rounded-md"
             onClick={() => handleSelect(property)}
           >
             View

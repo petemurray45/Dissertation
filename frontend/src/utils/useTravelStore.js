@@ -11,7 +11,7 @@ export const useTravelStore = create((set, get) => ({
   placesLoading: false,
   placesError: null,
   selectedTravelTime: null,
-  searchedDestination: null,
+  searchedDestination: false,
 
   setDestinations: (destination) => {
     const current = get().searchDestinations;
@@ -21,6 +21,8 @@ export const useTravelStore = create((set, get) => ({
     }
   },
 
+  setSearchedDestination: (value) => set({ searchedDestination: value }),
+
   resetSearchDestinations: () => set({ searchDestinations: [] }),
 
   setSelectedTravelTime: (travelTime) =>
@@ -29,7 +31,6 @@ export const useTravelStore = create((set, get) => ({
   getPropertiesWithTravelTime: async (modes) => {
     try {
       const destinations = get().searchDestinations;
-      console.log(destinations);
 
       const { data } = await axios.post(
         `${BASE_URL}/api/properties/travel-time`,

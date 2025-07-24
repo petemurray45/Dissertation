@@ -14,34 +14,11 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
 
 function MapSearch({ property }) {
-  const travelResults = useTravelStore((state) => state.travelResults);
-
-  const [selectedTransport, setSelectedTransport] = useState([
-    null,
-    null,
-    null,
-  ]);
-  const [destinations, setDestinations] = useState([
-    { lat: null, lng: null },
-    {},
-    {},
-  ]);
+  const { searchDestinations } = useTravelStore();
+  const [activeIndex, setActiveIndex] = useState(null); // to highlight selected
+  const [durations, setDurations] = useState([]); // store travel times by index
   const [directions, setDirections] = useState({});
-
-  const modeIcons = {
-    car: (
-      <FaCar className="text-gray-500 text-[20px] size-10 hover:text-gray-700" />
-    ),
-    bus: (
-      <FaBus className="text-gray-500 text-[20px] size-10 hover:text-gray-700" />
-    ),
-    walking: (
-      <FaWalking className="text-gray-500 text-[20px] size-10 hover:text-gray-700" />
-    ),
-    bicycle: (
-      <IoIosBicycle className="text-gray-500 text-[20px] size-10 hover:text-gray-700" />
-    ),
-  };
+  const [clickedIndex, setClickedIndex] = useState(null);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -49,18 +26,6 @@ function MapSearch({ property }) {
   });
 
   if (!isLoaded) return <div className="loading loading-spinner" />;
-
-  const handleInputChange = (index, place) => {
-    const newDestinations = [...destinations];
-    newDestinations[index] = place;
-    setDestinations(newDestinations);
-  };
-
-  const handleTransportSelect = (index, mode) => {
-    const newSelectedTransports = [...selectedTransport];
-    newSelectedTransports[index] = mode;
-    setSelectedTransport(newSelectedTransports);
-  };
 
   const center = {
     lat: property.latitude,
@@ -73,22 +38,41 @@ function MapSearch({ property }) {
   };
 
   const containerStyle = {
-    width: "70%",
-    height: "400px",
+    width: "100%",
+    height: "500px",
   };
 
-  const showRoute = (destination) => {
+  const handleClick = (index) => {
+    setClickedIndex(index);
+    setActiveIndex(index);
+    setTimeout(() => setClickedIndex(null), 400); // reset after animation
+  };
+
+  const showRoute = (destination, index) => {
+    handleClick(index);
     const service = new window.google.maps.DirectionsService();
+
+    const destinationLatLng = {
+      lat: destination.latitude,
+      lng: destination.longitude,
+    };
     service.route(
       {
         origin: origin,
-        destination: destination,
+        destination: destinationLatLng,
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
         if (status === "OK") {
           console.log("Route result:", result);
           setDirections(result);
+          setActiveIndex(index);
+          const duration = result.routes[0].legs[0].duration.text;
+          setDurations((prev) => {
+            const updated = [...prev];
+            updated[index] = duration;
+            return updated;
+          });
         } else {
           console.error("Route Failed");
         }
@@ -98,60 +82,30 @@ function MapSearch({ property }) {
 
   return (
     <>
-      <div className="h-auto   shadow-xl  border-2 mb-10  mx-20  rounded-2xl font-raleway">
-        <div className="flex flex-row w-full h-full p-8 gap-10 ">
+      <div className=" mb-10  mx-20  rounded-2xl font-raleway">
+        <div className="flex flex-col w-full p-8 gap-10 ">
           {/* sidebar for inputs */}
-          <div className="flex flex-col md:w-1/2 pr-14 gap-10 w-full h-full  rounded-2xl ">
+          <div className="flex flex-col gap-10 w-full h-full  rounded-2xl ">
             <h1 className="text-3xl text-black">{property.location}</h1>
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="flex space-x-2 items-center justify-between"
-              >
-                <UserAutocomplete
-                  onPlaceSelect={(place) => {
-                    const lat = place.latitude;
-                    const lng = place.longitude;
-                    handleInputChange(index, { lat, lng });
-                  }}
-                  className="rounded-md border-2 mr-10"
-                />
-                <div className="dropdown dropdown-bottom relative">
-                  <label
-                    tabIndex={0}
-                    className="btn m-1 rounded-md h-14 w-28 border-2 border-[#02343F]"
-                  >
-                    {selectedTransport[index]
-                      ? modeIcons[selectedTransport[index]]
-                      : "Transport"}
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content absolute z-[1] left-1/2 transform -translate-x-1/2  menu p-2 shadow bg-base-100 rounded-box w-auto border-2 border-[#02343F] justify-center"
-                  >
-                    <li onClick={() => handleTransportSelect(index, "car")}>
-                      <FaCar className="text-gray-500 text-[20px] size-16 hover:text-gray-700" />
-                    </li>
-                    <li onClick={() => handleTransportSelect(index, "bus")}>
-                      <FaBus className="text-gray-500 text-[20px] size-16 hover:text-gray-700" />
-                    </li>
-                    <li onClick={() => handleTransportSelect(index, "walking")}>
-                      <FaWalking className="text-gray-500 text-[20px] size-16 hover:text-gray-700" />
-                    </li>
-                    <li onClick={() => handleTransportSelect(index, "bicycle")}>
-                      <IoIosBicycle className="text-gray-500 text-[20px] size-16 hover:text-gray-700" />
-                    </li>
-                  </ul>
-                </div>
+            <div className="flex  justify-between w-full gap-20">
+              {searchDestinations.map((dest, index) => (
                 <button
-                  className="btn btn-primary rounded-md h-14 bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black"
-                  type="button"
-                  onClick={() => showRoute(destinations[index])}
+                  key={dest.label}
+                  onClick={() => {
+                    showRoute(dest, index);
+                  }}
+                  className={`  w-full h-20 border border-gray-200 rounded-md hover:bg-[#02343F] text-2xl text-gray-400 ${
+                    activeIndex === index
+                      ? "bg-[#02343F] text-white "
+                      : "btn-outline text-[#02343F]"
+                  } ${clickedIndex === index ? "animate-beat" : ""}`}
                 >
-                  SHOW ROUTE
+                  {activeIndex === index && durations[index]
+                    ? durations[index] + " drive" // show time only if selected
+                    : dest.label}{" "}
                 </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           <GoogleMap
             mapContainerStyle={containerStyle}

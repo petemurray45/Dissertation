@@ -25,22 +25,24 @@ function App() {
 
   return (
     <>
-      <Routes>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/addproperty" element={<AdminAddProperty />} />
-        <Route path="/admin/property/:id" element={<AdminProductPage />} />
-        <Route path="*" element={<Navigate to="/admin" />} />
-        {/* User Routes */}
-        <Route path="/" element={<Layout />}>
-          <Route path="home" element={<UserDashboard />} />
-          <Route path="properties" element={<PropertyPage />} />
-          <Route path="properties/:id" element={<ViewListing />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
+      <div className="overflow-x-hidden">
+        <Routes>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/addproperty" element={<AdminAddProperty />} />
+          <Route path="/admin/property/:id" element={<AdminProductPage />} />
+          <Route path="*" element={<Navigate to="/admin" />} />
+          {/* User Routes */}
+          <Route path="/" element={<Layout />}>
+            <Route path="home" element={<UserDashboard />} />
+            <Route path="properties" element={<PropertyPage />} />
+            <Route path="properties/:id" element={<ViewListing />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        <Route path="*" element={<Navigate to="/home" />} />
-        <Route path="/login" element={<UserLogin />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/home" />} />
+          <Route path="/login" element={<UserLogin />} />
+        </Routes>
+      </div>
     </>
   );
 }

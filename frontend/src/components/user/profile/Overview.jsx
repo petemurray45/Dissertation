@@ -1,8 +1,10 @@
 import house from "../../../assets/house.png";
 import search from "../../../assets/searchheart.png";
 import notes from "../../../assets/notes.png";
+import { useUserStore } from "../../../utils/useUserStore";
 
 function Overview() {
+  const { likedPropertyIds } = useUserStore();
   return (
     <>
       <div className="bg-gray-200 rounded-xl min-h-[600px] mx-20 my-20 border-2 border-gray-300 shadow-lg">
@@ -19,7 +21,7 @@ function Overview() {
                 You have saved
               </p>
               <p className="text-3xl text-center font-raleway text-gray-500 pt-5">
-                0 PROPERTIES
+                {likedPropertyIds.length} PROPERTIES
               </p>
             </div>
           </div>

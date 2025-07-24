@@ -69,21 +69,20 @@ function SearchDrawer() {
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-medium">
-                  Essential Location
+                  Sort By
                 </span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                   <House className="size-5" />
                 </div>
-                <UserAutocomplete
-                  onPlaceSelect={({ location, latitude, longitude }) =>
-                    setSearchFilters((prev) => ({
-                      ...prev,
-                      location,
-                      latitude,
-                      longitude,
-                    }))
+                <input
+                  type="text"
+                  placeholder="Max Price"
+                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                  value={searchFilters.minPrice}
+                  onChange={(e) =>
+                    setSearchFilters({ minPrice: e.target.value })
                   }
                 />
               </div>
