@@ -21,21 +21,30 @@ import {
 
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
-  const { searchFilters, setSearchFilters } = useListingStore();
+  const {
+    pendingFilters,
+    setPendingFilters,
+    applyFilters,
+    setSearchSubmitted,
+    syncFilters,
+    setLoading,
+    loading,
+  } = useListingStore();
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("Location at search time", location);
 
-    onSearch({
-      location,
-      maxTravelTime,
-      minPrice,
-      maxPrice,
-    });
-
-    setSearchSubmitted(true);
-    setSearchedLocation(location);
+    try {
+      setLoading(true);
+      useListingStore.setState({ loading: true });
+      await syncFilters();
+      await applyFilters();
+      setSearchSubmitted(true);
+    } catch (err) {
+      console.log("Error syncing filters", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,22 +78,31 @@ function SearchDrawer() {
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-medium">
-                  Sort By
+                  Sort By (Price)
                 </span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                   <House className="size-5" />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Max Price"
-                  className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={searchFilters.minPrice}
+                <select
+                  name="sortBy"
+                  className="select select-bordered w-full pl-10"
+                  placeholder="Low to high"
+                  value={pendingFilters.sortBy}
                   onChange={(e) =>
-                    setSearchFilters({ minPrice: e.target.value })
+                    setPendingFilters({ sortBy: e.target.value })
                   }
-                />
+                >
+                  <option
+                    value=""
+                    className="font-raleway"
+                    disabled
+                    selected
+                  ></option>
+                  <option value="price_low_high">Low to high</option>
+                  <option value="price_high_low">High to low</option>
+                </select>
               </div>
             </div>
 
@@ -102,9 +120,9 @@ function SearchDrawer() {
                   type="number"
                   placeholder="Max Price"
                   className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={searchFilters.maxPrice}
+                  value={pendingFilters.maxPrice}
                   onChange={(e) =>
-                    setSearchFilters({ maxPrice: e.target.value })
+                    setPendingFilters({ maxPrice: e.target.value })
                   }
                 />
               </div>
@@ -123,11 +141,11 @@ function SearchDrawer() {
 
                 <input
                   type="number"
-                  placeholder="Max Price"
+                  placeholder="Min Price"
                   className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
-                  value={searchFilters.minPrice}
+                  value={pendingFilters.minPrice}
                   onChange={(e) =>
-                    setSearchFilters({ minPrice: e.target.value })
+                    setPendingFilters({ minPrice: e.target.value })
                   }
                 />
               </div>
@@ -144,12 +162,12 @@ function SearchDrawer() {
                   <BedDouble className="size-5" />
                 </div>
                 <select
-                  name="bedType"
+                  name="bed_type"
                   className="select select-bordered w-full pl-10"
                   placeholder="Pick a bed type"
-                  value={searchFilters.bedType}
+                  value={pendingFilters.bed_type}
                   onChange={(e) =>
-                    setSearchFilters({ bedType: e.target.value })
+                    setPendingFilters({ bed_type: e.target.value })
                   }
                 >
                   <option
@@ -179,12 +197,12 @@ function SearchDrawer() {
                 </div>
 
                 <select
-                  name="propertyType"
+                  name="property_type"
                   className="select select-bordered w-full pl-10"
                   placeholder="Pick a bed type"
-                  value={searchFilters.propertyType}
+                  value={pendingFilters.property_type}
                   onChange={(e) =>
-                    setSearchFilters({ propertyType: e.target.value })
+                    setPendingFilters({ property_type: e.target.value })
                   }
                 >
                   <option className="font-raleway" disabled selected></option>
@@ -211,14 +229,14 @@ function SearchDrawer() {
                 <select
                   name="ensuite"
                   className="select select-bordered w-full pl-10"
-                  value={searchFilters.ensuite}
+                  value={pendingFilters.ensuite}
                   onChange={(e) => {
-                    setSearchFilters({ ensuite: e.target.value });
+                    setPendingFilters({ ensuite: e.target.value });
                   }}
                 >
                   <option className="font-raleway" disabled selected></option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </div>
             </div>
@@ -235,9 +253,9 @@ function SearchDrawer() {
                 <select
                   name="wifi"
                   className="select select-bordered w-full pl-10"
-                  value={searchFilters.wifi}
+                  value={pendingFilters.wifi}
                   onChange={(e) => {
-                    setSearchFilters({ wifi: e.target.value });
+                    setPendingFilters({ wifi: e.target.value });
                   }}
                 >
                   <option
@@ -246,8 +264,8 @@ function SearchDrawer() {
                     disabled
                     selected
                   ></option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </div>
             </div>
@@ -263,14 +281,14 @@ function SearchDrawer() {
                 <select
                   name="pets"
                   className="select select-bordered w-full pl-10"
-                  value={searchFilters.pets}
+                  value={pendingFilters.pets}
                   onChange={(e) => {
-                    setSearchFilters({ pets: e.target.value });
+                    setPendingFilters({ pets: e.target.value });
                   }}
                 >
                   <option className="font-raleway" disabled selected></option>
-                  <option>Yes</option>
-                  <option>No</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </div>
             </div>
@@ -283,7 +301,11 @@ function SearchDrawer() {
               form="advancedSearch"
               className="btn h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black"
             >
-              Apply
+              {loading ? (
+                <span className="loading loading-spinner loading-md" />
+              ) : (
+                "Apply"
+              )}
             </button>
           </div>
         </div>

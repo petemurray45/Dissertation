@@ -8,6 +8,7 @@ const BASE_URL = "http://localhost:3000";
 export const useListingStore = create((set, get) => ({
   // properties state
   properties: [],
+  filteredProperties: [],
   loading: false,
   error: null,
   location: "",
@@ -23,9 +24,9 @@ export const useListingStore = create((set, get) => ({
     title: "",
     description: "",
     price_per_month: "",
-    propertyType: "",
+    property_type: "",
     ensuite: "",
-    bedType: "",
+    bed_type: "",
     wifi: "",
     pets: "",
     location: "",
@@ -35,36 +36,28 @@ export const useListingStore = create((set, get) => ({
   },
 
   searchFilters: {
-    location1: {
-      name: "",
-      lat1: "",
-      lat2: "",
-      lat3: "",
-      maxTravelTime: "",
-    },
-    location2: {
-      name: "",
-      lat1: "",
-      lat2: "",
-      lat3: "",
-      maxTravelTime: "",
-    },
-    location3: {
-      name: "",
-      lat1: "",
-      lat2: "",
-      lat3: "",
-      maxTravelTime: "",
-    },
-
+    sortBy: "",
     maxPrice: 0,
     minPrice: 0,
-    propertyType: "",
-    bedType: "",
+    property_type: "",
+    bed_type: "",
     ensuite: "",
     pets: "",
     wifi: "",
   },
+
+  pendingFilters: {
+    sortBy: "",
+    minPrice: 0,
+    maxPrice: 0,
+    property_type: "",
+    bed_type: "",
+    ensuite: "",
+    pets: "",
+    wifi: "",
+  },
+
+  setLoading: (value) => set({ loading: value }),
 
   updatePropertyTravelTimes: (travelTimeResults) => {
     const updated = get().properties.map((property) => {
@@ -74,11 +67,53 @@ export const useListingStore = create((set, get) => ({
     set({ properties: updated });
   },
 
-  setSearchFilters: (update) => {
+  setPendingFilters: (updates) =>
     set((state) => ({
-      searchFilters:
-        typeof update === "function" ? update(state.searchFilters) : update,
-    }));
+      pendingFilters: { ...state.pendingFilters, ...updates },
+    })),
+
+  applyFilters: () => {
+    set((state) => {
+      const {
+        minPrice,
+        maxPrice,
+        property_type,
+        bed_type,
+        ensuite,
+        pets,
+        wifi,
+        sortBy,
+      } = state.searchFilters;
+
+      const min = Number(minPrice);
+      const max = Number(maxPrice);
+
+      const filtered = [...state.properties]
+        .filter((p) => {
+          return (
+            (!min || p.price_per_month >= min) &&
+            (!max || p.price_per_month <= max) &&
+            (!property_type || p.property_type === property_type) &&
+            (!bed_type || p.bed_type === bed_type) &&
+            (!ensuite || p.ensuite === (ensuite === "no")) &&
+            (!pets || p.pets === (pets !== "no")) &&
+            (!wifi || p.wifi === (wifi !== "no"))
+          );
+        })
+        .sort((a, b) => {
+          if (sortBy === "price_low_high")
+            return a.price_per_month - b.price_per_month;
+          if (sortBy === "price_high_low")
+            return b.price_per_month - a.price_per_month;
+          return 0;
+        });
+      return { filteredProperties: filtered };
+    });
+  },
+
+  syncFilters: () => {
+    const { pendingFilters } = get();
+    set({ searchFilters: { ...pendingFilters } });
   },
 
   setFormData: (update) => {

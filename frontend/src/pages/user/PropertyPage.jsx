@@ -10,17 +10,19 @@ import MainSearch from "../../components/user/MainSearch";
 function PropertyPage() {
   const {
     properties,
+    filteredProperties,
     loading,
     error,
     fetchProperties,
     searchSubmitted,
-    searchedLocation,
+    setSearchSubmitted,
   } = useListingStore();
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
 
   useEffect(() => {
     fetchProperties();
+    setSearchSubmitted(false);
   }, [fetchProperties]);
 
   const toggleLike = async (property) => {
@@ -33,23 +35,16 @@ function PropertyPage() {
     }
   };
 
-  console.log(properties);
+  console.log(
+    "search submitted:",
+    searchSubmitted,
+    "filtered properties:",
+    filteredProperties
+  );
 
-  const sortedProperties = properties
-    .map((property) => {
-      const travelTimeStr = property.travelTime ?? "";
-      const travelTimeParsed = parseInt(
-        travelTimeStr.replace(/[^\d]/g, ""),
-        10
-      );
-      return {
-        ...property,
-        travelTimeMinutes: isNaN(travelTimeParsed)
-          ? Infinity
-          : travelTimeParsed,
-      };
-    })
-    .sort((a, b) => a.travelTimeMinutes - b.travelTimeMinutes);
+  const propertyList = searchSubmitted ? filteredProperties : properties;
+
+  console.log(properties);
 
   return (
     <>
@@ -74,16 +69,9 @@ function PropertyPage() {
           <SearchDrawer />
         </div>
 
-        {searchSubmitted && searchedLocation && (
-          <h1 className="sm:text-xl md:text-4xl  text-black text-center mt-[4%]  sm:mt-[6%] font-raleway font-thin">
-            Showing properties near {searchedLocation.location}
-            <span className="text-[#02343F]"></span>
-          </h1>
-        )}
-
         <div className="w-full">
           {error && <div className="alert alert-error mb-8">{error}</div>}
-          {properties.length === 0 && !loading && (
+          {propertyList.length === 0 && !loading && (
             <div className="flex flex-col justify-center items-center h-96 space-y-4">
               <div className="bg-base-100 rounded-full p-6">
                 <PackageIcon className="size-12" />
@@ -102,7 +90,7 @@ function PropertyPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10">
-              {sortedProperties.map((property) => (
+              {propertyList.map((property) => (
                 <PropertyTile
                   property={property}
                   key={property.id}
