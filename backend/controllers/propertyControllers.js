@@ -4,12 +4,12 @@ import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import { type } from "os";
 import { Resend } from "resend";
+import { sendEnquiryConfirmation } from "../utils/sendEmail.js";
+
 dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const getAllProperties = async (req, res) => {
   const { minPrice = 0, maxPrice = 10000 } = req.query;
@@ -485,6 +485,14 @@ export const insertEnquiries = async (req, res) => {
     await sql`INSERT INTO enquiries (property_id, user_id, full_name, email, message) VALUES (${property_id}, ${
       user_id || null
     }, ${full_name}, ${email}, ${message})`;
+
+    const propertyRequest =
+      await sql`SELECT location FROM properties WHERE id = ${property_id}`;
+
+    const propertyTitle = propertyRequest[0]?.location || "a property.";
+
+    await sendEnquiryConfirmation(email, full_name, propertyTitle);
+
     res.status(201).json({ success: true });
   } catch (err) {
     console.error("Error inserting enquiry", err);
