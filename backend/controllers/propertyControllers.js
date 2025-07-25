@@ -3,10 +3,13 @@ import axios from "axios";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import { type } from "os";
+import { Resend } from "resend";
 dotenv.config();
 
 const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const getAllProperties = async (req, res) => {
   const { minPrice = 0, maxPrice = 10000 } = req.query;
@@ -468,5 +471,35 @@ export const getPlaces = async (req, res) => {
   } catch (err) {
     console.error("Error fetching places", err);
     res.status(500).json({ error: "Failed to get nearby places" });
+  }
+};
+
+export const insertEnquiries = async (req, res) => {
+  const { property_id, full_name, email, message, user_id } = req.body;
+
+  if (!property_id || !full_name || !email || !message) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    await sql`INSERT INTO enquiries (property_id, user_id, full_name, email, message) VALUES (${property_id}, ${
+      user_id || null
+    }, ${full_name}, ${email}, ${message})`;
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error("Error inserting enquiry", err);
+    res.status(500).json({ error: "Failed to create enquiry" });
+  }
+};
+
+export const getEnquiries = async (req, res) => {
+  const { user_id } = req.params;
+  try {
+    const result =
+      await sql`SELECT * FROM enquiries WHERE user_id = ${user_id} ORDER BY created_at DESC`;
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error getting enquiries", err);
+    res.status(500).json({ error: "Failed to fetch enquiries" });
   }
 };

@@ -7,6 +7,8 @@ import { updateProperty } from "../controllers/propertyControllers.js";
 import { deleteProperty } from "../controllers/propertyControllers.js";
 import { getPropertiesWithTravelTime } from "../controllers/propertyControllers.js";
 import { getPlaces } from "../controllers/propertyControllers.js";
+import { insertEnquiries } from "../controllers/propertyControllers.js";
+import { getEnquiries } from "../controllers/propertyControllers.js";
 
 const router = express.Router();
 
@@ -15,6 +17,8 @@ router.post("/travel-time", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 router.post("/", createProperty);
 router.get("/places", getPlaces);
+router.post("/insert-enquiry", insertEnquiries);
+router.get("/get-enquiry", getEnquiries);
 router.put("/:id", updateProperty);
 router.delete("/:id", deleteProperty);
 router.get("/:id", getProperty);

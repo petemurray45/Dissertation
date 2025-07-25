@@ -5,6 +5,7 @@ import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
 import SearchDrawer from "../../components/user/SearchDrawer";
 import { useUserStore } from "../../utils/useUserStore";
+import { useTravelStore } from "../../utils/useTravelStore";
 import MainSearch from "../../components/user/MainSearch";
 
 function PropertyPage() {
@@ -19,9 +20,11 @@ function PropertyPage() {
   } = useListingStore();
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
+  const { resetSearchDestinations } = useTravelStore();
 
   useEffect(() => {
     fetchProperties();
+    resetSearchDestinations();
     setSearchSubmitted(false);
   }, [fetchProperties]);
 

@@ -270,4 +270,17 @@ export const useListingStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+
+  addEnquiry: async (payload) => {
+    set({ loading: true });
+
+    try {
+      console.log("Payload recieved", payload);
+      await axios.post(`${BASE_URL}/api/properties/insert-enquiry`, payload);
+    } catch (err) {
+      console.log("Error inserting property", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));

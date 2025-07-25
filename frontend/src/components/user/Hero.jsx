@@ -10,7 +10,7 @@ function Hero() {
   const navigate = useNavigate();
   return (
     <>
-      <div className="relative ">
+      <div className="relative font-raleway ">
         <div className=" object-cover  w-[100%] ">
           <div className="relative  h-[300px]">
             <img
