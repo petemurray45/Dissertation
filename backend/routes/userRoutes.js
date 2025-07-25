@@ -8,8 +8,8 @@ import { removeLike } from "../controllers/userControllers.js";
 const router = express.Router();
 
 router.post("/likes", authenticate, addToLikes);
-router.get("/checkLikes", authenticate, checkLikes);
+router.get("/checkLikes", checkLikes);
 router.get("/getLikes", authenticate, getAllLikedProperties);
-router.delete("/removelike", removeLike);
+router.delete("/removelike", authenticate, removeLike);
 
 export default router;

@@ -56,7 +56,7 @@ function LikedProperties() {
         Liked Properties
       </h1>
       <div className="mx-20 my-10 rounded-lg">
-        <div className="w-full grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 h-full">
+        <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 h-full gap-10">
           {likedProperties.map((property) => (
             <PropertyTile
               property={property}

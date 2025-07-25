@@ -9,6 +9,7 @@ import MapSearch from "../../components/user/MapSearch";
 import Description from "../../components/user/Description";
 import SecondaryNav from "../../components/user/navs/secondaryNav";
 import PlacesSection from "../../components/user/PlacesSection";
+import Enquire from "../../components/user/Enquire";
 import { useEffect, useState } from "react";
 import { useUserStore } from "../../utils/useUserStore";
 
@@ -58,6 +59,7 @@ function ViewListing() {
         lng={currentProperty.longitude}
       />
     ),
+    enquire: <Enquire />,
   };
 
   const toggleLike = async (property) => {

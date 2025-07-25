@@ -57,7 +57,7 @@ function PropertyPage() {
                 Designed to find a room that suits ALL of your life.
               </h1>
               <h2 className="sm:text-4xl md:text-4xl text-center text-white text-shadow-xl pt-5 pb-10">
-                Open our tailored search function below to begin!
+                Use our tailored search function below to begin!
               </h2>
             </div>
           </div>

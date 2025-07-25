@@ -22,6 +22,7 @@ function UserDashboard() {
     <div className="overflow-x-hidden ">
       <NavBar />
       <Hero />
+      <div className="h-[170px]" />
       <div className="w-full">
         {error && <div className="alert alert-error mb-8">{error}</div>}
         {properties.length === 0 && !loading && (
@@ -40,8 +41,7 @@ function UserDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className="w-full pt-20 ">
-            <Search />
+          <div className=" pt-20 ">
             <PropertyCarousel properties={properties} />
             <LocationCarousel />
             <div className="divider my-20 bg-gray-00 h-[10px]" />
