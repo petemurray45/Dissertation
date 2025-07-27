@@ -10,6 +10,7 @@ import Description from "../../components/user/Description";
 import SecondaryNav from "../../components/user/navs/secondaryNav";
 import PlacesSection from "../../components/user/PlacesSection";
 import EnquireForm from "../../components/user/EnquireForm";
+import MakeNote from "../../components/user/MakeNote";
 import { useEffect, useState } from "react";
 import { useUserStore } from "../../utils/useUserStore";
 
@@ -60,6 +61,7 @@ function ViewListing() {
       />
     ),
     enquire: <EnquireForm property={currentProperty} />,
+    notes: <MakeNote />,
   };
 
   const toggleLike = async (property) => {

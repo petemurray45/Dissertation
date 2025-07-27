@@ -33,8 +33,6 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   const navigate = useNavigate();
 
   const handleSelect = (property) => {
-    const travelTime = getTravelTimeForProperty(property.id);
-    setSelectedTravelTime(travelTime);
     navigate(`/properties/${property.id}`, {
       state: { property }, // passing property object to user property page
     });

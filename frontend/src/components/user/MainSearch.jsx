@@ -12,12 +12,19 @@ function MainSearch() {
     setDestinations,
     getPropertiesWithTravelTime,
     setSearchedDestination,
+    loading,
   } = useTravelStore();
+
+  const { setSearchSubmitted } = useListingStore();
 
   const modes = ["DRIVING"];
 
   const handleSearch = async () => {
     const results = await getPropertiesWithTravelTime(modes);
+    useListingStore.getState().setProperties(results);
+    useListingStore.getState().applyFilters();
+    setSearchSubmitted(true);
+
     setSearchedDestination(true);
 
     console.log("Properties with Travel Time", results);
@@ -106,15 +113,21 @@ function MainSearch() {
                 />
               </div>
             </div>
-            <div className="flex justify-center items-center  pt-10 w-full ">
-              <button
-                type="button"
-                className="bg-white w-full sm:h-16 md:h-16 rounded-md font-raleway mt-3 sm:text-2xl md:text-3xl text-[#02343F] hover:bg-[#F0EDCC]"
-                onClick={handleSearch}
-              >
-                Next
-              </button>
-            </div>
+            {!loading ? (
+              <div className="flex justify-center items-center  pt-10 w-full ">
+                <button
+                  type="button"
+                  className="bg-white w-full sm:h-16 md:h-16 rounded-md font-raleway mt-3 sm:text-2xl md:text-3xl text-[#02343F] hover:bg-[#F0EDCC]"
+                  onClick={handleSearch}
+                >
+                  Next
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center  pt-10 w-full ">
+                <div className="loading loading-spinner text-white text-xl" />
+              </div>
+            )}
           </form>
         </div>
         {/*}

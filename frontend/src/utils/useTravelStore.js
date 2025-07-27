@@ -12,6 +12,7 @@ export const useTravelStore = create((set, get) => ({
   placesError: null,
   selectedTravelTime: null,
   searchedDestination: false,
+  loading: false,
 
   setDestinations: (destination) => {
     const current = get().searchDestinations;
@@ -21,6 +22,8 @@ export const useTravelStore = create((set, get) => ({
     }
   },
 
+  setLoading: (value) => set({ loading: value }),
+
   setSearchedDestination: (value) => set({ searchedDestination: value }),
 
   resetSearchDestinations: () => set({ searchDestinations: [] }),
@@ -29,6 +32,7 @@ export const useTravelStore = create((set, get) => ({
     set({ selectedTravelTime: travelTime }),
 
   getPropertiesWithTravelTime: async (modes) => {
+    set({ loading: true });
     try {
       const destinations = get().searchDestinations;
 
@@ -48,14 +52,9 @@ export const useTravelStore = create((set, get) => ({
       return data;
     } catch (err) {
       console.log("Error fetching travel times from backend", err);
+    } finally {
+      set({ loading: false });
     }
-  },
-
-  getTravelTimeForProperty: async (propertyId) => {
-    const travelResults = useTravelStore.getState().travelResults;
-    return (
-      travelResults.find((prop) => prop.id === propertyId)?.travelTime || null
-    );
   },
 
   getTravelTimesForAllRoutes: async (origin) => {

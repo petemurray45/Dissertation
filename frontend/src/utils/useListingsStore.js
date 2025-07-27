@@ -162,6 +162,8 @@ export const useListingStore = create((set, get) => ({
         searchSubmitted: true,
         loading: false,
       });
+      get().applyFilters();
+      set({ searchSubmitted: true });
       console.log(properties);
     } catch (err) {
       console.log("Error fetching properties with travel times", err);

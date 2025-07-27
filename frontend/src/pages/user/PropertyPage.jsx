@@ -1,5 +1,5 @@
 import { useListingStore } from "../../utils/useListingsStore";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
@@ -7,6 +7,7 @@ import SearchDrawer from "../../components/user/SearchDrawer";
 import { useUserStore } from "../../utils/useUserStore";
 import { useTravelStore } from "../../utils/useTravelStore";
 import MainSearch from "../../components/user/MainSearch";
+import { has } from "lodash";
 
 function PropertyPage() {
   const {
@@ -21,12 +22,29 @@ function PropertyPage() {
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const { resetSearchDestinations } = useTravelStore();
+  const hasMounted = useRef(false);
 
   useEffect(() => {
     fetchProperties();
     resetSearchDestinations();
     setSearchSubmitted(false);
   }, [fetchProperties]);
+
+  const propertyList = searchSubmitted ? filteredProperties : properties;
+
+  useEffect(() => {
+    console.log("Searched submitted?:", searchSubmitted);
+    if (hasMounted.current) {
+      if (searchSubmitted && propertyList.length > 0) {
+        setTimeout(() => {
+          const resultsSection = document.getElementById("results");
+          resultsSection?.scrollIntoView({ behavior: "smooth" });
+        }, 200);
+      }
+    } else {
+      hasMounted.current = true;
+    }
+  }, [searchSubmitted, propertyList]);
 
   const toggleLike = async (property) => {
     if (!user) return;
@@ -44,8 +62,6 @@ function PropertyPage() {
     "filtered properties:",
     filteredProperties
   );
-
-  const propertyList = searchSubmitted ? filteredProperties : properties;
 
   console.log(properties);
 
@@ -92,7 +108,10 @@ function PropertyPage() {
               <div className="loading loading-spinner loading-lg" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10 md:pt-32"
+              id="results"
+            >
               {propertyList.map((property) => (
                 <PropertyTile
                   property={property}

@@ -511,3 +511,32 @@ export const getEnquiries = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch enquiries" });
   }
 };
+
+export const addNote = async (req, res) => {
+  const { user_id, property_id, content } = req.body;
+
+  if (!user || !property_id || !content) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    await sql`INSERT INTO notes (user_id, property_id, content) VALUES (${user_id}, ${property_id}, ${content})`;
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.log("Error adding note", err);
+    return res.status(500).json({ error: "Failed to add note" });
+  }
+};
+
+export const getNotes = async (req, res) => {
+  const { user_id, property_id } = req.params;
+
+  try {
+    const result =
+      await sql`SELECT * FROM notes WHERE user_id = ${user_id} AND property_id = ${property_id}`;
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error getting notes", err);
+    res.status(500).json({ error: "Failed to fetch notes" });
+  }
+};
