@@ -8,6 +8,7 @@ export const useUserStore = create((set, get) => ({
   token: localStorage.getItem("token") || null,
   isLoggedIn: !!localStorage.getItem("token"),
   likedPropertyIds: [],
+  notes: [],
 
   setUser: (user) => set({ user }),
   setToken: (token) => set({ token }),
@@ -141,6 +142,41 @@ export const useUserStore = create((set, get) => ({
       set({ likedPropertyIds: res.data.liked });
     } catch (err) {
       console.log("Failed to fetch liked properties");
+    }
+  },
+
+  addNote: async ({ property_id, content }) => {
+    const { user, token } = get();
+    if (!user || !token) return;
+
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/user/addNote`,
+        {
+          property_id,
+          content,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Error adding note", err);
+    }
+  },
+
+  fetchNotes: async ({ property_id }) => {
+    const { user } = get();
+    if (!user) return;
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/getNotes/${user.id}/${property_id}`
+      );
+      set({ notes: res.data });
+    } catch (err) {
+      console.err("Error fetching notes", err);
     }
   },
 }));

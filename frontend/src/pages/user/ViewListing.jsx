@@ -61,7 +61,7 @@ function ViewListing() {
       />
     ),
     enquire: <EnquireForm property={currentProperty} />,
-    notes: <MakeNote />,
+    notes: <MakeNote property={currentProperty} />,
   };
 
   const toggleLike = async (property) => {

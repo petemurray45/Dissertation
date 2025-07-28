@@ -1,11 +1,24 @@
 import { CiTextAlignJustify } from "react-icons/ci";
 import { useUserStore } from "../../utils/useUserStore";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 
-function MakeNote() {
-  const { user } = useUserStore();
+function MakeNote({ property }) {
+  const { user, addNote } = useUserStore();
   const navigate = useNavigate();
+  const [content, setContent] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await addNote({ property_id: property.id, content });
+      setContent("");
+    } catch (err) {
+      console.error("Error submitting note", err);
+    }
+  };
   return (
     <>
       {user ? (
@@ -16,12 +29,17 @@ function MakeNote() {
             </h1>
             <p className="text-3xl pt-5">Why not make a note for later.</p>
           </div>
-          <form className="grid grid-cols-1 gap-10">
+          <form className="grid grid-cols-1 gap-10" onSubmit={handleSubmit}>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                 <CiTextAlignJustify size={24} />
               </div>
-              <textarea className="textarea textarea-bordered w-full px-12 py-5 sm:text-xl mt-10 md:text-2xl resize-none h-52 md:h-80"></textarea>
+              <textarea
+                className="textarea textarea-bordered w-full px-12 py-5 sm:text-xl mt-10 md:text-2xl resize-none h-52 md:h-80"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+              ></textarea>
             </div>
             <div className="w-full flex justify-end">
               <button
