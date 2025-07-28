@@ -86,7 +86,7 @@ function MapSearch({ property }) {
         <div className="flex flex-col w-full p-8 gap-10 ">
           {/* sidebar for inputs */}
           <div className="flex flex-col gap-10 w-full h-full  rounded-2xl ">
-            <h1 className="text-3xl text-black">{property.location}</h1>
+            <h1 className="text-3xl text-gray-100">{property.location}</h1>
             <div className="flex  justify-between w-full gap-20">
               {searchDestinations.map((dest, index) => (
                 <button
@@ -94,7 +94,7 @@ function MapSearch({ property }) {
                   onClick={() => {
                     showRoute(dest, index);
                   }}
-                  className={`  w-full h-20 border border-gray-200 rounded-md hover:bg-[#02343F] text-2xl text-gray-400 ${
+                  className={`  w-full h-20 border border-gray-200 rounded-md hover:bg-[#02343F] text-2xl text-gray-200 ${
                     activeIndex === index
                       ? "bg-[#02343F] text-white "
                       : "btn-outline text-[#02343F]"

@@ -31,16 +31,16 @@ function LikedProperties() {
   if (likedPropertyIds.length === 0) {
     return (
       <>
-        <h1 className="text-5xl font-raleway text-text-[#02343F] mx-20">
+        <h1 className="text-5xl font-raleway text-gray-200 mx-20">
           Liked Properties
         </h1>
         <div className="mx-20 my-20">
           <div className="flex flex-col justify-center items-center h-96">
-            <div className="bg-base-100 rounded-full p-6">
+            <div className="text-gray-200 rounded-full p-6">
               <PackageIcon className="size-24" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-4xl  font-raleway">
+              <h3 className="text-4xl text-gray-200  font-raleway mt-10">
                 You haven't liked any properties yet
               </h3>
             </div>

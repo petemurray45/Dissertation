@@ -74,7 +74,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="h-auto flex flex-col flex-grow relative bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s border-2 border-gray-200 rounded-lg">
+      <div className="h-auto flex flex-col flex-grow relative bg-[#f5f8f6] shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s  rounded-2xl">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -167,8 +167,8 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
         </AnimatePresence>
 
         <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left px-4 pt-6">
-          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2">
-            <h2 className="w-full flex flex-col sm:flex-row sm:text-xl md:text-4xl justify-between items-center gap-2 mb-2 sm:mt-5 md:mt-20">
+          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2 text-gray-600 font-r">
+            <h2 className="w-full flex flex-col sm:flex-row sm:text-xl md:text-3xl font-thin justify-between items-center gap-2 mb-2 sm:mt-5 md:mt-20">
               {property.location}
             </h2>
             <div className="sm:h-8 flex items-center">
@@ -180,7 +180,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               </span>
             </div>
           </div>
-          <p className="font-raleway sm:text-xl md:text-2xl sm:mb-2 md:mb-4 text-center">
+          <p className="font-raleway sm:text-lg md:text-2xl sm:mb-2 md:mb-4 text-center">
             {property.title}
           </p>
 

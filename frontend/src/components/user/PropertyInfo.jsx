@@ -19,19 +19,19 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
     onToggleLike(property);
   };
   return (
-    <div className=" bg-white   rounded-2xl min-w-[300px] font-raleway">
+    <div className="   rounded-2xl min-w-[300px] font-raleway">
       <div>
         <div className="grid grid-cols-1 md:flex-row">
           <div>
-            <h1 className="text-5xl text-black py-3 font-semibold">
+            <h1 className="text-5xl text-gray-300 py-3 font-semibold">
               {addressSplit[0]},
             </h1>
-            <h1 className="text-4xl text-black py-3 font-thin ">
+            <h1 className="text-4xl text-gray-200 py-3 font-thin ">
               {addressSplit[1]}
             </h1>
           </div>
           <div>
-            <h1 className="text-5xl text-black py-3  font-semibold">
+            <h1 className="text-5xl text-gray-200 py-3  font-semibold">
               £{property.price_per_month}
             </h1>
           </div>
@@ -67,7 +67,7 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
             </div>
           </div>
         ) : (
-          <div className="flex justify-between items-center w-full    mt-8 px-5">
+          <div className="flex justify-between items-center w-full text-gray-200   mt-8 px-5">
             <div className="flex-col px-5">
               <h1 className="text-3xl">Like this property?</h1>
               <p className="text-2xl mt-2">Save it for later.</p>

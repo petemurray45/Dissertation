@@ -79,8 +79,13 @@ function PropertyPage() {
 
   return (
     <>
-      <div className="relative overflow-hidden  ">
-        <div className=" bg-[url('https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-no-repeat bg-cover bg-top w-full h-[60vh] sm:h-[50vh] md:h-[40vh] top-0 left-0 z-20  ">
+      <div
+        className="relative overflow-hidden  "
+        style={{
+          backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+        }}
+      >
+        <div>
           <NavBar />
           <div className="w-full pt-48">
             <div className="flex flex-wrap sm:flex-row sm:flex-wrap  justify-center">

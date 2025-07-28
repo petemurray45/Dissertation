@@ -76,14 +76,19 @@ function ViewListing() {
 
   return (
     <>
-      <div className="overflow-x-hidden    h-screen w-full">
+      <div
+        className="overflow-x-hidden    h-screen w-full"
+        style={{
+          backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+        }}
+      >
         <NavBar />
         <div className="flex justify-between mt-20   items-center w-full h-[10%] px-6  ">
           <button
             onClick={() => navigate("/properties")}
             className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white text-black font-raleway font-thin"
           >
-            <ArrowLeftIcon className="size-4 mr-2 hover:text-black" />
+            <ArrowLeftIcon className="size-4 mr-2 hover:text-gray-200" />
             Back to search
           </button>
         </div>

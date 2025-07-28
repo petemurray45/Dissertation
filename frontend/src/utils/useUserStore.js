@@ -78,7 +78,7 @@ export const useUserStore = create((set, get) => ({
   },
 
   addToLikes: async (property) => {
-    const { user, likedPropertyIds, setLikedPropertyIds } = get();
+    const { user, token, likedPropertyIds, setLikedPropertyIds } = get();
     if (!user) return;
 
     try {
@@ -87,6 +87,9 @@ export const useUserStore = create((set, get) => ({
         params: {
           userId: user.id,
           propertyId: property.id,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log("Check like result", res.data);
@@ -97,6 +100,9 @@ export const useUserStore = create((set, get) => ({
             userId: user.id,
             propertyId: property.id,
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         console.log("Removed from likes");
 
@@ -105,10 +111,18 @@ export const useUserStore = create((set, get) => ({
           likedPropertyIds.filter((id) => id !== property.id)
         );
       } else {
-        await axios.post(`${BASE_URL}/api/user/likes`, {
-          userId: user.id,
-          propertyId: property.id,
-        });
+        await axios.post(
+          `${BASE_URL}/api/user/likes`,
+          {
+            userId: user.id,
+            propertyId: property.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         // update ui straight away
         setLikedPropertyIds([...likedPropertyIds, property.id]);

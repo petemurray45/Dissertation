@@ -47,7 +47,7 @@ function ImageGallery({ images }) {
             <img
               src={getTransformedUrl(images[currentIndex], 1300, 800)}
               alt={`Property image ${currentIndex + 1}`}
-              className="w-full h-full object-cover rounded-lg border-2"
+              className="w-full h-full object-cover rounded-lg shadow-2xl"
             />
 
             {/* Previous Button */}

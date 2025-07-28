@@ -25,7 +25,12 @@ function Profile() {
   ];
 
   return (
-    <div className="relative overflow-hidden">
+    <div
+      className="relative overflow-hidden"
+      style={{
+        backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+      }}
+    >
       <div>
         <NavBar />
         <div className="w-full  bg-cover bg-center">

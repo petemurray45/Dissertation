@@ -10,7 +10,7 @@ function EditProfile() {
 
   return (
     <>
-      <h1 className="text-5xl font-raleway text-gray-500 mx-20 gap-10">
+      <h1 className="text-5xl font-raleway text-gray-200 mx-20 gap-10">
         Edit Profile
       </h1>
       <div className="flex flex-wrap justify-between items-stretch mx-10 text-white font-raleway text-lg sm:text-xl md:text-2xl"></div>
@@ -21,7 +21,7 @@ function EditProfile() {
               <div className="h-56 w-96 border-2 rounded-3xl"></div>
               <div className="flex items-center justify-center w-full h-56 border-dashed border-4 bg-gray-100 rounded-lg">
                 <div className="flex flex-col justify-center items-center gap-3 w-full">
-                  <h1 className="text-2xl text-gray-400">
+                  <h1 className="text-2xl text-gray-200">
                     Upload a Profile Photo
                   </h1>
                   <FaCamera size={28} />

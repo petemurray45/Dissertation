@@ -36,7 +36,7 @@ function MainSearch() {
   };
   const currentHeading = stepHeading[step] || "Start your search";
   return (
-    <div className="sm:h-80 md:h-64  my-5 rounded-md px-10 py-3 flex items-center justify-center mx-10 gap-3  shadow-sm  bg-[#02343F]">
+    <div className="sm:h-80 md:h-64  my-5 rounded-md px-10 py-3 flex items-center justify-center mx-10 gap-3  shadow-2xl  bg-[#02343F]">
       <div className=" flex flex-col justify-start items-center py-8 w-full">
         <h1 className="text-white sm:text-xl md:text-4xl font-raleway text-center">
           {currentHeading}

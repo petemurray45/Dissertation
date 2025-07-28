@@ -1,6 +1,6 @@
 function SecondaryNav({ activeTab, setActiveTab, tabs }) {
   return (
-    <div className="w-full h-24 bg-[#02343F] px-4">
+    <div className="w-full h-24 bg-[#4a6d66]  px-4">
       <div className="flex flex-wrap justify-between items-stretch h-full mx-10 text-white font-raleway text-lg sm:text-xl md:text-2xl">
         {tabs.map((tab, index) => (
           <>

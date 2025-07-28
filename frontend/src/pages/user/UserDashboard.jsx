@@ -1,28 +1,28 @@
 import NavBar from "../../components/user/NavBar";
 import Hero from "../../components/user/Hero";
-import Search from "../../components/user/Search";
 import PropertyCarousel from "../../components/user/PropertyCarousel.jsx";
 import LocationCarousel from "../../components/user/LocationCarousel.jsx";
-import React from "react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
 import DashboardInfo from "../../components/user/DashboardInfo.jsx";
-import { useUserStore } from "../../utils/useUserStore.js";
 function UserDashboard() {
   const { properties, loading, error, fetchProperties } = useListingStore();
-
-  const { user, isLoggedIn } = useUserStore();
 
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);
 
   return (
-    <div className="overflow-x-hidden ">
+    <div
+      className="relative overflow-hidden min-h-screen w-full "
+      style={{
+        backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+      }}
+    >
       <NavBar />
       <Hero />
-      <div className="h-[170px]" />
+
       <div className="w-full">
         {error && <div className="alert alert-error mb-8">{error}</div>}
         {properties.length === 0 && !loading && (
@@ -41,7 +41,7 @@ function UserDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className=" pt-20 ">
+          <div className="mt-64">
             <PropertyCarousel properties={properties} />
             <LocationCarousel />
             <div className="divider my-20 bg-gray-00 h-[10px]" />
