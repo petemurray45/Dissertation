@@ -57,6 +57,22 @@ export const useListingStore = create((set, get) => ({
     wifi: "",
   },
 
+  pagination: {
+    currentPage: 1,
+    totalCount: 0,
+    perPage: 6,
+  },
+
+  setPage: (page) =>
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    })),
+
+  setTotalCount: (count) =>
+    set((state) => ({
+      pagination: { ...state.pagination, totalCount: count },
+    })),
+
   setLoading: (value) => set({ loading: value }),
 
   updatePropertyTravelTimes: (travelTimeResults) => {
@@ -71,6 +87,27 @@ export const useListingStore = create((set, get) => ({
     set((state) => ({
       pendingFilters: { ...state.pendingFilters, ...updates },
     })),
+
+  fetchPaginatedProperties: async () => {
+    const { pagination } = get();
+    set({ loading: true });
+
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/properties?page=${pagination.currentPage}&limit=${pagination.perPage}`
+      );
+      set({
+        properties: res.data.data,
+        error: null,
+      });
+      get().setTotalCount(res.data.totalCount);
+    } catch (err) {
+      console.log("Error fetching paginated properties", err);
+      set({ error: "Something went wrong", properties: [] });
+    } finally {
+      set({ loading: false });
+    }
+  },
 
   applyFilters: () => {
     set((state) => {

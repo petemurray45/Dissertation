@@ -12,15 +12,16 @@ const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 export const getAllProperties = async (req, res) => {
-  const { minPrice = 0, maxPrice = 10000 } = req.query;
+  const { page = 1, limit = 6 } = req.query;
+  const offset = (page - 1) * limit;
   try {
-    const properties = await sql`
-    SELECT * FROM properties WHERE price_per_month >= ${minPrice} AND price_per_month <= ${maxPrice}
-    ORDER BY created_at DESC`;
-
-    let images = [];
+    const [properties, [{ count }]] = await Promise.all([
+      sql`SELECT * FROM properties ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+      sql`SELECT COUNT(*)::int FROM properties`,
+    ]);
 
     const propertyIds = properties.map((p) => Number(p.id));
+    let images = [];
     console.log("property ids", propertyIds);
 
     if (propertyIds.length > 0) {
@@ -44,8 +45,13 @@ export const getAllProperties = async (req, res) => {
       };
     });
 
-    console.log("Fetched Properties", propertyWithImages);
-    res.status(200).json({ success: true, data: propertyWithImages });
+    console.log("Count:", count);
+
+    return res.status(200).json({
+      success: true,
+      data: propertyWithImages,
+      totalCount: count,
+    });
   } catch (err) {
     console.log("Error fetching properties");
     res.status(500).json({
@@ -99,7 +105,7 @@ export const createProperty = async (req, res) => {
   try {
     const insertedProperties = await sql`
         INSERT INTO properties (title, description, price_per_month, location, latitude, longitude, bed_type, ensuite, wifi, pets, property_type)
-        VALUES (${title}, ${description}, ${price_per_month},  ${location}, ${latitude}, ${longitude}, ${bedType}, ${ensuiteBool}, ${wifiBool}, ${petsBool}, ${propertyType})
+        VALUES (${title}, ${description}, ${price_per_month},  ${location}, ${latitude}, ${longitude}, ${bedType}, ${ensuiteBool}, ${wifiBool}, ${petsBool}, ${propertyType}::property_type_enum1)
         RETURNING id;
       `;
     const propertyId = insertedProperties[0].id;

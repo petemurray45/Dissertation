@@ -4,6 +4,7 @@ import { useState } from "react";
 import SecondaryNav from "../../components/user/navs/secondaryNav";
 import Overview from "../../components/user/profile/Overview";
 import LikedProperties from "../../components/user/profile/LikedProperties";
+import EditProfile from "../../components/user/profile/EditProfile";
 
 function Profile() {
   const { user } = useUserStore();
@@ -12,6 +13,7 @@ function Profile() {
   const tabComponents = {
     overview: <Overview />,
     likedProperties: <LikedProperties />,
+    edit: <EditProfile />,
   };
 
   const tabSelectors = [
@@ -50,6 +52,7 @@ function Profile() {
         <div className="p-10">
           {activeTab === "overview" && <Overview />}
           {activeTab === "likedProperties" && <LikedProperties />}
+          {activeTab === "edit" && <EditProfile />}
         </div>
       </div>
     </div>

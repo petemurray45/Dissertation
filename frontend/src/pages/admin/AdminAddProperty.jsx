@@ -244,7 +244,7 @@ function AdminProductPage() {
                   <select
                     name="propertyType"
                     className="select select-bordered w-full pl-10"
-                    placeholder="Pick a bed type"
+                    placeholder="Pick a property type"
                     value={formData.propertyType || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, propertyType: e.target.value })
@@ -254,7 +254,7 @@ function AdminProductPage() {
                     <option value="Bungalow">Bungalow</option>
                     <option value="Semi Detached">Semi Detached</option>
                     <option value="Detached">Detached</option>
-                    <option value="Terrace">Terrace</option>
+                    <option value="Terraced">Terraced</option>
                     <option value="Flat">Flat</option>
                     <option value="Cottage">Cottage</option>
                   </select>

@@ -57,7 +57,6 @@ export const useUserStore = create((set, get) => ({
   rehydrate: async () => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       try {
         console.log("Sending token:", token);
         const res = await axios.get(`${BASE_URL}/api/auth/me`, {

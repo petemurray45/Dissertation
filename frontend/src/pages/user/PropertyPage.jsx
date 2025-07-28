@@ -1,5 +1,5 @@
 import { useListingStore } from "../../utils/useListingsStore";
-import { useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
@@ -7,7 +7,7 @@ import SearchDrawer from "../../components/user/SearchDrawer";
 import { useUserStore } from "../../utils/useUserStore";
 import { useTravelStore } from "../../utils/useTravelStore";
 import MainSearch from "../../components/user/MainSearch";
-import { has } from "lodash";
+import Pagination from "../../components/user/Pagination";
 
 function PropertyPage() {
   const {
@@ -18,17 +18,29 @@ function PropertyPage() {
     fetchProperties,
     searchSubmitted,
     setSearchSubmitted,
+    fetchPaginatedProperties,
+    pagination,
   } = useListingStore();
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const { resetSearchDestinations } = useTravelStore();
   const hasMounted = useRef(false);
+  const resultsRef = useRef();
 
   useEffect(() => {
     fetchProperties();
     resetSearchDestinations();
+    fetchPaginatedProperties();
     setSearchSubmitted(false);
   }, [fetchProperties]);
+
+  useEffect(() => {
+    if (!loading && resultsRef.current) {
+      setTimeout(() => {
+        resultsRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [pagination.currentPage, loading]);
 
   const propertyList = searchSubmitted ? filteredProperties : properties;
 
@@ -111,6 +123,7 @@ function PropertyPage() {
             <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10 md:pt-32"
               id="results"
+              ref={resultsRef}
             >
               {propertyList.map((property) => (
                 <PropertyTile
@@ -122,6 +135,7 @@ function PropertyPage() {
               ))}
             </div>
           )}
+          <Pagination />
         </div>
       </div>
     </>

@@ -41,17 +41,15 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
           <p>Price:</p>
           <p className="text-end">£{property.price_per_month}</p>
           <p>Property Type:</p>
-          <p className="text-end">
-            {/*Need to implement property type*/}Bungalow
-          </p>
+          <p className="text-end">{property.property_type}</p>
           <p>En suite:</p>
-          <p className=" text-end">
-            {/*Need to implement en suite option*/}Yes
-          </p>
+          <p className=" text-end">{property.ensuite ? "Yes" : "No"}</p>
           <p>Bed Type:</p>
-          <p className=" text-end">{property.bedType}</p>
+          <p className=" text-end">{property.bed_type}</p>
+          <p>Wifi:</p>
+          <p className="text-end">{property.wifi ? "Yes" : "No"}</p>
           <p>Pet Friendly</p>
-          <p className="text-end">{/*Need to implement*/}Yes</p>
+          <p className="text-end">{property.pets ? "Yes" : "No"}</p>
         </div>
 
         {!user ? (
