@@ -9,6 +9,7 @@ import { getPropertiesWithTravelTime } from "../controllers/propertyControllers.
 import { getPlaces } from "../controllers/propertyControllers.js";
 import { insertEnquiries } from "../controllers/propertyControllers.js";
 import { getEnquiries } from "../controllers/propertyControllers.js";
+import { searchWithRadius } from "../controllers/propertyControllers.js";
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.post("/", createProperty);
 router.get("/places", getPlaces);
 router.post("/insert-enquiry", insertEnquiries);
 router.get("/get-enquiry", getEnquiries);
+router.get("/search", searchWithRadius);
 router.put("/:id", updateProperty);
 router.delete("/:id", deleteProperty);
 router.get("/:id", getProperty);

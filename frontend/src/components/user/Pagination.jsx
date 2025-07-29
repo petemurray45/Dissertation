@@ -10,7 +10,7 @@ function Pagination() {
     <div className="flex justify-center my-8 gap-4 font-raleway">
       <button
         type="button"
-        className="btn rounded-md bg-[#02343F] text-white"
+        className="btn border-none rounded-md bg-[#02343F] text-white w-40 text-xl"
         onClick={(e) => {
           e.preventDefault();
           setPage(pagination.currentPage - 1);
@@ -20,12 +20,12 @@ function Pagination() {
       >
         Previous
       </button>
-      <span className="self-center text-lg font-medium">
+      <span className="self-center text-3xl font-medium text-gray-100 text-shadow-md">
         Page {pagination.currentPage} of {totalPages || "?"}
       </span>
       <button
         type="button"
-        className="btn rounded-md bg-[#f0edcc]"
+        className="btn border-none rounded-md w-40 bg-[#f0edcc] text-xl"
         onClick={(e) => {
           e.preventDefault();
           setPage(pagination.currentPage + 1);

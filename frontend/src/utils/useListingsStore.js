@@ -292,6 +292,27 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
+  fetchPropertiesRadius: async ({ lat, lng, radius, minPrice, maxPrice }) => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axios.get(`${BASE_URL}/api/properties/search`, {
+        params: {
+          lat,
+          lng,
+          radius,
+          minPrice: minPrice || null,
+          maxPrice: maxPrice || null,
+        },
+      });
+
+      set({ filteredProperties: response.data, loading: false });
+    } catch (err) {
+      console.error("Failed to fetch properties", err);
+      set({ error: "Failed to load properties", loading: false });
+    }
+  },
+
   updateProperty: async (id) => {
     set({ loading: true });
     try {

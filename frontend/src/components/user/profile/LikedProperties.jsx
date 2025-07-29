@@ -52,7 +52,7 @@ function LikedProperties() {
 
   return (
     <>
-      <h1 className="text-5xl font-raleway text-text-[#02343F] mx-20">
+      <h1 className="text-5xl font-raleway text-gray-200 mx-20">
         Liked Properties
       </h1>
       <div className="mx-20 my-10 rounded-lg">

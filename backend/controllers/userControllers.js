@@ -81,14 +81,28 @@ export const addNote = async (req, res) => {
 };
 
 export const getNotes = async (req, res) => {
+  console.log("GET NOTES HIT");
   const { user_id, property_id } = req.params;
 
   try {
     const result =
       await sql`SELECT * FROM notes WHERE user_id = ${user_id} AND property_id = ${property_id}`;
-    res.json(result.rows);
+    console.log(result);
+    res.json(result);
   } catch (err) {
     console.error("Error getting notes", err);
     res.status(500).json({ error: "Failed to fetch notes" });
+  }
+};
+
+export const deleteNote = async (req, res) => {
+  const { note_id } = req.params;
+
+  try {
+    await sql`DELETE FROM notes WHERE id = ${note_id}`;
+    res.json({ success: true, message: "Note deleted" });
+  } catch (err) {
+    console.log("Error deleting note", err);
+    res.status(500).json({ error: "Failed to delete note" });
   }
 };

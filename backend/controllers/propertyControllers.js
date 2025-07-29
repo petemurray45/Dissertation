@@ -45,8 +45,6 @@ export const getAllProperties = async (req, res) => {
       };
     });
 
-    console.log("Count:", count);
-
     return res.status(200).json({
       success: true,
       data: propertyWithImages,
@@ -518,31 +516,39 @@ export const getEnquiries = async (req, res) => {
   }
 };
 
-export const addNote = async (req, res) => {
-  const { user_id, property_id, content } = req.body;
+export const searchWithRadius = async (req, res) => {
+  const { lat, lng, radius, minPrice, maxPrice } = req.query;
 
-  if (!user || !property_id || !content) {
-    return res.status(400).json({ error: "Missing required fields" });
+  console.log("Received query:", req.query);
+
+  if (!lat || !lng || !radius) {
+    return res.status(400).json({ error: "Missing location or radius" });
   }
 
   try {
-    await sql`INSERT INTO notes (user_id, property_id, content) VALUES (${user_id}, ${property_id}, ${content})`;
-    res.status(201).json({ success: true });
-  } catch (err) {
-    console.log("Error adding note", err);
-    return res.status(500).json({ error: "Failed to add note" });
-  }
-};
+    const result = await sql`
+    SELECT * FROM (
+      SELECT *, 
+        (6371 * acos(
+          cos(radians(${lat})) * cos(radians(latitude)) *
+          cos(radians(longitude) - radians(${lng})) +
+          sin(radians(${lat})) * sin(radians(latitude))
+        )) AS distance
+      FROM properties
 
-export const getNotes = async (req, res) => {
-  const { user_id, property_id } = req.params;
-
-  try {
-    const result =
-      await sql`SELECT * FROM notes WHERE user_id = ${user_id} AND property_id = ${property_id}`;
+     
+    ) AS subquery
+    WHERE distance <= ${radius}
+    ORDER BY distance ASC
+  `;
     res.json(result.rows);
   } catch (err) {
-    console.error("Error getting notes", err);
-    res.status(500).json({ error: "Failed to fetch notes" });
+    console.error("Search error", err);
+    res.status(500).json({ error: "Failed to fetch properties" });
   }
 };
+
+{
+  /*  WHERE (${minPrice}::int IS NULL OR price_per_month >= ${minPrice})
+        AND (${maxPrice}::int IS NULL OR price_per_month <= ${maxPrice}) */
+}

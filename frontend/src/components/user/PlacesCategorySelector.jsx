@@ -16,7 +16,7 @@ function PlacesCategorySelector({ selectedType, onSelect }) {
           className={`px-4 py-2 rounded-md border w-72 h-16 text-2xl ${
             selectedType === category.value
               ? "bg-[#02343F] text-white"
-              : "bg-white text-gray-400 border-gray-300"
+              : "bg-white/90 backdrop-blur-sm text-gray-600 border-gray-100"
           }`}
         >
           {category.label}

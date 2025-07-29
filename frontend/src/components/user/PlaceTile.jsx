@@ -19,7 +19,7 @@ const renderStars = (rating) => {
 
 function PlaceTile({ name, photoUrl, rating, vicinity, ratingsTotal }) {
   return (
-    <div className="flex flex-col bg-white border-2 border-gray-100 rounded-lg p-4 min-w-[400px] min-h-[300px] text-center font-raleway">
+    <div className="flex flex-col bg-white/90 backdrop-blur-sm shadow-2xl  rounded-lg p-4 min-w-[400px] min-h-[300px] text-center font-raleway">
       <img
         src={photoUrl}
         alt={name}
@@ -28,7 +28,7 @@ function PlaceTile({ name, photoUrl, rating, vicinity, ratingsTotal }) {
       <div className="flex flex-col flex-grow justify-between mt-4">
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-semibold">{name}</h3>
-          <p className="text-lg text-gray-500">{vicinity}</p>
+          <p className="text-lg text-gray-600">{vicinity}</p>
 
           <div className="flex justify-center items-center gap-1 text-yellow-500">
             {renderStars(rating)}

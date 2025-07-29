@@ -1,10 +1,9 @@
 import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cloudinary from "cloudinary";
 import cors from "cors";
 import { sql } from "./config/db.js";
-
-dotenv.config();
 
 import propertyRoutes from "./routes/propertyRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";

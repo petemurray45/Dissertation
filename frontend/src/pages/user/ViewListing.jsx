@@ -23,7 +23,6 @@ function ViewListing() {
   const { id } = useParams();
 
   const tabSelectors = [
-    { key: "traveltimes", label: "Travel Times" },
     { key: "routePlanner", label: "Plan your routes" },
     { key: "nearbyPlaces", label: "Places nearby" },
     { key: "notes", label: "Make a note" },
@@ -79,16 +78,16 @@ function ViewListing() {
       <div
         className="overflow-x-hidden    h-screen w-full"
         style={{
-          backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+          backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
         }}
       >
         <NavBar />
         <div className="flex justify-between mt-20   items-center w-full h-[10%] px-6  ">
           <button
             onClick={() => navigate("/properties")}
-            className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white text-black font-raleway font-thin"
+            className="btn btn-ghost m-8 text-lg hover:bg-[#02343F] hover:text-white text-white font-raleway font-thin"
           >
-            <ArrowLeftIcon className="size-4 mr-2 hover:text-gray-200" />
+            <ArrowLeftIcon className="size-4 mr-2 text-white hover:text-gray-200" />
             Back to search
           </button>
         </div>

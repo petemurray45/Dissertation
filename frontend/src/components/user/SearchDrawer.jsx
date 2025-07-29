@@ -209,7 +209,7 @@ function SearchDrawer() {
                   <option value="Bungalow">Bungalow</option>
                   <option value="Semi Detached">Semi Detached</option>
                   <option value="Detached">Detached</option>
-                  <option value="Terrace">Terrace</option>
+                  <option value="Terraced">Terrace</option>
                   <option value="Flat">Flat</option>
                   <option value="Cottage">Cottage</option>
                 </select>

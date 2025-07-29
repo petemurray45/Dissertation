@@ -40,14 +40,14 @@ function EnquireForm({ property }) {
 
   return (
     <div className=" mx-10 mt-10 font-raleway">
-      <h1 className="sm:text-2xl md:text-4xl text-gray-500">
+      <h1 className="sm:text-2xl md:text-4xl text-gray-200">
         Make an enquiry by filling out our enquiry request form below.
       </h1>
 
       <form className="grid grid-cols-1 mt-10 gap-10" onSubmit={handleSubmit}>
         <div className="form-control">
           <label className="label flex">
-            <span className="sm:text-xl md:text-3xl mb-2 text-gray-500">
+            <span className="sm:text-xl md:text-3xl mb-2 text-gray-200">
               Full Name:
             </span>
           </label>
@@ -57,7 +57,8 @@ function EnquireForm({ property }) {
             </div>
             <input
               className="input py-1 focus:input-primary transition-colors duration-200 input-bordered w-[30%] px-12 sm:h-12 md:h-16 sm:text-xl md:text-2xl"
-              value={name}
+              value={user.name}
+              disabled={user}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter full name"
             />
@@ -65,12 +66,12 @@ function EnquireForm({ property }) {
         </div>
         <div className="form-control">
           <label className="label flex">
-            <span className="sm:text-xl md:text-3xl text-gray-500">
+            <span className="sm:text-xl md:text-3xl text-gray-200">
               Your email:
             </span>
           </label>
           <div className="relative items-center">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
               <MdAlternateEmail size={24} />
             </div>
             {!user ? (
@@ -93,7 +94,7 @@ function EnquireForm({ property }) {
 
         <div className="form-control">
           <label className="label flex">
-            <span className="sm:text-xl md:text-3xl mb-2 text-gray-500">
+            <span className="sm:text-xl md:text-3xl mb-2 text-gray-200">
               Message:
             </span>
           </label>

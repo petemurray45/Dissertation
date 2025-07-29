@@ -8,7 +8,6 @@ export const useUserStore = create((set, get) => ({
   token: localStorage.getItem("token") || null,
   isLoggedIn: !!localStorage.getItem("token"),
   likedPropertyIds: [],
-  notes: [],
 
   setUser: (user) => set({ user }),
   setToken: (token) => set({ token }),
@@ -162,6 +161,7 @@ export const useUserStore = create((set, get) => ({
   addNote: async ({ property_id, content }) => {
     const { user, token } = get();
     if (!user || !token) return;
+    console.log(token);
 
     try {
       const res = await axios.post(
@@ -182,15 +182,36 @@ export const useUserStore = create((set, get) => ({
   },
 
   fetchNotes: async ({ property_id }) => {
-    const { user } = get();
-    if (!user) return;
+    const { user, token } = get();
+    if (!user || !token) return;
+
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/user/getNotes/${user.id}/${property_id}`
+        `${BASE_URL}/api/user/getNotes/${user.id}/${property_id}`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      set({ notes: res.data });
+      return res.data;
     } catch (err) {
       console.err("Error fetching notes", err);
+    }
+  },
+
+  deleteNote: async (note_id) => {
+    const { token } = get();
+
+    try {
+      await axios.delete(`${BASE_URL}/api/user/deleteNote/${note_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (err) {
+      console.log("Error deleting token", err);
     }
   },
 }));

@@ -73,6 +73,7 @@ export const login = async (req, res) => {
       expiresIn: "2h",
     }
   );
+  console.log("JWT_SECRET in login:", process.env.JWT_SECRET);
   res.json({
     token,
     user: {
@@ -92,7 +93,10 @@ export const getMe = async (req, res) => {
     }
 
     const token = authHeader.split(" ")[1];
+    console.log("TOKEN:", token);
+    console.log("SECRET USED:", process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("JWT_SECRET in getMe:", process.env.JWT_SECRET);
 
     const result =
       await sql`SELECT id, full_name, email FROM users WHERE id = ${decoded.id}`;

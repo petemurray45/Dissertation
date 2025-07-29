@@ -28,7 +28,7 @@ function Profile() {
     <div
       className="relative overflow-hidden"
       style={{
-        backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+        backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
       }}
     >
       <div>

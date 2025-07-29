@@ -15,7 +15,7 @@ function PropertyPage() {
     filteredProperties,
     loading,
     error,
-    fetchProperties,
+    fetchPropertiesRadius,
     searchSubmitted,
     setSearchSubmitted,
     fetchPaginatedProperties,
@@ -24,39 +24,51 @@ function PropertyPage() {
 
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const { resetSearchDestinations } = useTravelStore();
-  const hasMounted = useRef(false);
   const resultsRef = useRef();
 
   useEffect(() => {
-    fetchProperties();
-    resetSearchDestinations();
-    fetchPaginatedProperties();
-    setSearchSubmitted(false);
-  }, [fetchProperties]);
+    const params = Object.fromEntries(
+      new URLSearchParams(window.location.search)
+    );
+    const { lat, lng, radius, minPrice, maxPrice } = params;
+
+    if (lat && lng && radius) {
+      setSearchSubmitted(true);
+      fetchPropertiesRadius({
+        lat,
+        lng,
+        radius,
+        minPrice: minPrice || null,
+        maxPrice: maxPrice || null,
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    if (!loading && resultsRef.current) {
-      setTimeout(() => {
-        resultsRef.current.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-  }, [pagination.currentPage, loading]);
+    const init = async () => {
+      await fetchPaginatedProperties();
+      resetSearchDestinations();
+      setSearchSubmitted(false);
+    };
+    init();
+  }, []);
 
   const propertyList = searchSubmitted ? filteredProperties : properties;
 
   useEffect(() => {
-    console.log("Searched submitted?:", searchSubmitted);
-    if (hasMounted.current) {
-      if (searchSubmitted && propertyList.length > 0) {
-        setTimeout(() => {
-          const resultsSection = document.getElementById("results");
-          resultsSection?.scrollIntoView({ behavior: "smooth" });
-        }, 200);
-      }
-    } else {
-      hasMounted.current = true;
+    const scrollToResults = () => {
+      const resultsSection = document.getElementById("results");
+      resultsSection?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    if (!loading && pagination.currentPage) {
+      scrollToResults();
     }
-  }, [searchSubmitted, propertyList]);
+
+    if (searchSubmitted && propertyList.length > 0) {
+      scrollToResults();
+    }
+  }, [pagination.currentPage, loading, searchSubmitted, propertyList]);
 
   const toggleLike = async (property) => {
     if (!user) return;
@@ -75,14 +87,14 @@ function PropertyPage() {
     filteredProperties
   );
 
-  console.log(properties);
+  console.log("propertyList:", propertyList);
 
   return (
     <>
       <div
         className="relative overflow-hidden  "
         style={{
-          backgroundImage: `linear-gradient(to right bottom, #f0edcc, #bbc9ac, #89a690, #5c8378, #346060, #396067, #40606b, #49606e, #778491, #a5abb5, #d3d4d9, #ffffff)`,
+          backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
         }}
       >
         <div>
@@ -126,18 +138,19 @@ function PropertyPage() {
             </div>
           ) : (
             <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10 md:pt-32"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10 scroll-mt-24 "
               id="results"
               ref={resultsRef}
             >
-              {propertyList.map((property) => (
-                <PropertyTile
-                  property={property}
-                  key={property.id}
-                  onToggleLike={() => toggleLike(property)}
-                  isLiked={likedPropertyIds.includes(property.id)}
-                />
-              ))}
+              {Array.isArray(propertyList) &&
+                propertyList.map((property) => (
+                  <PropertyTile
+                    property={property}
+                    key={property.id}
+                    onToggleLike={() => toggleLike(property)}
+                    isLiked={likedPropertyIds.includes(property.id)}
+                  />
+                ))}
             </div>
           )}
           <Pagination />
