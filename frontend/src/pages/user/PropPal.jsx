@@ -1,5 +1,7 @@
 import { Typed } from "react-typed";
 import { ReactTyped } from "react-typed";
+import ChatBot from "../../components/user/chatBot/chatBot";
+import { Chat } from "openai/resources/index.js";
 function PropPal() {
   return (
     <>
@@ -10,19 +12,29 @@ function PropPal() {
         }}
       >
         {/* Proppal hero */}
-        <div className="flex justify-center items-center text-center w-full text-3xl h-[600px]">
-          <span>
-            <ReactTyped
-              strings={[
-                "Hi! I'm PropPal",
-                "Consider me your personal AI estate agent.",
-                "What can I help you with today?",
-              ]}
-              typeSpeed={50}
-              className="text-gray-200"
-            ></ReactTyped>
-          </span>
+        <div className="flex flex-col gap-5 justify-center text-left w-full text-3xl text-shadow-lg  h-[600px] mx-40">
+          <ReactTyped
+            strings={["Hi! I'm PropPal"]}
+            typeSpeed={60}
+            className="text-gray-200"
+            showCursor={false}
+          />
+          <ReactTyped
+            strings={["Consider me your personal AI estate agent."]}
+            typeSpeed={65}
+            className="text-gray-200"
+            startDelay={2000}
+            showCursor={false}
+          />
+          <ReactTyped
+            strings={["What can I help you with today?"]}
+            typeSpeed={65}
+            className="text-gray-200"
+            startDelay={6000}
+            showCursor={false}
+          />
         </div>
+        <ChatBot />
       </div>
     </>
   );
