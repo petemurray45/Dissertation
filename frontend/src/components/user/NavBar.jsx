@@ -54,6 +54,18 @@ function NavBar() {
                 Search
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/propPal"
+                className={({ isActive }) =>
+                  isActive
+                    ? "border-b-4 border-b-[#02343F] shadow-lg text-3xl"
+                    : "hover:border-b-4 border-b-[#02343F] text-3xl text-shadow-lg"
+                }
+              >
+                PropPal
+              </NavLink>
+            </li>
 
             {user?.name && (
               <li>

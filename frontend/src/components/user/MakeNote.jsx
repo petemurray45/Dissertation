@@ -85,7 +85,7 @@ function MakeNote({ property }) {
           </form>
         </div>
       ) : (
-        <div className="flex w-full justify-center font-raleway text-gray-500 pt-32">
+        <div className="flex w-full justify-center font-raleway text-gray-200 pt-32">
           <div>
             <h1 className="text-4xl text-center">
               Something you like about this property you wish to make a note of?
