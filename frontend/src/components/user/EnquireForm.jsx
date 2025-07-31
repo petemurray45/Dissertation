@@ -57,7 +57,7 @@ function EnquireForm({ property }) {
             </div>
             <input
               className="input py-1 focus:input-primary transition-colors duration-200 input-bordered w-[30%] px-12 sm:h-12 md:h-16 sm:text-xl md:text-2xl"
-              value={user.name}
+              value={user ? user.name : name}
               disabled={user}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter full name"

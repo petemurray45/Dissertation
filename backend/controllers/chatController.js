@@ -1,5 +1,5 @@
 import { OpenAI } from "openai/client.js";
-import { sql } from "../config/db";
+import { sql } from "../config/db.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -30,8 +30,8 @@ export const botChat = async (req, res) => {
               type: "object",
               properties: {
                 location: { type: "string", description: "City or landmark" },
-                maxPrice: { type: "Number" },
-                minPrice: { type: "Number" },
+                maxPrice: { type: "number" },
+                minPrice: { type: "number" },
                 ensuite: { type: "boolean" },
                 wifi: { type: "boolean" },
                 pets: { type: "boolean" },
@@ -53,7 +53,7 @@ export const botChat = async (req, res) => {
       tool_choice: "auto",
     });
 
-    const toolCall = response.choices[0].message.tool_calls?.[0];
+    const toolCall = response.choices?.[0]?.message?.tool_calls?.[0];
     if (toolCall?.function?.name === "search_properties") {
       const args = JSON.parse(toolCall.function.arguments);
       const { location, minPrice, maxPrice, ensuite, wifi, pets, bedType } =
@@ -66,16 +66,39 @@ export const botChat = async (req, res) => {
         filters.push(sql`price_per_month <= ${maxPrice}`);
       if (ensuite !== undefined) filters.push(sql`ensuite = ${ensuite}`);
       if (wifi !== undefined) filters.push(sql`wifi = ${wifi}`);
+      if (pets !== undefined) filters.push(sql`pets = ${pets}`);
       if (bedType !== undefined) filters.push(sql`bed_type = ${bedType}`);
 
-      const whereClause =
-        filters.length > 0 ? sql`WHERE ${sql.join(filters, sql`AND`)}` : sql``;
-      const reuslts =
-        await sql`SELECT * FROM properties ${whereClause} LIMIT 10`;
+      let whereClause = sql``;
 
-      return res.json({ reuslts });
+      if (filters.length > 0) {
+        const [first, ...rest] = filters;
+        whereClause = rest.reduce(
+          (acc, clause) => sql`${acc} AND ${clause}`,
+          first
+        );
+      }
+
+      const results =
+        await sql`SELECT * FROM properties ${filters.length > 0 ? sql`WHERE ${whereClause}` : sql``} ORDER BY price_per_month ASC LIMIT 10`;
+
+      if (results.length === 0) {
+        return res.json({
+          reply:
+            "Sorry, I couldn't find any properties that match your criteria.",
+          properties: [],
+        });
+      } else {
+        return res.json({
+          reply: "Here are some properties that match your search:",
+          results,
+        });
+      }
     }
-    return res.json({ reply: response.choices[0].message.content });
+    return res.json({
+      reply: response.choices[0].message.content,
+      properties: [],
+    });
   } catch (err) {
     console.error("Chat error", err);
     res.status(500).json({ error: "Failed to generate response" });

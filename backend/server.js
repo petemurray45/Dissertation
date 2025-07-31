@@ -8,6 +8,7 @@ import { sql } from "./config/db.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/properties", propertyRoutes);
 app.use("/api/auth", loginRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api", chatRoutes);
 
 async function initDB() {
   try {

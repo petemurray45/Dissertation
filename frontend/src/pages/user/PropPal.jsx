@@ -12,6 +12,7 @@ function PropPal() {
         }}
       >
         {/* Proppal hero */}
+        {/*}
         <div className="flex flex-col gap-5 justify-center text-left w-full text-3xl text-shadow-lg  h-[600px] mx-40">
           <ReactTyped
             strings={["Hi! I'm PropPal"]}
@@ -33,7 +34,9 @@ function PropPal() {
             startDelay={6000}
             showCursor={false}
           />
+          
         </div>
+        */}
         <ChatBot />
       </div>
     </>
