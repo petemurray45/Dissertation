@@ -89,9 +89,26 @@ export const botChat = async (req, res) => {
           properties: [],
         });
       } else {
+        const propertyIds = results.map((property) => Number(property.id));
+
+        const images =
+          await sql`SELECT property_id, image_url FROM images WHERE property_id = ANY(${propertyIds}::integer[]) ORDER BY property_id, id`;
+
+        const propertiesWithImages = results.map((property) => {
+          const propertyImages = images
+            .filter((image) => image.property_id === property.id)
+            .map((image) => image.image_url);
+          return {
+            ...property,
+            imageUrls: propertyImages,
+          };
+        });
+
+        console.log("props with images:", propertiesWithImages);
+
         return res.json({
           reply: "Here are some properties that match your search:",
-          results,
+          properties: propertiesWithImages,
         });
       }
     }

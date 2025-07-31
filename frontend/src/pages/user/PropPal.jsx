@@ -1,7 +1,7 @@
 import { Typed } from "react-typed";
 import { ReactTyped } from "react-typed";
 import ChatBot from "../../components/user/chatBot/chatBot";
-import { Chat } from "openai/resources/index.js";
+import NavBar from "../../components/user/NavBar";
 function PropPal() {
   return (
     <>
@@ -11,6 +11,7 @@ function PropPal() {
           backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
         }}
       >
+        <NavBar />
         {/* Proppal hero */}
         {/*}
         <div className="flex flex-col gap-5 justify-center text-left w-full text-3xl text-shadow-lg  h-[600px] mx-40">

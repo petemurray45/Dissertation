@@ -2,6 +2,8 @@ import Footer from "./Footer";
 import NavBar from "./NavBar";
 import { Outlet } from "react-router-dom";
 
+{
+  /*
 function Layout() {
   console.log("layout rendered");
   return (
@@ -15,4 +17,9 @@ function Layout() {
   );
 }
 
+
+
 export default Layout;
+
+*/
+}

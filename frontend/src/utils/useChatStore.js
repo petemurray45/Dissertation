@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import axios from "axios";
-
 const BASE_URL = "http://localhost:3000";
 
 export const useChatStore = create((set, get) => ({
@@ -26,7 +25,7 @@ export const useChatStore = create((set, get) => ({
       });
 
       const fullReply = response.data.reply || "";
-      const properties = response.data.results || [];
+      const properties = response.data.properties || [];
 
       let index = 0;
       const typingInterval = setInterval(() => {
@@ -34,7 +33,7 @@ export const useChatStore = create((set, get) => ({
         const partial = fullReply.slice(0, index);
         get().setTypingMessage(partial);
 
-        if (index > fullReply.length) {
+        if (index === fullReply.length) {
           clearInterval(typingInterval);
           set((state) => ({
             messages: [
@@ -42,7 +41,7 @@ export const useChatStore = create((set, get) => ({
               {
                 role: "assistant",
                 content: fullReply,
-                properties: properties,
+                ...(properties.length > 0 ? { properties } : {}),
               },
             ],
             typingMessage: "",

@@ -167,7 +167,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
         </AnimatePresence>
 
         <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left px-4 pt-6">
-          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2 text-gray-600 font-r">
+          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2 text-gray-600 text-shadow-none">
             <h2 className="w-full flex flex-col sm:flex-row sm:text-xl md:text-3xl font-thin justify-between items-center gap-2 mb-2 sm:mt-5 md:mt-20">
               {property.location}
             </h2>
@@ -180,7 +180,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               </span>
             </div>
           </div>
-          <p className="font-raleway sm:text-lg md:text-2xl sm:mb-2 md:mb-4 text-center">
+          <p className="font-raleway sm:text-lg md:text-2xl sm:mb-2 md:mb-4 text-center text-[#02343F] text-shadow-none">
             {property.title}
           </p>
 
