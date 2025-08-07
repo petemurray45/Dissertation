@@ -516,8 +516,22 @@ export const getEnquiries = async (req, res) => {
   }
 };
 
+{
+  /*}
 export const searchWithRadius = async (req, res) => {
-  const { lat, lng, radius, minPrice, maxPrice } = req.query;
+  const { lat, lng, radius } = req.query;
+
+  const minPrice =
+    req.query.minPrice && req.query.minPrice !== ""
+      ? Number(req.query.minPrice)
+      : null;
+
+  const maxPrice =
+    req.query.maxPrice && req.query.maxPrice !== ""
+      ? Number(req.query.maxPrice)
+      : null;
+
+  console.log("Parsed maxPrice:", maxPrice, typeof maxPrice);
 
   console.log("Received query:", req.query);
 
@@ -526,29 +540,126 @@ export const searchWithRadius = async (req, res) => {
   }
 
   try {
-    const result = await sql`
-    SELECT * FROM (
-      SELECT *, 
-        (6371 * acos(
-          cos(radians(${lat})) * cos(radians(latitude)) *
-          cos(radians(longitude) - radians(${lng})) +
-          sin(radians(${lat})) * sin(radians(latitude))
-        )) AS distance
-      FROM properties
+    const filters = [];
 
-     
-    ) AS subquery
-    WHERE distance <= ${radius}
-    ORDER BY distance ASC
-  `;
+    if (minPrice != null) filters.push(sql`price_per_month >= ${minPrice}`);
+    if (maxPrice != null) filters.push(sql`price_per_month <= ${maxPrice}`);
+
+    console.log(
+      "Filters:",
+      filters.map((f) => f.sql)
+    );
+
+    const whereClause =
+      filters.length > 0
+        ? filters.reduce((acc, cur) => sql`${acc} AND ${cur}`)
+        : sql`TRUE`;
+
+    if (whereClause) {
+      console.log("WHERE clause SQL:", whereClause);
+      console.log("WHERE clause values:", whereClause);
+    } else {
+      console.log("No filters applied, WHERE clause is null");
+    }
+
+    if (whereClause) {
+      console.log("Final WHERE:", whereClause);
+    }
+
+    const result = await sql`
+      SELECT * FROM (
+        SELECT *, 
+          (6371 * acos(
+            cos(radians(${lat})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(${lng})) +
+            sin(radians(${lat})) * sin(radians(latitude))
+          )) AS distance
+        FROM properties
+      ) AS subquery
+      WHERE distance <= ${radius} AND ${whereClause}
+      ORDER BY distance ASC
+    `;
     res.json(result.rows);
   } catch (err) {
     console.error("Search error", err);
     res.status(500).json({ error: "Failed to fetch properties" });
   }
 };
-
-{
-  /*  WHERE (${minPrice}::int IS NULL OR price_per_month >= ${minPrice})
-        AND (${maxPrice}::int IS NULL OR price_per_month <= ${maxPrice}) */
+*/
 }
+
+export const searchWithRadius = async (req, res) => {
+  const { lat, lng, radius } = req.query;
+
+  const minPrice =
+    req.query.minPrice && req.query.minPrice !== ""
+      ? Number(req.query.minPrice)
+      : null;
+
+  const maxPrice =
+    req.query.maxPrice && req.query.maxPrice !== ""
+      ? Number(req.query.maxPrice)
+      : null;
+
+  if (!lat || !lng || !radius) {
+    return res.status(400).json({ error: "Missing location or radius" });
+  }
+
+  try {
+    const filters = [];
+
+    if (minPrice !== null) filters.push(sql`price_per_month >= ${minPrice}`);
+    if (maxPrice !== null) filters.push(sql`price_per_month <= ${maxPrice}`);
+
+    filters.push(sql`distance <= ${radius}`);
+
+    const whereClause =
+      filters.length > 0
+        ? filters.reduce((acc, cur) => sql`${acc} AND ${cur}`)
+        : sql`TRUE`;
+
+    console.log("Final WHERE:", whereClause); // ✅ Works
+
+    const properties = await sql`
+      SELECT * FROM (
+        SELECT *,
+          (6371 * acos(
+            cos(radians(${lat})) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(${lng})) +
+            sin(radians(${lat})) * sin(radians(latitude))
+          )) AS distance
+        FROM properties
+      ) AS subquery
+      WHERE ${whereClause}
+      ORDER BY distance ASC
+    `;
+
+    const propertyIds = properties.map((property) => property.id);
+    let images = [];
+
+    if (propertyIds.length > 0) {
+      images = await sql`
+        SELECT property_id, image_url
+        FROM images
+        WHERE property_id = ANY(${propertyIds}::int[])
+        ORDER BY property_id, id;
+      `;
+    }
+
+    const propertiesWithImages = properties.map((p) => {
+      const propertyImages = images
+        .filter((img) => img.property_id === p.id)
+        .map((img) => img.image_url);
+
+      return {
+        ...p,
+        imageUrls: propertyImages,
+      };
+    });
+
+    res.status(200).json(propertiesWithImages);
+  } catch (err) {
+    console.error("Search error", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

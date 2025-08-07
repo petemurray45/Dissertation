@@ -15,7 +15,7 @@ function MainSearch() {
     loading,
   } = useTravelStore();
 
-  const { setSearchSubmitted } = useListingStore();
+  const { setTravelSearchSubmitted } = useListingStore();
 
   const modes = ["DRIVING"];
 
@@ -23,7 +23,7 @@ function MainSearch() {
     const results = await getPropertiesWithTravelTime(modes);
     useListingStore.getState().setProperties(results);
     useListingStore.getState().applyFilters();
-    setSearchSubmitted(true);
+    setTravelSearchSubmitted(true);
 
     setSearchedDestination(true);
 

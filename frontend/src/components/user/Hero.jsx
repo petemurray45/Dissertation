@@ -28,8 +28,8 @@ function Hero() {
       location: destination.label,
       lat: destination.latitude,
       lng: destination.longitude,
-      minPrice,
-      maxPrice,
+      minPrice: minPrice ? Number(minPrice) : "",
+      maxPrice: maxPrice ? Number(maxPrice) : "",
       radius,
     });
 
@@ -38,93 +38,96 @@ function Hero() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center font-raleway h-[900px] my-40 ">
-        <div className="grid grid-cols-2 w-full gap-20 justify-center mt-80">
-          <div className="w-full flex justify-end pl-20">
-            <img src={mac} className="h-[700px] w-[1000px]" />
+      <div className="flex flex-col justify-center items-center font-raleway min-h-screen pt-96 px-4 sm:px-6 md:px-10">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 items-center w-full gap-10 px-4 sm:px-6 md:px-8 mx-20">
+          <div className="flex justify-center lg:justify-end w-full">
+            <img
+              src={mac}
+              className="w-full max-w-[700px] md:max-w-[500px] lg:max-w-[700px] h-auto object-contain"
+              alt="Mac mockup"
+            />
           </div>
-          <div className="flex flex-col justify-center items-start mr-24">
-            <h1 className="text-7xl text-gray-200 text-shadow-xl">
+
+          <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left gap-6">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-7xl text-gray-200 text-shadow-xl">
               PropertyApp
             </h1>
-            <p className="text-4xl mt-10 text-gray-200">
+            <p className="text-base sm:text-xl md:text-2xl text-gray-200 max-w-prose">
               Searching for a room that suits you has never been easier.
             </p>
-            <div className="mt-10">
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
-                className="btn w-64 h-16 bg-[#02343F] border-none  text-white rounded-md text-xl"
+                className="btn border-none bg-[#02343F] text-white rounded-md px-6 py-3 text-lg sm:text-xl"
                 type="button"
-                onClick={() => {
-                  searchBar?.scrollIntoView({ behavior: "smooth" });
-                }}
+                onClick={() =>
+                  searchBar?.scrollIntoView({ behavior: "smooth" })
+                }
               >
-                Search Now
-                <FaArrowDown size={24} />
+                Search Now <FaArrowDown className="ml-2" />
               </button>
               <button
-                className="btn w-64 h-16  bg-[#e3d6a1] text-black ml-5 rounded-md border-none text-xl"
-                onClick={(e) => navigate("/properties")}
+                className="btn border-none bg-[#e3d6a1] text-black rounded-md px-6 py-3 text-lg sm:text-xl"
+                onClick={() => navigate("/properties")}
               >
-                View All Rooms
-                <FaArrowRight size={24} />
+                View All Rooms <FaArrowRight className="ml-2" />
               </button>
             </div>
           </div>
         </div>
-        <div className="px-20 mt-48 w-full">
+
+        <div className="mt-96 sm:mt-32 lg:mt-96 scroll-mt-40 w-full  max-w-[1700px]">
           <form
-            className="bg-[#02343F]  shadow-2xl p-4 rounded-xl flex flex-col sm:flex-row sm:items-center ap-4 md:h-36 gap-5 scroll-mt-24"
+            className="bg-[#02343F] shadow-2xl py-4 px-4 rounded-xl flex flex-col lg:flex-row flex-wrap items-center justify-between mx-auto  gap-4 w-full"
             id="search"
             onSubmit={handleSubmit}
           >
-            <div className="flex gap-1 flex-1">
-              <UserAutocomplete
-                onPlaceSelect={({ location, latitude, longitude }) =>
-                  setDestination({
-                    label: location,
-                    latitude,
-                    longitude,
-                  })
-                }
-                className="rounded-tl-md rounded-bl-md rounded-tr-none rounded-br-none border-2 sm:w-auto sm:h-20 md:h-24 flex-1 pl-5 sm:text-xl md:text-2xl basis-3/4"
-                placeholder="Enter a location"
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full">
+              <div className="flex flex-col sm:flex-row gap-1 w-full lg:flex-grow lg:max-w-[50%]">
+                <UserAutocomplete
+                  onPlaceSelect={({ location, latitude, longitude }) =>
+                    setDestination({ label: location, latitude, longitude })
+                  }
+                  className="rounded-md border-2 px-4 py-3 w-full flex-1 text-base lg:h-24 md:h-16 sm:h-12 lg:text-4xl md:text-2xl sm:text-xl"
+                  placeholder="Enter a location"
+                />
+                <select
+                  value={radius}
+                  onChange={(e) => setRadius(e.target.value)}
+                  className="rounded-md border-2 px-4 py-3 w-full sm:w-36 text-base sm:text-lg md:text-2xl lg:text-3xl"
+                >
+                  <option value="5">5 km</option>
+                  <option value="10">10 km</option>
+                  <option value="15">15 km</option>
+                  <option value="20">20 km</option>
+                  <option value="30">30 km</option>
+                </select>
+              </div>
+
+              <input
+                type="number"
+                placeholder="Max Price"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="rounded-md border-2 px-4 py-3 w-full flex-1 sm:w-40 text-base lg:h-24 md:h-16 sm:h-12 sm:text-lg md:text-2xl lg:text-3xl"
               />
-              <select
-                value={radius}
-                onChange={(e) => setRadius(e.target.value)}
-                className="rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md border-2 sm:w-auto sm:h-20 md:h-24 flex-1 ml-0 sm:text-xl md:text-2xl text-lg basis-1/4"
+
+              <input
+                type="number"
+                placeholder="Min Price"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="rounded-md border-2 px-4 py-3 w-full flex-1 sm:w-40 text-base lg:h-24 md:h-16 sm:h-12 sm:text-lg md:text-2xl lg:text-3xl"
+              />
+
+              <button
+                type="submit"
+                className="rounded-md   flex-1 bg-[#e3d6a1] text-black hover:bg-[#02343F] hover:text-white hover:border-[#F0EDCC] px-6 py-3 text-base sm:text-lg md:text-2xl lg:text-3xl lg:h-24 md:h-16 sm:h-12 "
               >
-                <option value="5">5 km</option>
-                <option value="10">10 km</option>
-                <option value="15">15 km</option>
-                <option value="20">20 km</option>
-                <option value="30">30 km</option>
-              </select>
+                SEARCH
+              </button>
             </div>
-            <input
-              type="number"
-              placeholder="Max Price"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="rounded-md border-2  sm:w-auto sm:h-20 md:h-24 flex-1 px-5 sm:text-xl md:text-2xl"
-            />
-            <input
-              type="number"
-              placeholder="Min Price"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="rounded-md border-2  sm:w-auto sm:h-20 md:h-24 flex-1 px-5 sm:text-xl md:text-2xl"
-            />
-            <button
-              type="submit"
-              className="rounded-md bg-[#e3d6a1] text-black hover:bg-[#02343F]  hover:text-white hover:border-[#F0EDCC] sm:w-auto md:w-40 md:h-24 sm:text-xl md:text-2xl"
-            >
-              Search
-            </button>
           </form>
         </div>
-
-        {/* Text Overlay */}
       </div>
     </>
   );

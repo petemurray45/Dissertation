@@ -21,6 +21,7 @@ function UserDashboard() {
       }}
     >
       <NavBar />
+
       <Hero />
 
       <div className="w-full">
@@ -41,11 +42,8 @@ function UserDashboard() {
             <div className="loading loading-spinner loading-lg" />
           </div>
         ) : (
-          <div className="mt-64">
+          <div className="mt-20">
             <PropertyCarousel properties={properties} />
-            <LocationCarousel />
-            <div className="divider my-20 bg-gray-00 h-[10px]" />
-            <DashboardInfo />
           </div>
         )}
       </div>

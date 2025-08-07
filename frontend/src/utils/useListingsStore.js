@@ -19,6 +19,7 @@ export const useListingStore = create((set, get) => ({
   ensuite: 0,
   currentProperty: null,
   searchSubmitted: false,
+  travelSearchSubmitted: false,
   // form state
   formData: {
     title: "",
@@ -88,6 +89,32 @@ export const useListingStore = create((set, get) => ({
       pendingFilters: { ...state.pendingFilters, ...updates },
     })),
 
+  clearFilters: () => {
+    set((state) => ({
+      searchFilters: {
+        sortBy: "",
+        maxPrice: 0,
+        minPrice: 0,
+        property_type: "",
+        bed_type: "",
+        ensuite: "",
+        pets: "",
+        wifi: "",
+      },
+      pendingFilters: {
+        sortBy: "",
+        maxPrice: 0,
+        minPrice: 0,
+        property_type: "",
+        bed_type: "",
+        ensuite: "",
+        pets: "",
+        wifi: "",
+      },
+      filteredProperties: state.properties,
+    }));
+  },
+
   fetchPaginatedProperties: async () => {
     const { pagination } = get();
     set({ loading: true });
@@ -122,19 +149,25 @@ export const useListingStore = create((set, get) => ({
         sortBy,
       } = state.searchFilters;
 
+      const { searchSubmitted, properties, filteredProperties } = state;
+
       const min = Number(minPrice);
       const max = Number(maxPrice);
 
-      const filtered = [...state.properties]
+      const source = searchSubmitted
+        ? [...filteredProperties]
+        : [...properties];
+
+      const filtered = source
         .filter((p) => {
           return (
             (!min || p.price_per_month >= min) &&
             (!max || p.price_per_month <= max) &&
             (!property_type || p.property_type === property_type) &&
             (!bed_type || p.bed_type === bed_type) &&
-            (!ensuite || p.ensuite === (ensuite === "no")) &&
-            (!pets || p.pets === (pets !== "no")) &&
-            (!wifi || p.wifi === (wifi !== "no"))
+            (!ensuite || p.ensuite === (ensuite === "yes")) &&
+            (!pets || p.pets === (pets !== "yes")) &&
+            (!wifi || p.wifi === (wifi !== "yes"))
           );
         })
         .sort((a, b) => {
@@ -183,6 +216,7 @@ export const useListingStore = create((set, get) => ({
   setMaxTravelTime: (time) => set({ maxTravelTime: time }),
 
   setSearchSubmitted: (value) => set({ searchSubmitted: value }),
+  setTravelSearchSubmitted: (value) => set({ travelSearchSubmitted: value }),
   setSearchedLocation: (value) => set({ searchedLocation: value }),
 
   handleSearch: async (filters) => {
@@ -196,11 +230,11 @@ export const useListingStore = create((set, get) => ({
       set({
         properties: data,
         searchedLocation: filters.location,
-        searchSubmitted: true,
+        travelSearchSubmitted: true,
         loading: false,
       });
       get().applyFilters();
-      set({ searchSubmitted: true });
+      set({ travelSearchSubmitted: true });
       console.log(properties);
     } catch (err) {
       console.log("Error fetching properties with travel times", err);
@@ -306,7 +340,11 @@ export const useListingStore = create((set, get) => ({
         },
       });
 
-      set({ filteredProperties: response.data, loading: false });
+      set({
+        filteredProperties: response.data,
+        loading: false,
+        searchSubmitted: true,
+      });
     } catch (err) {
       console.error("Failed to fetch properties", err);
       set({ error: "Failed to load properties", loading: false });

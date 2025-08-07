@@ -5,7 +5,8 @@ import PropertyTile from "../PropertyTile";
 import { PackageIcon } from "lucide-react";
 
 function LikedProperties() {
-  const { likedPropertyIds, addToLikes, user } = useUserStore();
+  const { likedPropertyIds, addToLikes, user, fetchLikedProperties } =
+    useUserStore();
   const { fetchProperties, properties } = useListingStore();
 
   useEffect(() => {
@@ -13,6 +14,12 @@ function LikedProperties() {
       fetchProperties();
     }
   }, [properties.length, fetchProperties]);
+
+  useEffect(() => {
+    if (user) {
+      fetchLikedProperties();
+    }
+  }, [user, fetchLikedProperties]);
 
   const toggleLike = async (property) => {
     if (!user) return;

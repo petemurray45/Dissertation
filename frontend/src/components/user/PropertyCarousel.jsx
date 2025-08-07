@@ -54,11 +54,11 @@ function PropertyCarousel({ properties }) {
   console.log(properties);
 
   return (
-    <div className="my-8 mx-36 flex flex-col sm:block">
-      <h2 className="text-5xl sm:text-5xl py-12 px-8 text-center font-raleway font-thin text-gray-200 text-shadow-lg">
+    <div className="my-8 mx-8 md:mx-36 lg:mx-36 flex flex-col sm:block">
+      <h2 className="text-3xl md:text-4xl lg:text-6xl py-12 px-8 text-center font-raleway font-thin text-gray-200 text-shadow-lg ">
         Featured Properties
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         {properties
           .slice(0, showAll ? properties.length : 6)
           .map((property) => (

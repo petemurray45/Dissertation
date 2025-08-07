@@ -1,5 +1,5 @@
-import react, { useEffect } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -7,7 +7,7 @@ import {
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FaCarAlt } from "react-icons/fa";
+import { useListingStore } from "../../utils/useListingsStore";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTravelStore } from "../../utils/useTravelStore";
@@ -18,12 +18,8 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const [showTimes, setShowTimes] = useState(false);
-  const {
-    getTravelTimeForProperty,
-    setSelectedTravelTime,
-    searchDestinations,
-    setSearchedDestination,
-  } = useTravelStore();
+  const { searchDestinations } = useTravelStore();
+  const { travelSearchSubmitted } = useListingStore();
   const { user } = useUserStore();
 
   useEffect(() => {
@@ -85,7 +81,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
                   200
                 )}
                 alt={property.title}
-                className="w-full h-full object-cover rounded-bl-none rounded-br-none shadow-xl" // Ensure image covers the area
+                className="w-full h-full object-cover rounded-bl-none rounded-br-none shadow-md" // Ensure image covers the area
               />
 
               {/* Previous Button */}
@@ -127,13 +123,15 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
             </div>
           )}
 
-          <button
-            onClick={() => setShowTimes(!showTimes)}
-            className="w-full sm:h-12 md:h-12 bg-[#02343F] text-white sm:text-sm md:text-xl py-1  flex items-center justify-center gap-1 font-raleway"
-          >
-            {showTimes ? "Hide Travel Times" : "Show Travel Times"}
-            {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
+          {travelSearchSubmitted && (
+            <button
+              onClick={() => setShowTimes(!showTimes)}
+              className="w-full sm:h-12 md:h-12 bg-[#02343F] text-white sm:text-sm md:text-xl py-1  flex items-center justify-center gap-1 font-raleway"
+            >
+              {showTimes ? "Hide Travel Times" : "Show Travel Times"}
+              {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          )}
         </div>
 
         <AnimatePresence initial={false}>
@@ -166,13 +164,13 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           )}
         </AnimatePresence>
 
-        <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left px-4 pt-6">
-          <div className="sm:grid sm:grid-cols-1 sm:w-full  md:flex  justify-between items-center mb-2 text-gray-600 text-shadow-none">
-            <h2 className="w-full flex flex-col sm:flex-row sm:text-xl md:text-3xl font-thin justify-between items-center gap-2 mb-2 sm:mt-5 md:mt-20">
+        <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left  px-4">
+          <div className="grid grid-cols-2 w-full md:flex justify-between items-start gap-10 sm:mt-5 mb-2 text-gray-600 text-shadow-none">
+            <h2 className="w-full text-left text-md md:text-3xl font-thin  gap-2 mb-2">
               {property.location}
             </h2>
-            <div className="sm:h-8 flex items-center">
-              <span className="bg-[#02343F] text-white px-2 py-1 text-sm sm:text-md md:text-xl font-raleway">
+            <div className="sm:h-8 md:h-12 flex justify-center items-center">
+              <span className="bg-[#02343F] text-white px-2 py-1 text-sm sm:text-md md:text-xl font-raleway ">
                 Price
               </span>
               <span className="bg-[#f0edcc] px-2 py-1 text-sm sm:text-md md:text-xl font-semibold font-raleway">
@@ -180,17 +178,21 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               </span>
             </div>
           </div>
-          <p className="font-raleway sm:text-lg md:text-2xl sm:mb-2 md:mb-4 text-center text-[#02343F] text-shadow-none">
-            {property.title}
-          </p>
+          <div className="w-full flex justify-start">
+            <p className="font-raleway text-left sm:text-lg md:text-2xl sm:mb-2 md:mb-4  text-[#02343F] text-shadow-none">
+              {property.title}
+            </p>
+          </div>
 
-          <button
-            type="button"
-            className="w-full sm:w-96 md:w-32 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-md md:text-xl font-thin mt-2 rounded-md"
-            onClick={() => handleSelect(property)}
-          >
-            View
-          </button>
+          <div className="w-full flex justify-end md:w-full md:flex md:justify-end">
+            <button
+              type="button"
+              className="w-full md:w-auto sm:w-96 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-md md:text-xl font-thin mt-2 rounded-md"
+              onClick={() => handleSelect(property)}
+            >
+              View
+            </button>
+          </div>
         </div>
       </div>
     </>

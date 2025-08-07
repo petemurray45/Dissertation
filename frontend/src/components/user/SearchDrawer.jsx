@@ -1,19 +1,11 @@
 import { useState } from "react";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useListingStore } from "../../utils/useListingsStore";
-import UserAutocomplete from "./UserAutocomplete";
+
 import {
-  ArrowLeftIcon,
-  SaveIcon,
-  Trash2Icon,
   House,
-  Text,
   PoundSterling,
   BedDouble,
-  MapPinPlusInside,
-  Compass,
-  PlusCircleIcon,
-  ImageIcon,
   Dog,
   Wifi,
   Toilet,
@@ -29,6 +21,7 @@ function SearchDrawer() {
     syncFilters,
     setLoading,
     loading,
+    clearFilters,
   } = useListingStore();
 
   const handleSearch = async (e) => {
@@ -47,8 +40,22 @@ function SearchDrawer() {
     }
   };
 
+  const handleClear = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await clearFilters();
+      setSearchSubmitted(false);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (err) {
+      console.log("Failed to clear filters", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className=" w-full px-10 mx-auto mt-5 font-raleway">
+    <div className=" w-full px-10 mx-auto mt-5 font-raleway mb-10">
       <button
         onClick={() => setOpen(!open)}
         className="w-full bg-[#02343F] text-white px-4 py-3 rounded-t-lg text-center text-2xl flex justify-center items-center font-semibold"
@@ -94,12 +101,7 @@ function SearchDrawer() {
                     setPendingFilters({ sortBy: e.target.value })
                   }
                 >
-                  <option
-                    value=""
-                    className="font-raleway"
-                    disabled
-                    selected
-                  ></option>
+                  <option value="" className="font-raleway" disabled></option>
                   <option value="price_low_high">Low to high</option>
                   <option value="price_high_low">High to low</option>
                 </select>
@@ -170,12 +172,7 @@ function SearchDrawer() {
                     setPendingFilters({ bed_type: e.target.value })
                   }
                 >
-                  <option
-                    value=""
-                    className="font-raleway"
-                    disabled
-                    selected
-                  ></option>
+                  <option value="" className="font-raleway" disabled></option>
                   <option value="Double">Double</option>
                   <option value="Single">Single</option>
                   <option value="Bunk">Bunk Bed</option>
@@ -258,12 +255,7 @@ function SearchDrawer() {
                     setPendingFilters({ wifi: e.target.value });
                   }}
                 >
-                  <option
-                    className="font-raleway"
-                    value=""
-                    disabled
-                    selected
-                  ></option>
+                  <option className="font-raleway" value="" disabled></option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -286,7 +278,7 @@ function SearchDrawer() {
                     setPendingFilters({ pets: e.target.value });
                   }}
                 >
-                  <option className="font-raleway" disabled selected></option>
+                  <option className="font-raleway" disabled></option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -310,6 +302,13 @@ function SearchDrawer() {
 
             <button className=" h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black">
               Save this search
+            </button>
+
+            <button
+              onClick={handleClear}
+              className=" h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black"
+            >
+              Clear filters
             </button>
           </div>
         </div>

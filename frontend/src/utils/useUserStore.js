@@ -143,13 +143,16 @@ export const useUserStore = create((set, get) => ({
   },
 
   fetchLikedProperties: async () => {
-    const { user } = get();
+    const { user, token } = get();
 
-    if (!user) return;
+    if (!user || !token) return;
 
     try {
       const res = await axios.get(`${BASE_URL}/api/user/getLikes`, {
         params: { userId: user.id },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       set({ likedPropertyIds: res.data.liked });

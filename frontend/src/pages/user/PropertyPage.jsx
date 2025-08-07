@@ -48,12 +48,16 @@ function PropertyPage() {
     const init = async () => {
       await fetchPaginatedProperties();
       resetSearchDestinations();
-      setSearchSubmitted(false);
     };
     init();
   }, []);
 
-  const propertyList = searchSubmitted ? filteredProperties : properties;
+  const propertyList =
+    searchSubmitted &&
+    Array.isArray(filteredProperties) &&
+    filteredProperties.length > 0
+      ? filteredProperties
+      : properties;
 
   useEffect(() => {
     const scrollToResults = () => {

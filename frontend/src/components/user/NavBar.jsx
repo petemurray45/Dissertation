@@ -29,7 +29,7 @@ function NavBar() {
           )}
 
           {/* Nav links */}
-          <ul className="absolute left-1/2 transform -translate-x-1/2 flex gap-6 text-sm font-medium text-white font-raleway">
+          <ul className="flex flex-wrap justify-center gap-3 sm:gap-6 text-white font-raleway text-base sm:text-xl md:text-2xl">
             <li>
               <NavLink
                 to="/home"
