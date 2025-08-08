@@ -81,7 +81,6 @@ export const addNote = async (req, res) => {
 };
 
 export const getNotes = async (req, res) => {
-  console.log("GET NOTES HIT");
   const { user_id, property_id } = req.params;
 
   try {
@@ -92,6 +91,31 @@ export const getNotes = async (req, res) => {
   } catch (err) {
     console.error("Error getting notes", err);
     res.status(500).json({ error: "Failed to fetch notes" });
+  }
+};
+
+export const getAllNotes = async (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const result = await sql`
+      SELECT 
+        n.id,
+        n.content,
+        n.property_id,
+        p.location,
+        n.created_at
+      FROM notes n
+      LEFT JOIN properties p
+        ON n.property_id = p.id
+      WHERE n.user_id = ${user_id}
+      ORDER BY n.created_at
+    `;
+    console.log("Notes result", result);
+    res.json(result);
+  } catch (err) {
+    console.error("Error getting all notes", err);
+    res.status(500).json({ error: "Failed to fetch all notes" });
   }
 };
 

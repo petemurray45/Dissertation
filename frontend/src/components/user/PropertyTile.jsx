@@ -70,7 +70,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="h-auto flex flex-col flex-grow relative bg-[#f5f8f6] shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s  rounded-2xl">
+      <div className="h-auto flex flex-col flex-grow relative bg-[#f5f8f6] shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s  rounded-2xl ">
         <div className="relative w-full max-h-[250px]">
           {hasImages ? (
             <>
@@ -81,7 +81,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
                   200
                 )}
                 alt={property.title}
-                className="w-full h-full object-cover rounded-bl-none rounded-br-none shadow-md" // Ensure image covers the area
+                className="w-full h-full aspect-[4/3] object-cover rounded-bl-none rounded-br-none shadow-md" // Ensure image covers the area
               />
 
               {/* Previous Button */}
@@ -165,7 +165,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
         </AnimatePresence>
 
         <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left  px-4">
-          <div className="grid grid-cols-2 w-full md:flex justify-between items-start gap-10 sm:mt-5 mb-2 text-gray-600 text-shadow-none">
+          <div className="grid grid-cols-2 w-full md:flex justify-between items-start gap-10 sm:mt-5 mb-2 text-gray-600 text-shadow-none flex-1">
             <h2 className="w-full text-left text-md md:text-3xl font-thin  gap-2 mb-2">
               {property.location}
             </h2>
@@ -184,7 +184,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
             </p>
           </div>
 
-          <div className="w-full flex justify-end md:w-full md:flex md:justify-end">
+          <div className="w-full flex justify-end md:w-full md:flex md:justify-end mt-auto">
             <button
               type="button"
               className="w-full md:w-auto sm:w-96 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-md md:text-xl font-thin mt-2 rounded-md"

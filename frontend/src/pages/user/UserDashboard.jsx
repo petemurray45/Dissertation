@@ -5,7 +5,6 @@ import LocationCarousel from "../../components/user/LocationCarousel.jsx";
 import { useListingStore } from "../../utils/useListingsStore";
 import { useEffect } from "react";
 import { PackageIcon } from "lucide-react";
-import DashboardInfo from "../../components/user/DashboardInfo.jsx";
 function UserDashboard() {
   const { properties, loading, error, fetchProperties } = useListingStore();
 

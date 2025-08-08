@@ -5,6 +5,7 @@ import SecondaryNav from "../../components/user/navs/secondaryNav";
 import Overview from "../../components/user/profile/Overview";
 import LikedProperties from "../../components/user/profile/LikedProperties";
 import EditProfile from "../../components/user/profile/EditProfile";
+import Notes from "../../components/user/profile/Notes";
 
 function Profile() {
   const { user } = useUserStore();
@@ -14,6 +15,7 @@ function Profile() {
     overview: <Overview />,
     likedProperties: <LikedProperties />,
     edit: <EditProfile />,
+    notes: <Notes />,
   };
 
   const tabSelectors = [
@@ -54,10 +56,16 @@ function Profile() {
           tabs={tabSelectors}
         />
 
-        <div className="p-10">
+        <div
+          className="relative overflow-hidden min-h-screen"
+          style={{
+            backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
+          }}
+        >
           {activeTab === "overview" && <Overview />}
           {activeTab === "likedProperties" && <LikedProperties />}
           {activeTab === "edit" && <EditProfile />}
+          {activeTab === "notes" && <Notes />}
         </div>
       </div>
     </div>

@@ -1,10 +1,25 @@
 import house from "../../../assets/house.png";
 import search from "../../../assets/searchheart.png";
-import notes from "../../../assets/notes.png";
+import notes1 from "../../../assets/notes.png";
 import { useUserStore } from "../../../utils/useUserStore";
+import { useEffect, useState } from "react";
 
 function Overview() {
-  const { likedPropertyIds } = useUserStore();
+  const { likedPropertyIds, fetchAllNotes } = useUserStore();
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    const countNotes = async () => {
+      try {
+        const response = await fetchAllNotes();
+        setNotes(response || []);
+      } catch (err) {
+        console.error("Error counting notes", err);
+        setNotes([]);
+      }
+    };
+    countNotes();
+  });
   return (
     <>
       <div className="bg-gray-200 rounded-xl min-h-[600px] mx-20 my-20 border-2 border-gray-300 shadow-lg">
@@ -37,13 +52,13 @@ function Overview() {
             </div>
           </div>
           <div className="h-48 px-10">
-            <img src={notes} className="h-80" />
+            <img src={notes1} className="h-80" />
             <div>
               <p className="text-3xl text-center font-raleway text-gray-500">
                 You have made
               </p>
               <p className="text-3xl text-center font-raleway text-gray-500 pt-5">
-                0 NOTES
+                {notes.length} NOTES
               </p>
             </div>
           </div>

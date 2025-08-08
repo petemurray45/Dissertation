@@ -54,7 +54,7 @@ function PropertyCarousel({ properties }) {
   console.log(properties);
 
   return (
-    <div className="my-8 mx-8 md:mx-36 lg:mx-36 flex flex-col sm:block">
+    <div className="my-8 mx-auto max-w-screen-2xl  px-8 sm:px-6 lg:px-12 flex flex-col sm:block">
       <h2 className="text-3xl md:text-4xl lg:text-6xl py-12 px-8 text-center font-raleway font-thin text-gray-200 text-shadow-lg ">
         Featured Properties
       </h2>

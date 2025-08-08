@@ -204,6 +204,25 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
+  fetchAllNotes: async () => {
+    const { user, token } = get();
+    if (!user || !token) return;
+
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/user/getAllNotes/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    } catch (err) {
+      console.err("Error fetching all Notes", err);
+    }
+  },
+
   deleteNote: async (note_id) => {
     const { token } = get();
 

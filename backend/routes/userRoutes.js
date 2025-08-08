@@ -7,12 +7,14 @@ import { removeLike } from "../controllers/userControllers.js";
 import { getNotes } from "../controllers/userControllers.js";
 import { addNote } from "../controllers/userControllers.js";
 import { deleteNote } from "../controllers/userControllers.js";
+import { getAllNotes } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
 router.post("/likes", authenticate, addToLikes);
 router.post("/addNote", authenticate, addNote);
 router.get("/getNotes/:user_id/:property_id", authenticate, getNotes);
+router.get("/getAllNotes/:user_id", authenticate, getAllNotes);
 router.get("/checkLikes", checkLikes);
 router.get("/getLikes", authenticate, getAllLikedProperties);
 router.delete("/removelike", authenticate, removeLike);
