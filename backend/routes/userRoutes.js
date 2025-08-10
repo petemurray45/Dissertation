@@ -8,6 +8,7 @@ import { getNotes } from "../controllers/userControllers.js";
 import { addNote } from "../controllers/userControllers.js";
 import { deleteNote } from "../controllers/userControllers.js";
 import { getAllNotes } from "../controllers/userControllers.js";
+import { updateProfile } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.get("/checkLikes", checkLikes);
 router.get("/getLikes", authenticate, getAllLikedProperties);
 router.delete("/removelike", authenticate, removeLike);
 router.delete("/deleteNote/:note_id", authenticate, deleteNote);
+router.patch("/updateProfile/:id", authenticate, updateProfile);
 
 export default router;

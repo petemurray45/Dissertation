@@ -236,4 +236,27 @@ export const useUserStore = create((set, get) => ({
       console.log("Error deleting token", err);
     }
   },
+
+  updateProfile: async (payLoad) => {
+    const { user, token } = get();
+
+    if (!user || !token) return;
+
+    try {
+      const { data } = await axios.patch(
+        `${BASE_URL}/api/user/updateProfile/${user.id}`,
+        payLoad,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      set({ user: data.user });
+
+      return data.user;
+    } catch (err) {
+      console.log("Error updating user", err);
+    }
+  },
 }));

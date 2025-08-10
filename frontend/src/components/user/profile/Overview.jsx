@@ -22,7 +22,7 @@ function Overview() {
   });
   return (
     <>
-      <div className="bg-gray-200 rounded-xl min-h-[600px] mx-20 my-20 border-2 border-gray-300 shadow-lg">
+      <div className="bg-gray-200 rounded-xl min-h-[600px] mx-20 my-20 border-2 shadow-lg">
         <div>
           <h1 className="text-5xl font-medium font-raleway text-[#02343F] text-center mt-10">
             Account Overview

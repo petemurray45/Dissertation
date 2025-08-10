@@ -142,24 +142,26 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 py-2 space-y-2 text-lg text-white border-t border-gray-300 font-raleway"
+              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 py-2 space-y-2 text-lg text-gray-700 border-t border-gray-300 font-raleway py-4"
             >
-              {property.travelTimes && property.travelTimes.length > 0 ? (
-                <ul className="space-y-1">
-                  {property.travelTimes.map((time, index) => (
-                    <li key={index} className="pt-2">
-                      <span className="text-2xl pr-5">
-                        {time.duration} to{}
-                      </span>
-                      <span className="italic text-2xl">
-                        {searchDestinations[index]?.label || time.destination}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No travel time available</p>
-              )}
+              <div className="h-full flex justify-between  bg-gray-200 rounded-2xl px-4 py-4">
+                {property.travelTimes && property.travelTimes.length > 0 ? (
+                  <ul className="space-y-1 flex flex-col gap-2 items-center">
+                    {property.travelTimes.map((time, index) => (
+                      <li key={index} className="flex  pt-2">
+                        <span className="text-2xl pr-5">
+                          {time.duration} to{}
+                        </span>
+                        <span className="italic text-2xl">
+                          {searchDestinations[index]?.label || time.destination}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No travel time available</p>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

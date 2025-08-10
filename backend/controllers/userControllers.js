@@ -130,3 +130,23 @@ export const deleteNote = async (req, res) => {
     res.status(500).json({ error: "Failed to delete note" });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  const { id } = req.params;
+  let { full_name, email, password, photoUrl } = req.body;
+
+  let hashed = null;
+  if (password) hashed = await bcrypt.hash(password, 10);
+
+  const result = await sql`
+    UPDATE users SET
+      full_name     = COALESCE(${full_name}, full_name),
+      email         = COALESCE(${email}, email),
+      photo_url     = COALESCE(${photoUrl}, photo_url),
+      password_hash = COALESCE(${hashed}, password_hash)
+    WHERE id = ${id}
+    RETURNING id, full_name, email, photo_url
+  `;
+
+  res.json({ user: result[0] });
+};

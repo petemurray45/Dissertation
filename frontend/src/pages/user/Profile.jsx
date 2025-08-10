@@ -21,27 +21,22 @@ function Profile() {
   const tabSelectors = [
     { key: "overview", label: "Overview" },
     { key: "likedProperties", label: "Liked Properties" },
-    { key: "saved", label: "Saved Searches" },
+
     { key: "edit", label: "Edit Profile" },
     { key: "notes", label: "Notes" },
   ];
 
   return (
     <div
-      className="relative overflow-hidden"
+      className="overflow-hidden"
       style={{
         backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
       }}
     >
       <div>
         <NavBar />
-        <div className="w-full  bg-cover bg-center">
-          <div
-            className="w-full h-[400px] flex items-center justify-center bg-cover bg-center"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-            }}
-          >
+        <div className="w-full ">
+          <div className="w-full  flex items-center justify-center bg-cover bg-center">
             <div className="flex flex-col justify-center">
               <h1 className="text-6xl text-center text-white font-raleway font-bold text-shadow-lg mt-28">
                 Welcome {user.name}!
@@ -56,12 +51,7 @@ function Profile() {
           tabs={tabSelectors}
         />
 
-        <div
-          className="relative overflow-hidden min-h-screen"
-          style={{
-            backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
-          }}
-        >
+        <div className="relative overflow-hidden min-h-screen">
           {activeTab === "overview" && <Overview />}
           {activeTab === "likedProperties" && <LikedProperties />}
           {activeTab === "edit" && <EditProfile />}

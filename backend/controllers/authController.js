@@ -3,13 +3,13 @@ import jwt from "jsonwebtoken";
 import { sql } from "../config/db.js";
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, photoUrl } = req.body;
   console.log("REQ.BODY for register:", req.body);
 
   try {
     const hashed = await bcrypt.hash(password, 10);
     const result =
-      await sql`INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (${name}, ${email}, ${hashed}, 'user', NOW()) RETURNING id, email`;
+      await sql`INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (${name}, ${email}, ${hashed}, 'user', ${photoUrl || null}, NOW()) RETURNING id, email`;
     let user;
 
     // check if is array and contains at least one row
@@ -43,7 +43,15 @@ export const register = async (req, res) => {
         expiresIn: "2hr",
       }
     );
-    res.status(201).json({ user, token });
+    res.status(201).json({
+      token,
+      user: {
+        id: user.id,
+        name: user.full_name,
+        email: user.email,
+        photoUrl: user.photoUrl ?? null,
+      },
+    });
   } catch (err) {
     if (err.code === "23505") {
       res.status(400).json({ error: "User already exists" });
@@ -80,6 +88,7 @@ export const login = async (req, res) => {
       id: user.id,
       name: user.full_name,
       email: user.email,
+      photoUrl: user.photoUrl ?? null,
     },
   });
 };
@@ -107,7 +116,12 @@ export const getMe = async (req, res) => {
     }
 
     res.json({
-      user: { id: user.id, name: user.full_name, email: user.email },
+      user: {
+        id: user.id,
+        name: user.full_name,
+        email: user.email,
+        photoUrl: user.photoUrl ?? null,
+      },
     });
   } catch (err) {
     console.error("Error in /me", err);

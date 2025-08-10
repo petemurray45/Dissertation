@@ -55,9 +55,9 @@ function Hero() {
             <p className="text-base sm:text-xl md:text-2xl text-gray-200 max-w-prose">
               Searching for a room that suits you has never been easier.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col justify-center items-center sm:flex-row gap-4">
               <button
-                className="btn border-none bg-[#02343F] text-white rounded-md px-6 py-3 text-lg sm:text-xl"
+                className="btn border-none bg-[#02343F] text-white rounded-md px-6 py-3 text-lg sm:text-xl text-center"
                 type="button"
                 onClick={() =>
                   searchBar?.scrollIntoView({ behavior: "smooth" })
@@ -66,7 +66,7 @@ function Hero() {
                 Search Now <FaArrowDown className="ml-2" />
               </button>
               <button
-                className="btn border-none bg-[#e3d6a1] text-black rounded-md px-6 py-3 text-lg sm:text-xl"
+                className="btn border-none bg-[#e3d6a1] text-black rounded-md px-6 py-3 text-center text-lg sm:text-xl"
                 onClick={() => navigate("/properties")}
               >
                 View All Rooms <FaArrowRight className="ml-2" />
