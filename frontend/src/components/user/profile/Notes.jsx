@@ -2,6 +2,8 @@ import { useUserStore } from "../../../utils/useUserStore";
 import { useState, useEffect } from "react";
 import { PackageIcon } from "lucide-react";
 import { MdDelete } from "react-icons/md";
+import { Toaster, toast } from "react-hot-toast";
+
 function Notes() {
   const [notes, setNotes] = useState([]);
   const [openNoteId, setOpenNoteId] = useState(null);
@@ -24,9 +26,11 @@ function Notes() {
     try {
       await deleteNote(id);
       const updated = await fetchAllNotes();
+      toast.success("Note deleted.");
       setNotes(updated);
     } catch (err) {
       console.error("Error deleting note", err);
+      toast.error("Error deleting note.");
     }
   };
 
@@ -61,20 +65,33 @@ function Notes() {
         </div>
       ) : (
         <div className="bg-gray-200 rounded-xl mt-10 mx-20">
+          <Toaster
+            position="top-center"
+            containerClassName="!absolute !top-0"
+            toastOptions={{
+              style: {
+                borderRadius: "8px",
+                background: "#333",
+                color: "#fff",
+                fontSize: "1.2rem",
+                padding: "1rem 1.5rem",
+              },
+            }}
+          />
           <ul className="space-y-4 px-5 py-3">
             {notes.map((note) => {
-              const id = Number(note.id); // <-- coerce once
+              const id = Number(note.id);
               return (
                 <li key={id} className="space-y-3">
-                  <div className="flex justify-between items-center bg-gray-100 px-5 py-5 rounded-lg">
+                  <div className="flex justify-between items-center bg-gray-100 px-5 py-5 rounded-lg relative">
                     <span className="text-xl truncate max-w-[200px]">
                       {note.content}
                     </span>
 
-                    {note.content?.length > 40 && (
+                    {note.content?.length > 10 && (
                       <button
-                        className=" hover:bg-[#02343F]/60 text-xl bg-[#02343F] text-gray-200 px-5 py-3 rounded-md"
-                        onClick={() => toggleDrawer(id)} // <-- pass function
+                        className="absolute left-[250px] top-1/2 -translate-y-1/2 hover:bg-[#02343F]/60 text-xl bg-[#02343F] text-gray-200 px-5 py-3 rounded-md"
+                        onClick={() => toggleDrawer(id)}
                       >
                         {openNoteId === id ? "Hide" : "View More"}
                       </button>
@@ -91,6 +108,15 @@ function Notes() {
                     >
                       <MdDelete size={24} />
                     </button>
+
+                    {note.content?.length > 40 && (
+                      <button
+                        className="absolute left-[250px] top-1/2 -translate-y-1/2 hover:bg-[#02343F]/60 text-xl bg-[#02343F] text-gray-200 px-5 py-3 rounded-md"
+                        onClick={() => toggleDrawer(id)}
+                      >
+                        {openNoteId === id ? "Hide" : "View More"}
+                      </button>
+                    )}
                   </div>
 
                   {openNoteId === id && (

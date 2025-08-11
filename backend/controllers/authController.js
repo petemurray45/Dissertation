@@ -9,7 +9,7 @@ export const register = async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, 10);
     const result =
-      await sql`INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (${name}, ${email}, ${hashed}, 'user', ${photoUrl || null}, NOW()) RETURNING id, email`;
+      await sql`INSERT INTO users (full_name, email, password_hash, role, photo_url created_at) VALUES (${name}, ${email}, ${hashed}, 'user', ${photoUrl || null}, NOW()) RETURNING id, email`;
     let user;
 
     // check if is array and contains at least one row
@@ -49,7 +49,7 @@ export const register = async (req, res) => {
         id: user.id,
         name: user.full_name,
         email: user.email,
-        photoUrl: user.photoUrl ?? null,
+        photoUrl: user.photo_url ?? null,
       },
     });
   } catch (err) {
@@ -88,7 +88,7 @@ export const login = async (req, res) => {
       id: user.id,
       name: user.full_name,
       email: user.email,
-      photoUrl: user.photoUrl ?? null,
+      photoUrl: user.photo_url ?? null,
     },
   });
 };
@@ -108,7 +108,7 @@ export const getMe = async (req, res) => {
     console.log("JWT_SECRET in getMe:", process.env.JWT_SECRET);
 
     const result =
-      await sql`SELECT id, full_name, email FROM users WHERE id = ${decoded.id}`;
+      await sql`SELECT id, full_name, email, photo_url FROM users WHERE id = ${decoded.id}`;
     const user = result[0];
 
     if (!user) {
@@ -120,7 +120,7 @@ export const getMe = async (req, res) => {
         id: user.id,
         name: user.full_name,
         email: user.email,
-        photoUrl: user.photoUrl ?? null,
+        photoUrl: user.photo_url ?? null,
       },
     });
   } catch (err) {

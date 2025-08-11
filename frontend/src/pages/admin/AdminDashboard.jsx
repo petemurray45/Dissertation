@@ -10,10 +10,17 @@ import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from "lucide-react";
 import { HiOutlineViewfinderCircle } from "react-icons/hi2";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useListingStore } from "../../utils/useListingsStore.js";
+import { useUserStore } from "../../utils/useUserStore.js";
+import { useAgencyStore } from "../../utils/useAgencyStore.js";
 import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
   const { properties, loading, error, fetchProperties } = useListingStore();
+
+  const { user } = useUserStore();
+  const { agency } = useAgencyStore();
+
+  const displayName = agency?.agency_name || user?.name || "Admin";
 
   useEffect(() => {
     fetchProperties();

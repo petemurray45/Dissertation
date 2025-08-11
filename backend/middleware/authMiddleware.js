@@ -13,3 +13,19 @@ export const authenticate = (req, res, next) => {
     res.sendStatus(403);
   }
 };
+
+export const authenticateAgency = (req, res, next) => {
+  const authHeader = equal.headers.authorization;
+  if (!authHeader) return res.sendStatus(401);
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "agency") return res.sendStatus(403);
+
+    req.agency = decoded;
+    next();
+  } catch (err) {
+    res.sendStatus(403);
+  }
+};

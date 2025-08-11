@@ -300,10 +300,6 @@ function SearchDrawer() {
               )}
             </button>
 
-            <button className=" h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black">
-              Save this search
-            </button>
-
             <button
               onClick={handleClear}
               className=" h-16 w-80 rounded-md mt-8 mb-4 text-2xl bg-[#02343F] text-white  hover:bg-[#F0EDCC] hover:text-black"

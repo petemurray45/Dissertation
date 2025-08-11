@@ -9,6 +9,7 @@ import propertyRoutes from "./routes/propertyRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import agencyRoutes from "./routes/agencyRoutes.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -27,6 +28,7 @@ app.use("/api/properties", propertyRoutes);
 app.use("/api/auth", loginRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api", chatRoutes);
+app.use("/api/agency", agencyRoutes);
 
 async function initDB() {
   try {

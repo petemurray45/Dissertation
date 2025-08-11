@@ -82,38 +82,44 @@ function MapSearch({ property }) {
 
   return (
     <>
-      <div className=" mb-10  mx-20  rounded-2xl font-raleway">
-        <div className="flex flex-col w-full p-8 gap-10 ">
-          {/* sidebar for inputs */}
-          <div className="flex flex-col gap-10 w-full h-full  rounded-2xl ">
-            <h1 className="text-3xl text-gray-100">{property.location}</h1>
-            <div className="flex  justify-between w-full gap-20">
-              {searchDestinations.map((dest, index) => (
-                <button
-                  key={dest.label}
-                  onClick={() => {
-                    showRoute(dest, index);
-                  }}
-                  className={`  w-full h-20 border border-gray-200 rounded-md hover:bg-[#02343F] text-2xl text-gray-200 ${
-                    activeIndex === index
-                      ? "bg-[#02343F] text-white "
-                      : "btn-outline text-[#02343F]"
-                  } ${clickedIndex === index ? "animate-beat" : ""}`}
-                >
-                  {activeIndex === index && durations[index]
-                    ? durations[index] + " drive" // show time only if selected
-                    : dest.label}{" "}
-                </button>
-              ))}
+      <div className="px-2 py-2 bg-gray-300 rounded-2xl">
+        <div className=" px-10 py-10  rounded-2xl font-raleway bg-gray-100">
+          <div className="flex flex-col  p-8 gap-2 ">
+            {/* sidebar for inputs */}
+            <div className="flex flex-col gap-10 w-full h-full  rounded-2xl ">
+              <h1 className="text-3xl text-gray-600">{property.location}</h1>
+              <div className="flex  justify-between w-full gap-20">
+                {searchDestinations.map((dest, index) => (
+                  <button
+                    key={dest.label}
+                    onClick={() => {
+                      showRoute(dest, index);
+                    }}
+                    className={`mb-5 w-full h-20 border bg-gray-200 border-gray-400 rounded-md hover:bg-[#02343F] hover:text-gray-100 text-2xl text-gray-600 ${
+                      activeIndex === index
+                        ? "!bg-[#02343F] text-gray-100 "
+                        : "bg-gray-200 text-[#02343F]"
+                    } ${clickedIndex === index ? "animate-beat" : ""}`}
+                  >
+                    {activeIndex === index && durations[index]
+                      ? durations[index] + " drive" // show time only if selected
+                      : dest.label}{" "}
+                  </button>
+                ))}
+              </div>
             </div>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={center}
+              zoom={12}
+            >
+              <Marker
+                position={{ lat: property.latitude, lng: property.longitude }}
+                title={property.location}
+              />
+              <DirectionsRenderer directions={directions} />
+            </GoogleMap>
           </div>
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={12}
-          >
-            <DirectionsRenderer directions={directions} />
-          </GoogleMap>
         </div>
       </div>
     </>

@@ -17,7 +17,7 @@ import { useUserStore } from "../../utils/useUserStore";
 function ViewListing() {
   const { fetchProperty, loading, currentProperty, error } = useListingStore();
   const { addToLikes, likedPropertyIds, user } = useUserStore();
-  const [activeTab, setActiveTab] = useState("traveltimes");
+  const [activeTab, setActiveTab] = useState("routePlanner");
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -118,9 +118,7 @@ function ViewListing() {
           />
         </div>
 
-        <div className="mx-20">
-          {tabComponents[activeTab] ?? <p>No tab found</p>}
-        </div>
+        <div className="mx-20">{tabComponents[activeTab] ?? <p></p>}</div>
 
         <div className="flex h-full mt-5">
           {/*<MapSearch property={currentProperty} />*/}

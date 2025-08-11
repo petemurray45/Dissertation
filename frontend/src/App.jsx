@@ -8,6 +8,7 @@ import ViewListing from "./pages/user/ViewListing";
 import UserLogin from "./pages/user/UserLogin";
 import Profile from "./pages/user/Profile";
 import PropPal from "./pages/user/PropPal";
+import AgencyAuth from "./components/user/AgencyAuth";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 function App() {
@@ -41,6 +42,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/home" />} />
           <Route path="/login" element={<UserLogin />} />
+          <Route path="/agencyLogin" element={<AgencyAuth />} />
         </Routes>
       </div>
     </>

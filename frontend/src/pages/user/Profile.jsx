@@ -9,7 +9,7 @@ import Notes from "../../components/user/profile/Notes";
 
 function Profile() {
   const { user } = useUserStore();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("likedProperties");
 
   const tabComponents = {
     likedProperties: <LikedProperties />,
@@ -33,9 +33,14 @@ function Profile() {
       <div>
         <NavBar />
         <div className="w-full ">
-          <div className="w-full  flex items-center justify-center bg-cover bg-center">
+          <div className="  flex flex-col items-center justify-end bg-cover bg-center">
+            <img
+              src={user.photoUrl}
+              alt="user"
+              className="rounded-full object-cover h-64 w-64 mt-20"
+            />
             <div className="flex flex-col justify-center">
-              <h1 className="text-6xl text-center text-white font-raleway font-bold text-shadow-lg mt-28">
+              <h1 className="text-6xl text-center text-white font-raleway font-bold text-shadow-lg mt-10">
                 Welcome {user.name}!
               </h1>
             </div>

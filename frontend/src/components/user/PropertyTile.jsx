@@ -19,6 +19,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   const [liked, setLiked] = useState(false);
   const [showLikeMessage, setShowLikeMessage] = useState(false);
   const [likeMessageText, setLikeMessageText] = useState("");
+  const [mode, setMode] = useState("driving");
   const [showTimes, setShowTimes] = useState(false);
   const { searchDestinations } = useTravelStore();
   const { travelSearchSubmitted } = useListingStore();
@@ -159,17 +160,29 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 py-2 space-y-2 text-lg text-gray-700 border-t border-gray-300 font-raleway py-4"
+              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 space-y-2 text-lg text-gray-700 border-t border-gray-300 font-raleway py-4"
             >
-              <div className="h-full flex justify-between  bg-gray-200 rounded-2xl px-4 py-4">
+              <div className="h-full flex-col justify-between  bg-gray-200 rounded-2xl px-4 py-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
+                    Driving
+                  </span>
+                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
+                    Bicycle
+                  </span>
+                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
+                    Walking
+                  </span>
+                </div>
+
                 {property.travelTimes && property.travelTimes.length > 0 ? (
-                  <ul className="space-y-1 flex flex-col gap-2 items-center">
+                  <ul className="space-y-1 flex flex-col">
                     {property.travelTimes.map((time, index) => (
-                      <li key={index} className="flex  pt-2">
-                        <span className="text-2xl pr-5">
+                      <li key={index} className="flex">
+                        <span className="text-xl pr-5">
                           {time.duration} to{}
                         </span>
-                        <span className="italic text-2xl">
+                        <span className="italic text-xl">
                           {searchDestinations[index]?.label || time.destination}
                         </span>
                       </li>

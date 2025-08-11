@@ -39,27 +39,32 @@ function PlacesSection({ lat, lng }) {
   }
 
   return (
-    <div className="w-full px-20 my-10 py-10">
-      <h1 className="text-4xl font-raleway pb-2">Nearby Places</h1>
-      <PlacesCategorySelector selectedType={category} onSelect={setCategory} />
-      <div className="flex gap-20 my-10 overflow-x-auto scrollbar-hide">
-        {nearbyPlaces
-          .filter(
-            (place) =>
-              place?.photoUrl?.length > 0 &&
-              typeof place.rating === "number" &&
-              !isNaN(place.rating)
-          )
-          .map((place, index) => (
-            <PlaceTile
-              key={index}
-              name={place.name}
-              photoUrl={place.photoUrl}
-              rating={place.rating}
-              vicinity={place.vicinity}
-              ratingsTotal={place.user_ratings_total}
-            />
-          ))}
+    <div className="px-2 py-2 bg-gray-300 rounded-2xl">
+      <div className="w-full px-20 py-10 bg-gray-200 rounded-2xl">
+        <h1 className="text-4xl font-raleway pb-2">Nearby Places</h1>
+        <PlacesCategorySelector
+          selectedType={category}
+          onSelect={setCategory}
+        />
+        <div className="flex gap-20 my-10 overflow-x-auto scrollbar-hide">
+          {nearbyPlaces
+            .filter(
+              (place) =>
+                place?.photoUrl?.length > 0 &&
+                typeof place.rating === "number" &&
+                !isNaN(place.rating)
+            )
+            .map((place, index) => (
+              <PlaceTile
+                key={index}
+                name={place.name}
+                photoUrl={place.photoUrl}
+                rating={place.rating}
+                vicinity={place.vicinity}
+                ratingsTotal={place.user_ratings_total}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

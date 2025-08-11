@@ -52,7 +52,7 @@ function MakeNote({ property }) {
   return (
     <>
       <div className="bg-gray-300 px-2 py-2 rounded-2xl">
-        <div className="bg-gray-200 px-8 py-8 rounded-2xl relative">
+        <div className="bg-gray-100 px-8 py-8 rounded-2xl relative">
           <Toaster
             position="top-center"
             containerClassName="!absolute !top-0"
