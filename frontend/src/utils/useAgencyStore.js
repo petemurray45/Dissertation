@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import axios from "axios";
-import { log } from "console";
 const BASE_URL = "http://localhost:3000";
 
 export const useAgencyStore = create((set, get) => ({
@@ -8,6 +7,7 @@ export const useAgencyStore = create((set, get) => ({
   token: localStorage.getItem("agency_token") || null,
   isLoggedIn: !!localStorage.getItem("agency_token"),
   loading: false,
+  properties: [],
   error: null,
 
   setAgency: (agency) => set({ agency }),
@@ -34,17 +34,17 @@ export const useAgencyStore = create((set, get) => ({
     }
   },
 
-  register: async ({ name, website, email, phone, loginId }) => {
+  register: async ({ agency_name, agency_email, phone, loginId, website }) => {
     try {
       set({ loading: true, error: null });
       const { data } = await axios.post(
         `${BASE_URL}/api/agency/registerAgency`,
         {
-          name,
-          website,
-          email,
+          agency_name,
+          agency_email,
           phone,
           loginId,
+          website,
         }
       );
       localStorage.setItem("agency_token", data.token);
@@ -57,11 +57,11 @@ export const useAgencyStore = create((set, get) => ({
     }
   },
 
-  login: async ({ name, loginId }) => {
+  login: async ({ agency_name, loginId }) => {
     try {
       set({ loading: true, error: null });
-      const { data } = await axios.post(`${BASE_URL}/api/agency/agenctLogin`, {
-        name,
+      const { data } = await axios.post(`${BASE_URL}/api/agency/agencyLogin`, {
+        agency_name,
         loginId,
       });
       localStorage.setItem("agency_token", data.token);
@@ -69,6 +69,26 @@ export const useAgencyStore = create((set, get) => ({
       return data.agency;
     } catch (err) {
       console.log("Error logging agency in", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchPropertiesByAgency: async (agencyId) => {
+    set({ loading: true });
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/agency/${agencyId}/agencyProperties`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = res.json();
+      set({ properties: data });
+    } catch (err) {
+      console.error("Error fetching agency properties", err);
     } finally {
       set({ loading: false });
     }

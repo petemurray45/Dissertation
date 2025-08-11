@@ -9,6 +9,7 @@ import UserLogin from "./pages/user/UserLogin";
 import Profile from "./pages/user/Profile";
 import PropPal from "./pages/user/PropPal";
 import AgencyAuth from "./components/user/AgencyAuth";
+import AgencyDashboard from "./pages/admin/AgencyDashboard";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 function App() {
@@ -28,12 +29,17 @@ function App() {
     <>
       <div className="overflow-x-hidden">
         <Routes>
+          {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/addproperty" element={<AdminAddProperty />} />
           <Route path="/admin/property/:id" element={<AdminProductPage />} />
           <Route path="*" element={<Navigate to="/admin" />} />
-          {/* User Routes */}
 
+          {/* Agency Routes */}
+          <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+          <Route path="/agencyLogin" element={<AgencyAuth />} />
+
+          {/* User Routes */}
           <Route path="home" element={<UserDashboard />} />
           <Route path="properties" element={<PropertyPage />} />
           <Route path="properties/:id" element={<ViewListing />} />
@@ -42,7 +48,6 @@ function App() {
 
           <Route path="*" element={<Navigate to="/home" />} />
           <Route path="/login" element={<UserLogin />} />
-          <Route path="/agencyLogin" element={<AgencyAuth />} />
         </Routes>
       </div>
     </>

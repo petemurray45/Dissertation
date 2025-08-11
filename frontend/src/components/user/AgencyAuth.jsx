@@ -23,7 +23,7 @@ function AgencyAuth() {
     e?.preventDefault?.();
     try {
       if (mode === "sign-in") {
-        await login({ agencyName, loginId });
+        await login({ agency_name: agencyName, loginId });
         navigate("/agency/dashboard");
       } else {
         if (loginId !== confirmLoginId) {
@@ -31,11 +31,11 @@ function AgencyAuth() {
           return;
         }
         await register({
-          agencyName,
-          website,
-          agencyEmail,
+          agency_name: agencyName,
+          agency_email: agencyEmail,
           phone,
           loginId,
+          website,
         });
         navigate("/agency/dashboard");
       }

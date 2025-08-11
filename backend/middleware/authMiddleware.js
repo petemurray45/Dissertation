@@ -15,7 +15,7 @@ export const authenticate = (req, res, next) => {
 };
 
 export const authenticateAgency = (req, res, next) => {
-  const authHeader = equal.headers.authorization;
+  const authHeader = req.headers.authorization;
   if (!authHeader) return res.sendStatus(401);
 
   const token = authHeader.split(" ")[1];
