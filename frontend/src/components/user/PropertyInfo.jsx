@@ -37,19 +37,21 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 shadow-xl border-gray-300 bg-gray-200 rounded-lg gap-10 w-[100%] p-6 mt-6 text-xl">
-          <p>Price:</p>
-          <p className="text-end">£{property.price_per_month}</p>
-          <p>Property Type:</p>
-          <p className="text-end">{property.property_type}</p>
-          <p>En suite:</p>
-          <p className=" text-end">{property.ensuite ? "Yes" : "No"}</p>
-          <p>Bed Type:</p>
-          <p className=" text-end">{property.bed_type}</p>
-          <p>Wifi:</p>
-          <p className="text-end">{property.wifi ? "Yes" : "No"}</p>
-          <p>Pet Friendly</p>
-          <p className="text-end">{property.pets ? "Yes" : "No"}</p>
+        <div className="bg-gray-300 px-2 py-2 rounded-2xl">
+          <div className="grid grid-cols-2 shadow-xl border-gray-300 bg-gray-200 rounded-2xl gap-10 w-[100%] p-6  text-xl">
+            <p>Price:</p>
+            <p className="text-end">£{property.price_per_month}</p>
+            <p>Property Type:</p>
+            <p className="text-end">{property.property_type}</p>
+            <p>En suite:</p>
+            <p className=" text-end">{property.ensuite ? "Yes" : "No"}</p>
+            <p>Bed Type:</p>
+            <p className=" text-end">{property.bed_type}</p>
+            <p>Wifi:</p>
+            <p className="text-end">{property.wifi ? "Yes" : "No"}</p>
+            <p>Pet Friendly</p>
+            <p className="text-end">{property.pets ? "Yes" : "No"}</p>
+          </div>
         </div>
 
         {!user ? (

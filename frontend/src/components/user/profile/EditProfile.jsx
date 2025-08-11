@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { FaCamera } from "react-icons/fa";
 import { useUserStore } from "../../../utils/useUserStore";
+import { Toaster, toast } from "react-hot-toast";
 
 function EditProfile() {
   const { user, updateProfile } = useUserStore();
@@ -77,11 +78,13 @@ function EditProfile() {
       setPassword("");
       setConfirmPassword("");
       setFile(null);
+      toast.success("Profile updated!");
 
       if (updated?.photoUrl) setPreview(updated.photoUrl);
       console.log("Profile updated successfully");
     } catch (err) {
       console.log("Failed to update profile", err);
+      toast.error("Error updating profile.");
     } finally {
       setSaving(false);
     }
@@ -93,7 +96,20 @@ function EditProfile() {
         Edit Profile
       </h1>
 
-      <div className="bg-gray-300 mx-20 my-10 py-2 px-2 rounded-2xl">
+      <div className="bg-gray-300 mx-20 my-10 py-2 px-2 rounded-2xl relative">
+        <Toaster
+          position="top-center"
+          containerClassName="!absolute !top-0"
+          toastOptions={{
+            style: {
+              borderRadius: "8px",
+              background: "#333",
+              color: "#fff",
+              fontSize: "1.2rem",
+              padding: "1rem 1.5rem",
+            },
+          }}
+        />
         <div className="grid grid-cols-2 bg-gray-100 gap-20 font-raleway rounded-xl">
           <div className="col-span-2 rounded-lg px-5 py-5">
             <form className="grid grid-cols-1 gap-5" onSubmit={handleSubmit}>

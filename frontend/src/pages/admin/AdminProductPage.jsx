@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useListingStore } from "../../utils/useListingsStore.js";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminNavBar from "../../components/admin/AdminNavBar";
-import toast from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import {
   ArrowLeftIcon,
   SaveIcon,
@@ -133,6 +133,18 @@ function AdminProductPage() {
     <>
       <AdminNavBar />
       <div className="container mx-auto max-w-7xl px-4 py-8 border border-gray-300 shadow-2xl rounded-xl mb-10 mt-10 font-raleway">
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              borderRadius: "8px",
+              background: "#333",
+              color: "#fff",
+              fontSize: "1.2rem",
+              padding: "1rem 1.5rem",
+            },
+          }}
+        />
         <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
           <ArrowLeftIcon className="size-4 mr-2" />
           Back to dashboard

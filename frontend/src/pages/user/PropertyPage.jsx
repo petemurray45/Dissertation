@@ -1,5 +1,6 @@
 import { useListingStore } from "../../utils/useListingsStore";
-import { use, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
 import PropertyTile from "../../components/user/PropertyTile";
@@ -25,6 +26,9 @@ function PropertyPage() {
   const { addToLikes, likedPropertyIds, user } = useUserStore();
   const { resetSearchDestinations } = useTravelStore();
   const resultsRef = useRef();
+  const query = new URLSearchParams(useLocation().search);
+  const location = query.get("location");
+  const radius = query.get("radius");
 
   useEffect(() => {
     const params = Object.fromEntries(
@@ -116,6 +120,14 @@ function PropertyPage() {
         </div>
 
         <MainSearch />
+
+        <div>
+          {location && radius && (
+            <div className="text-center text-4xl py-4 text-gray-100 font-raleway">
+              Showing properties within {radius} km of {location}
+            </div>
+          )}
+        </div>
 
         <div className="sm:mb-10">
           <SearchDrawer />

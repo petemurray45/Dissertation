@@ -12,11 +12,13 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTravelStore } from "../../utils/useTravelStore";
 import { useUserStore } from "../../utils/useUserStore";
-
+import { Toaster, toast } from "react-hot-toast";
 function PropertyTile({ property, isLiked, onToggleLike }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [showLikeMessage, setShowLikeMessage] = useState(false);
+  const [likeMessageText, setLikeMessageText] = useState("");
   const [showTimes, setShowTimes] = useState(false);
   const { searchDestinations } = useTravelStore();
   const { travelSearchSubmitted } = useListingStore();
@@ -35,8 +37,18 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
   };
 
   const handleLikeClick = () => {
+    const newLikedState = !liked;
     setLiked(!liked);
+
+    if (newLikedState) {
+      setLikeMessageText("Property liked");
+    } else {
+      setLikeMessageText("Property unliked");
+    }
+
+    setShowLikeMessage(true);
     onToggleLike(property);
+    setTimeout(() => setShowLikeMessage(false), 2000);
   };
 
   const goToNextImage = () => {
@@ -72,6 +84,11 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
     <>
       <div className="h-auto flex flex-col flex-grow relative bg-[#f5f8f6] shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s  rounded-2xl ">
         <div className="relative w-full max-h-[250px]">
+          {showLikeMessage && (
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-100 px-3 py-1 rounded-md text-xl shadow-md font-raleway">
+              {likeMessageText}
+            </div>
+          )}
           {hasImages ? (
             <>
               <img

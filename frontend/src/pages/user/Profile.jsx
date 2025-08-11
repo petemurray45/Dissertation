@@ -12,16 +12,13 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const tabComponents = {
-    overview: <Overview />,
     likedProperties: <LikedProperties />,
     edit: <EditProfile />,
     notes: <Notes />,
   };
 
   const tabSelectors = [
-    { key: "overview", label: "Overview" },
     { key: "likedProperties", label: "Liked Properties" },
-
     { key: "edit", label: "Edit Profile" },
     { key: "notes", label: "Notes" },
   ];
@@ -52,7 +49,6 @@ function Profile() {
         />
 
         <div className="relative overflow-hidden min-h-screen">
-          {activeTab === "overview" && <Overview />}
           {activeTab === "likedProperties" && <LikedProperties />}
           {activeTab === "edit" && <EditProfile />}
           {activeTab === "notes" && <Notes />}
