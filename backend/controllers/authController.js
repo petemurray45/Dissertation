@@ -93,6 +93,27 @@ export const login = async (req, res) => {
   });
 };
 
+export const adminLogin = async (req, res) => {
+  const { username, password } = req.body;
+
+  const rows = await sql`SELECT * FROM admins WHERE username = ${username}`;
+  const admin = rows[0];
+  if (!admin) return res.status(400).json({ error: "Invalid credentials" });
+
+  const ok = await bcrypt.compare(password, admin.password_hash);
+  if (!ok) return res.status(400).json({ error: "Invalid credentials" });
+
+  const token = jwt.sign(
+    { id: admin.id, username: admin.username, role: "admin" },
+    process.env.JWT_SECRET,
+    { expiresIn: "2hr" }
+  );
+  return res.json({
+    token,
+    user: { id: admin.id, username: admin.username, role: "admin" },
+  });
+};
+
 export const getMe = async (req, res) => {
   try {
     const authHeader = req.headers.authorization || "";

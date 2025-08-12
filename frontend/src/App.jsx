@@ -5,11 +5,12 @@ import AdminProductPage from "./pages/admin/AdminProductPage";
 import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
 import ViewListing from "./pages/user/ViewListing";
-import UserLogin from "./pages/user/UserLogin";
 import Profile from "./pages/user/Profile";
 import PropPal from "./pages/user/PropPal";
 import AgencyAuth from "./components/user/auth/AgencyAuth";
+import UserAuth from "./components/user/auth/UserAuth";
 import AgencyDashboard from "./pages/admin/AgencyDashboard";
+import AdminAuth from "./components/user/auth/AdminAuth";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 function App() {
@@ -30,10 +31,11 @@ function App() {
       <div className="overflow-x-hidden">
         <Routes>
           {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminAuth />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/addproperty" element={<AdminAddProperty />} />
           <Route path="/admin/property/:id" element={<AdminProductPage />} />
-          <Route path="*" element={<Navigate to="/admin" />} />
+          <Route path="*" element={<Navigate to="/home" />} />
 
           {/* Agency Routes */}
           <Route path="/agency/dashboard" element={<AgencyDashboard />} />
@@ -47,7 +49,7 @@ function App() {
           <Route path="propPal" element={<PropPal />} />
 
           <Route path="*" element={<Navigate to="/home" />} />
-          <Route path="/login" element={<UserLogin />} />
+          <Route path="/user/login" element={<UserAuth />} />
         </Routes>
       </div>
     </>

@@ -44,7 +44,12 @@ function AgencyAuth() {
     }
   };
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div
+      className="h-screen flex justify-center items-center"
+      style={{
+        backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
+      }}
+    >
       <div className="relative h-[1000px] w-[800px] bg-white  rounded-2xl shadow-2xl">
         <div className="flex flex-col justify-end bg-[url('https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] h-[45%] w-full rounded-tl-2xl rounded-tr-2xl bg-cover">
           <h1 className="flex flex-col  flex-reverse text-6xl text-white font-extrabold pl-4 pb-4 shadow-2xl">
@@ -215,7 +220,7 @@ function AgencyAuth() {
               </form>
               <button
                 type="button"
-                className="absolute bottom-12 -right-14 bg-[#D1C1D7] text-white p-3 rounded-full hover:bg-[#02343F] hover:border-black"
+                className="absolute bottom-12 -right-14 bg-[#02343F]  text-white p-3 rounded-full hover:bg-[#02343F] hover:border-black"
                 onClick={handleSubmit}
               >
                 <FaArrowAltCircleRight className="size-24 shadow-2xl" />
