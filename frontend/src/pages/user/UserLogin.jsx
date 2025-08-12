@@ -1,4 +1,4 @@
-import Auth from "../../components/user/Auth";
+import Auth from "../../components/user/auth/Auth";
 
 function UserLogin() {
   return (

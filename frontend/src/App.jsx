@@ -8,7 +8,7 @@ import ViewListing from "./pages/user/ViewListing";
 import UserLogin from "./pages/user/UserLogin";
 import Profile from "./pages/user/Profile";
 import PropPal from "./pages/user/PropPal";
-import AgencyAuth from "./components/user/AgencyAuth";
+import AgencyAuth from "./components/user/auth/AgencyAuth";
 import AgencyDashboard from "./pages/admin/AgencyDashboard";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";

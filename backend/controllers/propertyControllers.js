@@ -1,9 +1,6 @@
 import { sql } from "../config/db.js";
 import axios from "axios";
-import cloudinary from "cloudinary";
 import dotenv from "dotenv";
-import { type } from "os";
-import { Resend } from "resend";
 import { sendEnquiryConfirmation } from "../utils/sendEmail.js";
 
 dotenv.config();
@@ -61,6 +58,13 @@ export const getAllProperties = async (req, res) => {
 };
 
 export const createProperty = async (req, res) => {
+  const { role, agencyId } = req.auth;
+  const agency_id = role === "admin" ? (req.body.agency_id ?? null) : agencyId;
+
+  if (!agency_id)
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing agency id" });
   console.log("REQ.BODY:", req.body);
   const {
     title,
@@ -86,10 +90,10 @@ export const createProperty = async (req, res) => {
     !description ||
     !price_per_month ||
     !propertyType ||
-    !ensuite ||
+    ensuite == null ||
     !bedType ||
-    !wifi ||
-    !pets ||
+    wifi == null ||
+    pets == null ||
     !location ||
     !latitude ||
     !longitude ||
@@ -102,8 +106,8 @@ export const createProperty = async (req, res) => {
 
   try {
     const insertedProperties = await sql`
-        INSERT INTO properties (title, description, price_per_month, location, latitude, longitude, bed_type, ensuite, wifi, pets, property_type)
-        VALUES (${title}, ${description}, ${price_per_month},  ${location}, ${latitude}, ${longitude}, ${bedType}, ${ensuiteBool}, ${wifiBool}, ${petsBool}, ${propertyType}::property_type_enum1)
+        INSERT INTO properties (title, description, price_per_month, location, latitude, longitude, bed_type, ensuite, wifi, pets, property_type, agency_id)
+        VALUES (${title}, ${description}, ${price_per_month},  ${location}, ${latitude}, ${longitude}, ${bedType}, ${ensuiteBool}, ${wifiBool}, ${petsBool}, ${propertyType}::property_type_enum1, ${agency_id})
         RETURNING id;
       `;
     const propertyId = insertedProperties[0].id;
@@ -160,6 +164,22 @@ export const getProperty = async (req, res) => {
 
 export const updateProperty = async (req, res) => {
   const { id } = req.params;
+  const { role, agencyId } = req.auth || {};
+
+  if (role !== "admin") {
+    const property =
+      await sql`SELECT agency_id FROM properties WHERE id = ${id}`;
+    if (!property.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+    if (String(property[0].agency_id) !== String(agencyId)) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden: Not your property" });
+    }
+  }
 
   const {
     title,
@@ -191,7 +211,7 @@ export const updateProperty = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Property not found" });
     }
-    res.status(200).json({ success: true, data: updateProperty[0] });
+    res.status(200).json({ success: true, data: updatedProperty[0] });
   } catch (err) {
     console.log("Error updating product", err);
     res.status(500).json({ success: false, message: "Error updating product" });
@@ -199,7 +219,23 @@ export const updateProperty = async (req, res) => {
 };
 
 export const deleteProperty = async (req, res) => {
+  const { role, agencyId } = req.auth || {};
   const { id } = req.params;
+
+  if (role !== "admin") {
+    const property =
+      await sql`SELECT agency_id FROM properties WHERE id = ${id}`;
+    if (!property.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found." });
+    }
+    if (String(property[0].agency_id) !== String(agencyId)) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Forbidden: Not your property." });
+    }
+  }
 
   try {
     const deletedProperty = await sql`
@@ -348,86 +384,6 @@ export const getPropertiesWithTravelTime = async (req, res) => {
     console.error("Error calculating travel time", err);
     res.status(500).json({ error: "Server error" });
   }
-  {
-    /*}
-  try {
-    // select all properties in price range
-
-    const response =
-      await sql`SELECT * FROM properties ORDER BY created_at DESC`;
-
-    const properties = response.rows || response;
-    console.log("Properties", properties);
-
-    // get property ids
-    const responseResults = await Promise.all(
-      pro
-    )
-    let images = [];
-
-    if (propertyIds.length === 0) {
-      console.log("No property ids");
-    }
-
-    if (propertyIds.length > 0) {
-      images = await sql`SELECT property_id, image_url
-      FROM images
-      WHERE property_id = ANY(${propertyIds}::integer[])
-      ORDER BY property_id, id;`;
-    }
-
-    const propertiesWithImages = properties.map((property) => {
-      const propertyImages = images
-        .filter((img) => img.property_id === property.id)
-        .map((img) => img.image_url);
-
-      return {
-        ...property,
-        imageUrls: propertyImages,
-      };
-    });
-
-    //call maps api
-    if (!Array.isArray(propertiesWithImages)) {
-      console.log(
-        "No properties returned or not an array",
-        propertiesWithImages
-      );
-      return res.status(500).json({ error: "Failed to load properties" });
-    }
-    const results = await Promise.all(
-      propertiesWithImages.map(async (property) => {
-        if (!property.latitude || !property.longitude) {
-          return { ...property, travelTime: null };
-        }
-        console.log(property.latitude, property.longitude);
-
-        try {
-          const origin = `${property.latitude}, ${property.longitude}`;
-          const apiRes = await axios.get(
-            "https://maps.googleapis.com/maps/api/directions/json",
-            {
-              params: {
-                origin,
-                destination,
-                key: API_KEY,
-              },
-            }
-          );
-
-          const travel_time =
-            apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
-
-          return { ...property, travelTime: travel_time };
-        } catch (err) {
-          console.log("Error fetching travel time", err.message);
-          return { ...property, travelTime: null };
-        }
-      })
-    );
-    res.json(results);
-    */
-  }
 };
 
 export const getPlaces = async (req, res) => {
@@ -485,6 +441,12 @@ export const insertEnquiries = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  if (req.auth?.role === "user" && req.auth.userId) {
+    if (user_id && String(user_id) !== String(req.auth.userId)) {
+      return res.status(403).json({ error: "Forbidden: mismatched user_id" });
+    }
+  }
+
   try {
     await sql`INSERT INTO enquiries (property_id, user_id, full_name, email, message) VALUES (${property_id}, ${
       user_id || null
@@ -505,88 +467,36 @@ export const insertEnquiries = async (req, res) => {
 };
 
 export const getEnquiries = async (req, res) => {
-  const { user_id } = req.params;
+  const { userId, role, agencyId } = req.auth || {};
   try {
-    const result =
-      await sql`SELECT * FROM enquiries WHERE user_id = ${user_id} ORDER BY created_at DESC`;
-    res.json(result.rows);
+    if (role === "admin") {
+      const rows = await sql`SELECT * from enquiries ORDER BY created_at DESC`;
+      return res.json(rows);
+    }
+
+    if (role === "agent") {
+      const rows = await sql`SELECT e.*
+        FROM enquiries e
+        JOIN properties p ON p.id = e.property_id
+        WHERE p.agency_id = ${agencyId}
+        ORDER BY e.created_at DESC;`;
+      return res.json(rows);
+    }
+
+    if (role === "user") {
+      const rows = await sql`
+        SELECT * FROM enquiries
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC`;
+      return res.json(rows);
+    }
+
+    return res.sendStatus(403);
   } catch (err) {
     console.error("Error getting enquiries", err);
     res.status(500).json({ error: "Failed to fetch enquiries" });
   }
 };
-
-{
-  /*}
-export const searchWithRadius = async (req, res) => {
-  const { lat, lng, radius } = req.query;
-
-  const minPrice =
-    req.query.minPrice && req.query.minPrice !== ""
-      ? Number(req.query.minPrice)
-      : null;
-
-  const maxPrice =
-    req.query.maxPrice && req.query.maxPrice !== ""
-      ? Number(req.query.maxPrice)
-      : null;
-
-  console.log("Parsed maxPrice:", maxPrice, typeof maxPrice);
-
-  console.log("Received query:", req.query);
-
-  if (!lat || !lng || !radius) {
-    return res.status(400).json({ error: "Missing location or radius" });
-  }
-
-  try {
-    const filters = [];
-
-    if (minPrice != null) filters.push(sql`price_per_month >= ${minPrice}`);
-    if (maxPrice != null) filters.push(sql`price_per_month <= ${maxPrice}`);
-
-    console.log(
-      "Filters:",
-      filters.map((f) => f.sql)
-    );
-
-    const whereClause =
-      filters.length > 0
-        ? filters.reduce((acc, cur) => sql`${acc} AND ${cur}`)
-        : sql`TRUE`;
-
-    if (whereClause) {
-      console.log("WHERE clause SQL:", whereClause);
-      console.log("WHERE clause values:", whereClause);
-    } else {
-      console.log("No filters applied, WHERE clause is null");
-    }
-
-    if (whereClause) {
-      console.log("Final WHERE:", whereClause);
-    }
-
-    const result = await sql`
-      SELECT * FROM (
-        SELECT *, 
-          (6371 * acos(
-            cos(radians(${lat})) * cos(radians(latitude)) *
-            cos(radians(longitude) - radians(${lng})) +
-            sin(radians(${lat})) * sin(radians(latitude))
-          )) AS distance
-        FROM properties
-      ) AS subquery
-      WHERE distance <= ${radius} AND ${whereClause}
-      ORDER BY distance ASC
-    `;
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Search error", err);
-    res.status(500).json({ error: "Failed to fetch properties" });
-  }
-};
-*/
-}
 
 export const searchWithRadius = async (req, res) => {
   const { lat, lng, radius } = req.query;

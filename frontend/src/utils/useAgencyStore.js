@@ -22,7 +22,7 @@ export const useAgencyStore = create((set, get) => ({
 
     try {
       set({ loading: true, error: null });
-      const { data } = await axios.post(`${BASE_URL}/api/agency/me`, {
+      const { data } = await axios.get(`${BASE_URL}/api/agency/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({ agency: data.agency, token, isLoggedIn: true });
@@ -75,9 +75,16 @@ export const useAgencyStore = create((set, get) => ({
   },
 
   fetchPropertiesByAgency: async (agencyId) => {
-    set({ loading: true });
+    const { token } = get();
+
+    if (!token) {
+      set({ error: "Unathorized" });
+      return;
+    }
+
     try {
-      const res = await axios.get(
+      set({ loading: true, error: null });
+      const { data } = await axios.get(
         `${BASE_URL}/api/agency/${agencyId}/agencyProperties`,
         {
           headers: {
@@ -85,7 +92,6 @@ export const useAgencyStore = create((set, get) => ({
           },
         }
       );
-      const data = res.json();
       set({ properties: data });
     } catch (err) {
       console.error("Error fetching agency properties", err);

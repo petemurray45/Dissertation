@@ -95,20 +95,15 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No token provided" });
-    }
-
-    const token = authHeader.split(" ")[1];
-    console.log("TOKEN:", token);
-    console.log("SECRET USED:", process.env.JWT_SECRET);
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
+    if (!token) return res.status(401).json({ message: "No token provided" });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("JWT_SECRET in getMe:", process.env.JWT_SECRET);
 
     const result =
-      await sql`SELECT id, full_name, email, photo_url FROM users WHERE id = ${decoded.id}`;
+      await sql`SELECT id, full_name, email, photo_url FROM users WHERE id = ${decoded.userId}`;
     const user = result[0];
 
     if (!user) {

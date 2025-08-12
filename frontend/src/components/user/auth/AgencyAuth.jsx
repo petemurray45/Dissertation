@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AtSign } from "lucide-react";
 import { UserRound, Key } from "lucide-react";
 import { FaArrowAltCircleRight } from "react-icons/fa";
-import { useAgencyStore } from "../../utils/useAgencyStore";
+import { useAgencyStore } from "../../../utils/useAgencyStore";
 import { Toaster, toast } from "react-hot-toast";
 
 function AgencyAuth() {

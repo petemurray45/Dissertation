@@ -56,6 +56,10 @@ export const agencyLogin = async (req, res) => {
 
 export const fetchPropertyByAgency = async (req, res) => {
   const { id } = req.params;
+  console.log("=== Fetch Property Debug ===");
+  console.log("req.auth:", req.auth); // what authenticateAgency put here
+  console.log("req.params.id:", req.params.id); // from URL :id
+  console.log("============================");
 
   try {
     const result =
@@ -64,5 +68,21 @@ export const fetchPropertyByAgency = async (req, res) => {
   } catch (err) {
     console.error("Error fetching agency properties", err);
     res.status(500).json({ error: "Failed to fetch properties" });
+  }
+};
+
+export const getAgencyMe = async (req, res) => {
+  try {
+    const { agencyId } = req.auth;
+    const rows =
+      await sql`SELECT id, agency_name, agency_email, phone, logo_url, created_at, updated_at, website FROM agencies WHERE id = ${agencyId} LIMIT 1`;
+    if (rows.length === 0)
+      return res.status(404).json({ error: "Agency not found" });
+
+    const agency = rows[0];
+    return res.json({ agency });
+  } catch (err) {
+    console.error("Error in agency/me", err);
+    return res.status(500).json({ error: "Failed to fetch agency" });
   }
 };

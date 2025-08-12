@@ -23,9 +23,9 @@ function AgencyDashboard() {
 
   useEffect(() => {
     if (agency?.id) {
-      fetchPropertiesByAgency();
+      fetchPropertiesByAgency(agency.id);
     }
-  }, [agency, fetchPropertiesByAgency]);
+  }, [agency?.id, fetchPropertiesByAgency]);
 
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ function AgencyDashboard() {
     <>
       <AdminNavBar />
       <div className="mx-20 my-20">
-        <h1 className="text-4xl">Welcome {agency.agencyName}</h1>
+        <h1 className="text-6xl text-center">Welcome {displayName}</h1>
       </div>
       <div className="flex flex-col  overflow-x-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 m-10 font-raleway">

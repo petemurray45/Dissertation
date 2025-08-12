@@ -1,31 +1,39 @@
 import jwt from "jsonwebtoken";
 
-export const authenticate = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.sendStatus(401);
+export const authenticate =
+  (allowedRoles = []) =>
+  (req, res, next) => {
+    const auth = req.headers.authorization || "";
+    if (!auth.startsWith("Bearer ")) {
+      return res
+        .status(403)
+        .json({ error: "Missing or invalid Authentication header" });
+    }
+    try {
+      const payLoad = jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+      req.auth = payLoad;
+      if (allowedRoles.length && !allowedRoles.includes(payLoad.role)) {
+        return res.status(403).json({ error: "Forbidden: Insufficient Role" });
+      }
+      next();
+    } catch (err) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+  };
 
-  const token = authHeader.split(" ")[1];
-  try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = user;
-    next();
-  } catch {
-    res.sendStatus(403);
-  }
-};
+export const requireAuth =
+  (...allowedRoles) =>
+  (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
 
-export const authenticateAgency = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.sendStatus(401);
-
-  const token = authHeader.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== "agency") return res.sendStatus(403);
-
-    req.agency = decoded;
-    next();
-  } catch (err) {
-    res.sendStatus(403);
-  }
-};
+    if (!token) return res.sendStatus(401);
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (allowedRoles.length && !allowedRoles.includes(decoded.role))
+        return res.sendStatus(403);
+      req.auth = decoded;
+      next();
+    } catch (err) {
+      return res.sendStatus(403);
+    }
+  };
