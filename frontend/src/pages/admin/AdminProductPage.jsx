@@ -145,7 +145,10 @@ function AdminProductPage() {
             },
           }}
         />
-        <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
+        <button
+          onClick={() => navigate("/admin")}
+          className="btn btn-ghost mb-8"
+        >
           <ArrowLeftIcon className="size-4 mr-2" />
           Back to dashboard
         </button>

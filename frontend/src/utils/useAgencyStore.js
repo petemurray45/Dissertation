@@ -9,8 +9,15 @@ export const useAgencyStore = create((set, get) => ({
   loading: false,
   properties: [],
   error: null,
+  hasHydrated: false,
+
+  // agencies catalog
+  agencies: [],
+  agenciesLoading: false,
+  agenciesError: null,
 
   setAgency: (agency) => set({ agency }),
+  setHasHydrated: () => set({ hasHydrated: true }),
   logout: () => {
     localStorage.removeItem("agency_token");
     set({ agency: null, token: null, isLoggedIn: false });
@@ -18,7 +25,9 @@ export const useAgencyStore = create((set, get) => ({
 
   rehydrate: async () => {
     const token = localStorage.getItem("agency_token");
-    if (!token) return;
+    if (!token) {
+      set({ hasHydrated: true });
+    }
 
     try {
       set({ loading: true, error: null });
@@ -30,7 +39,7 @@ export const useAgencyStore = create((set, get) => ({
       localStorage.removeItem("agency_token");
       set({ agency: null, token: null, isLoggedIn: false, error: null });
     } finally {
-      set({ loading: false });
+      set({ loading: false, hasHydrated: true });
     }
   },
 
@@ -51,7 +60,9 @@ export const useAgencyStore = create((set, get) => ({
       set({ agency: data.agency, token: data.token, isLoggedIn: true });
       return data.agency;
     } catch (err) {
-      console.log("Error registering agency", err);
+      const message = err?.response?.data?.error || "Failed to register";
+      set({ error: message });
+      throw err;
     } finally {
       set({ loading: false });
     }
@@ -68,7 +79,9 @@ export const useAgencyStore = create((set, get) => ({
       set({ agency: data.agency, token: data.token, isLoggedIn: true });
       return data.agency;
     } catch (err) {
-      console.log("Error logging agency in", err);
+      const message = err?.response?.data?.error || "Login Failed";
+      set({ error: message });
+      throw err;
     } finally {
       set({ loading: false });
     }
@@ -97,6 +110,26 @@ export const useAgencyStore = create((set, get) => ({
       console.error("Error fetching agency properties", err);
     } finally {
       set({ loading: false });
+    }
+  },
+
+  fetchAgencies: async (adminToken) => {
+    if (get().agencies.length > 0) return get().agencies;
+
+    try {
+      set({ agenciesLoading: true, agenciesError: null });
+      const { data } = await axios.get(`${BASE_URL}/api/agency/agencies`, {
+        headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {},
+      });
+      set({ agencies: data.agencies || [] });
+      return data.agencies || [];
+    } catch (err) {
+      const message =
+        err?.response?.data?.error || "Failed to fetch agencies list";
+      set({ agenciesError: message });
+      throw err;
+    } finally {
+      set({ agenciesLoading: false });
     }
   },
 }));

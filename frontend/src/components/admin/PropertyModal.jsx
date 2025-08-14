@@ -1,0 +1,493 @@
+import { useState, useEffect } from "react";
+import {
+  ArrowLeftIcon,
+  House,
+  PoundSterling,
+  BedDouble,
+  MapPinPlusInside,
+  PlusCircleIcon,
+  ImageIcon,
+  Dog,
+  Wifi,
+  Toilet,
+  SaveIcon,
+  Trash2Icon,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import LocationAutocomplete from "./LocationAutocomplete.jsx";
+import { useNavigate } from "react-router-dom";
+import { useAdminStore } from "../../utils/useAdminStore.js";
+import { useAgencyStore } from "../../utils/useAgencyStore.js";
+
+function PropertyModal({
+  initial = {},
+  isEdit = false,
+  onSubmit,
+  showAgencyPicker = false,
+  adminToken = null, // keep only once
+  onDelete,
+  onClose,
+  backTo = "/admin",
+}) {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price_per_month: "",
+    propertyType: "",
+    ensuite: "",
+    bedType: "",
+    wifi: "",
+    pets: "",
+    location: "",
+    latitude: "",
+    longitude: "",
+    images: [],
+    ...initial,
+  });
+
+  const { token } = useAdminStore();
+  const { agencies, agenciesLoading, agenciesError, fetchAgencies } =
+    useAgencyStore();
+
+  const navigate = useNavigate();
+  const submitLabel = isEdit ? "Save changes" : "Add Property";
+
+  // hydrate form when initial changes
+  const [selectedAgencyId, setSelectedAgencyId] = useState(
+    initial?.agency_id ? String(initial.agency_id) : ""
+  );
+
+  // fetch agencies if we need the picker
+  useEffect(() => {
+    if (showAgencyPicker) {
+      fetchAgencies(adminToken || token);
+    }
+  }, [showAgencyPicker, adminToken, token, fetchAgencies]);
+
+  const uploadImagestoCloudinary = async (files) => {
+    const uploadPromises = files.map(async (file) => {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", "property-app");
+      fd.append("cloud_name", "dnldppxxg");
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/dnldppxxg/image/upload",
+          fd,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        return res.data.secure_url;
+      } catch (err) {
+        console.log("Error with cloudinary image upload", err);
+        return null;
+      }
+    });
+    const results = await Promise.all(uploadPromises);
+    return results.filter(Boolean);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (showAgencyPicker && !selectedAgencyId) {
+      toast.error("Please choose an agency");
+      return;
+    }
+
+    const finalPayload = {
+      ...formData,
+      price_per_month: Number(formData.price_per_month),
+      ...(showAgencyPicker ? { agency_id: Number(selectedAgencyId) } : {}),
+    };
+
+    try {
+      await onSubmit(finalPayload);
+      toast.success(isEdit ? "Property updated!" : "Property added!");
+      navigate(backTo);
+    } catch (err) {
+      console.error("Submit error", err);
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleDeleteImage = (index) =>
+    setFormData((p) => ({
+      ...p,
+      images: p.images.filter((_, i) => i !== index),
+    }));
+
+  return (
+    <div className="card bg-base-100 w-full">
+      <div className="w-full flex justify-end items-center mb-4">
+        {onClose && (
+          <button type="button" onClick={onClose} className="btn">
+            Close
+          </button>
+        )}
+      </div>
+
+      <div className="card-body border-2 rounded-2xl">
+        {/* Images preview */}
+        <div className="flex flex-wrap overflow-hidden sm:grid-cols-2 max-w-4xl mx-auto mt-2 pl-8 pr-8">
+          {Array.isArray(formData.images) && formData.images.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden">
+              {formData.images.map((img, index) => (
+                <div
+                  key={index}
+                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full max-w-[400px] shadow-lg"
+                >
+                  <button
+                    onClick={() => handleDeleteImage(index)}
+                    className="absolute top-2 right-2 z-10 bg-white text-black-600 font-bold rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-100"
+                  >
+                    X
+                  </button>
+                  <img
+                    src={typeof img === "string" ? img : img.url}
+                    alt={`Property Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              Images will appear here
+            </div>
+          )}
+        </div>
+
+        {/* Form */}
+        <form
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-7 items-start"
+          onSubmit={handleSubmit}
+        >
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">
+                Property Title
+              </span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <House className="size-5" />
+              </div>
+              <input
+                type="text"
+                placeholder="Enter property title"
+                className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">Price</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <PoundSterling className="size-5" />
+              </div>
+              <input
+                type="text"
+                placeholder="Enter property price"
+                className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                value={formData.price_per_month}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    price_per_month: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">
+                Property Type
+              </span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <PoundSterling className="size-5" />
+              </div>
+
+              <select
+                name="propertyType"
+                className="select select-bordered w-full pl-10"
+                placeholder="Pick a property type"
+                value={formData.propertyType || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, propertyType: e.target.value })
+                }
+              >
+                <option className="font-raleway" disabled selected></option>
+                <option value="Bungalow">Bungalow</option>
+                <option value="Semi Detached">Semi Detached</option>
+                <option value="Detached">Detached</option>
+                <option value="Terraced">Terraced</option>
+                <option value="Flat">Flat</option>
+                <option value="Cottage">Cottage</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">Bed Type</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3  flex items-center pointer-events-none text-base-content/50">
+                <BedDouble className="size-5" />
+              </div>
+              <select
+                name="bedType"
+                className="select select-bordered w-full pl-10"
+                placeholder="Pick a bed type"
+                value={formData.bedType || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, bedType: e.target.value })
+                }
+              >
+                <option
+                  value=""
+                  className="font-raleway"
+                  disabled
+                  selected
+                ></option>
+                <option value="Double">Double</option>
+                <option value="Single">Single</option>
+                <option value="Bunk">Bunk Bed</option>
+                <option value="Queen">Queen</option>
+                <option value="King">King</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">En Suite</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <Toilet className="size-5" />
+              </div>
+              <select
+                name="ensuite"
+                className="select select-bordered w-full pl-10"
+                value={formData.ensuite || ""}
+                onChange={(e) => {
+                  setFormData({ ...formData, ensuite: e.target.value });
+                }}
+              >
+                <option className="font-raleway" disabled selected></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">Wifi</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <Wifi className="size-5" />
+              </div>
+
+              <select
+                name="wifi"
+                className="select select-bordered w-full pl-10"
+                value={formData.wifi || ""}
+                onChange={(e) => {
+                  setFormData({ ...formData, wifi: e.target.value });
+                }}
+              >
+                <option
+                  className="font-raleway"
+                  value=""
+                  disabled
+                  selected
+                ></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">Pets</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <Dog className="size-5" />
+              </div>
+              <select
+                name="pets"
+                className="select select-bordered w-full pl-10"
+                value={formData.pets || ""}
+                onChange={(e) => {
+                  setFormData({ ...formData, pets: e.target.value });
+                }}
+              >
+                <option className="font-raleway" disabled selected></option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">Location</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <MapPinPlusInside className="size-5" />
+              </div>
+              <LocationAutocomplete
+                onPlaceSelect={({ location, latitude, longitude }) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    location,
+                    latitude,
+                    longitude,
+                  }))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-base font-medium">
+                Upload Images
+              </span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <ImageIcon className="size-5" />
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                onChange={async (e) => {
+                  console.log("FILES:", e.target.files);
+                  const filesArray = Array.from(e.target.files);
+                  const uploadedUrls = await uploadImagestoCloudinary(
+                    filesArray
+                  );
+                  setFormData((prev) => ({
+                    ...prev,
+                    images: [...prev.images, ...uploadedUrls],
+                  }));
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="form-control col-span-3 row-span-3">
+            <label className="label">
+              <span className="label-text text-base font-medium">
+                Property Description
+              </span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50"></div>
+              <textarea
+                className="textarea textarea-bordered w-full h-36"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              ></textarea>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {showAgencyPicker && (
+              <div className="flex  items-center gap-2">
+                <label className="label m-0 whitespace-nowrap">
+                  <span className="label-text text-base font-medium">
+                    Assign to Agency
+                  </span>
+                </label>
+                {agenciesLoading ? (
+                  <div className="text-sm text-gray-500">Loading agencies…</div>
+                ) : agenciesError ? (
+                  <div className="text-sm text-red-600">{agenciesError}</div>
+                ) : (
+                  <select
+                    className="select select-bordered"
+                    value={selectedAgencyId}
+                    onChange={(e) => setSelectedAgencyId(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Select an agency…
+                    </option>
+                    {Array.isArray(agencies) &&
+                      agencies.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.agency_name} {a.website ? `— ${a.website}` : ""}
+                        </option>
+                      ))}
+                  </select>
+                )}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={
+                !formData.title ||
+                !formData.description ||
+                !formData.price_per_month ||
+                !formData.bedType ||
+                formData.wifi === undefined ||
+                formData.pets === undefined ||
+                formData.ensuite === undefined ||
+                !formData.propertyType ||
+                !formData.location ||
+                formData.images.length === 0 ||
+                (showAgencyPicker && !selectedAgencyId)
+              }
+            >
+              {isEdit ? (
+                <SaveIcon className="size-5 mr-2" />
+              ) : (
+                <PlusCircleIcon className="size-5 mr-2" />
+              )}
+              {submitLabel}
+
+              {isEdit && onDelete ? (
+                <button
+                  type="button"
+                  className="btn btn-error"
+                  onClick={onDelete}
+                >
+                  <Trash2Icon className="size-5" />
+                  Delete Property
+                </button>
+              ) : (
+                <div />
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default PropertyModal;

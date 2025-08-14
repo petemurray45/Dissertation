@@ -2,6 +2,9 @@ import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useTravelStore } from "./useTravelStore";
+import { useUserStore } from "./useUserStore";
+import { useAdminStore } from "./useAdminStore";
+import { useAgencyStore } from "./useAgencyStore";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -243,12 +246,20 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  addProperty: async (payload) => {
+  addProperty: async (payload, token) => {
     set({ loading: true });
 
     try {
       console.log("Payload recieved from store", payload);
-      await axios.post(`${BASE_URL}/api/properties`, payload);
+
+      if (!token) {
+        toast.error("Authentication token is missing.");
+        set({ loading: false });
+        return;
+      }
+
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      await axios.post(`${BASE_URL}/api/properties`, payload, { headers });
       await get().fetchProperties();
       get().resetForm();
       toast.success("Property added successfully");
@@ -278,11 +289,12 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  deleteProperty: async (id) => {
+  deleteProperty: async (id, token) => {
     set({ loading: true });
 
     try {
-      await axios.delete(`${BASE_URL}/api/properties/${id}`);
+      const headers = { Authorization: `Bearer ${token}` };
+      await axios.delete(`${BASE_URL}/api/properties/${id}`, { headers });
 
       set((prev) => {
         return {
@@ -351,13 +363,15 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  updateProperty: async (id) => {
+  updateProperty: async (id, token) => {
     set({ loading: true });
     try {
+      const headers = { Authorization: `Bearer ${token}` };
       const { formData } = get();
       const response = await axios.put(
         `${BASE_URL}/api/properties/${id}`,
-        formData
+        formData,
+        { headers }
       );
       set({ currentProperty: response.data.data });
       toast.success("Property updated successfully");

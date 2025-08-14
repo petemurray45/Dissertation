@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import AddPropertyModal from "./AddPropertyModel";
+import AddPropertyModal from "./PropertyModal";
 import { MdOutlineArrowCircleLeft } from "react-icons/md";
 import { MdOutlineArrowCircleRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-function PropertyTile({ property }) {
+function PropertyTile({ property, onEdit }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -79,9 +79,7 @@ function PropertyTile({ property }) {
             <button
               className="btn btn-primary"
               type="button"
-              onClick={(e) => {
-                handleSelect(property);
-              }}
+              onClick={() => onEdit?.(property)}
             >
               Select
             </button>

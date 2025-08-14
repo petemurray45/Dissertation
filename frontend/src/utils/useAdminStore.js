@@ -10,6 +10,9 @@ export const useAdminStore = create((set, get) => ({
   isLoggedIn: !!localStorage.getItem("admin_token"),
   loading: false,
   error: null,
+  hasHydrated: false,
+
+  setHasHydrated: () => set({ hasHydrated: true }),
 
   login: async ({ username, password }) => {
     try {
@@ -19,7 +22,8 @@ export const useAdminStore = create((set, get) => ({
         password,
       });
       localStorage.setItem("admin_token", data.token);
-      set({ admin: data.admin, token: data.token, isLoggedIn: true });
+      set({ admin: data.user, token: data.token, isLoggedIn: true });
+      return data.user;
     } catch (err) {
       set({ error: "Login failed" });
       throw err;
@@ -35,7 +39,9 @@ export const useAdminStore = create((set, get) => ({
 
   rehydrate: async () => {
     const token = localStorage.getItem("admin_token");
-    if (!token) return;
-    set({ token, isLoggedIn: true });
+    if (!token) {
+      set({ hasHydrated: true });
+    }
+    set({ token, isLoggedIn: true, hasHydrated: true });
   },
 }));

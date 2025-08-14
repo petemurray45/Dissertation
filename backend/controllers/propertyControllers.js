@@ -58,7 +58,7 @@ export const getAllProperties = async (req, res) => {
 };
 
 export const createProperty = async (req, res) => {
-  const { role, agencyId } = req.auth;
+  const { role, agencyId } = req.auth || {};
   const agency_id = role === "admin" ? (req.body.agency_id ?? null) : agencyId;
 
   if (!agency_id)

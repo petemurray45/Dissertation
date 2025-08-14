@@ -8,13 +8,18 @@ function AdminAuth() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login, loading, error, isLoggedIn } = useAdminStore();
+  const { login } = useAdminStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login({ username, password });
-      navigate("/admin");
+      const admin = await login({ username, password });
+      if (admin) {
+        navigate("/admin");
+      } else {
+        console.log("Incorrect login credentials");
+        return;
+      }
     } catch (err) {
       console.error("Admin Login failed");
     }

@@ -15,30 +15,74 @@ function AgencyAuth() {
   const [loginId, setLoginId] = useState("");
   const [confirmLoginId, setConfirmLoginId] = useState("");
 
-  const { login, register, loading } = useAgencyStore();
+  const { login, register } = useAgencyStore();
 
   const navigate = useNavigate();
+
+  // helper at top of file (reuse the one you already have if you exported it)
+  function getRoleFromToken(token) {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1] || ""));
+      return payload?.role ?? null;
+    } catch {
+      return null;
+    }
+  }
 
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
     try {
       if (mode === "sign-in") {
-        await login({ agency_name: agencyName, loginId });
-        navigate("/agency/dashboard");
-      } else {
-        if (loginId !== confirmLoginId) {
-          toast.error("Login Id's must match");
-          return;
-        }
-        await register({
-          agency_name: agencyName,
-          agency_email: agencyEmail,
-          phone,
-          loginId,
-          website,
+        const agency = await login({ agency_name: agencyName, loginId });
+
+        // DEBUG: confirm state and localStorage got set by the store
+        const { token, agency: storeAgency } = useAgencyStore.getState();
+        console.log("After login:", {
+          storeAgency,
+          token,
+          ls: localStorage.getItem("agency_token"),
+          role: getRoleFromToken(token || localStorage.getItem("agency_token")),
         });
-        navigate("/agency/dashboard");
+
+        const role = getRoleFromToken(
+          token || localStorage.getItem("agency_token")
+        );
+        if (role === "agent") {
+          navigate("/agency/dashboard");
+        } else {
+          console.error("Token missing or wrong role. Not navigating.");
+          return; // prevents redirect loop + clearing
+        }
+
+        if (agency) navigate("/agency/dashboard");
+        return;
       }
+
+      // register branch
+      if (loginId !== confirmLoginId) {
+        toast.error("Login Id's must match");
+        return;
+      }
+      await register({
+        agency_name: agencyName,
+        agency_email: agencyEmail,
+        phone,
+        loginId,
+        website,
+      });
+
+      const { token } = useAgencyStore.getState();
+      const role = getRoleFromToken(
+        token || localStorage.getItem("agency_token")
+      );
+      if (role !== "agent") {
+        console.error(
+          "Registration OK but token missing/wrong. Not navigating."
+        );
+        return;
+      }
+      navigate("/agency/dashboard");
     } catch (err) {
       console.log("Error with login or register", err);
     }
@@ -89,7 +133,7 @@ function AgencyAuth() {
                     <div className=" px-9 flex items-center  mt-12">
                       <UserRound className="size-10 mr-6" />
                       <input
-                        type="email"
+                        type="text"
                         placeholder="Enter agency name"
                         value={agencyName}
                         onChange={(e) => setAgencyName(e.target.value)}

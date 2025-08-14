@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
-import AdminNavBar from "../../components/admin/AdminNavBar";
-import AdminHero from "../../components/admin/AdminHero";
-import AdminCard from "../../components/admin/AdminCard";
-import AddPropertyModal from "../../components/admin/AddPropertyModel.jsx";
-import PropertyTile from "../../components/admin/PropertyTile";
+import React, { useEffect, useState } from "react";
+import AdminNavBar from "../../components/admin/AdminNavBar.jsx";
+import AdminCard from "../../components/admin/AdminCard.jsx";
+import PropertyTile from "../../components/admin/PropertyTile.jsx";
+import PropertyModal from "../../components/admin/PropertyModal.jsx";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdBrowserUpdated } from "react-icons/md";
 import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from "lucide-react";
@@ -15,11 +14,25 @@ import { useAgencyStore } from "../../utils/useAgencyStore.js";
 import { useNavigate } from "react-router-dom";
 
 function AgencyDashboard() {
-  const { properties, loading, fetchPropertiesByAgency, agency, error } =
-    useAgencyStore();
-  const { user } = useUserStore();
+  const {
+    properties,
+    loading,
+    error,
+    fetchProperties,
+    addProperty,
+    updateProperty,
+    deleteProperty,
+  } = useListingStore();
+  const {
+    agency,
+    token: agencyToken,
+    fetchPropertiesByAgency,
+  } = useAgencyStore();
 
-  const displayName = agency?.agency_name || user?.name || "Admin";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const displayName = agency?.agency_name || "Admin";
 
   useEffect(() => {
     if (agency?.id) {
@@ -29,7 +42,38 @@ function AgencyDashboard() {
 
   const navigate = useNavigate();
 
-  console.log("Properties: ", properties);
+  const openAdd = () => {
+    setEditing(null);
+    setIsModalOpen(true);
+    document.getElementById("property_modal")?.showModal?.();
+  };
+
+  const openEdit = (prop) => {
+    setEditing(prop);
+    setIsModalOpen(true);
+    document.getElementById("property_modal")?.showModal?.();
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditing(null);
+    document.getElementById("property_modal")?.close?.();
+  };
+
+  const handleSubmit = async (payload) => {
+    if (editing) {
+      await updateProperty(editing.id, payload, agencyToken);
+    } else {
+      await addProperty({ ...payload, agency_id: agency.id }, agencyToken);
+    }
+    closeModal();
+  };
+
+  const handleDelete = async () => {
+    if (!editing) return;
+    await deleteProperty(editing.id, agencyToken);
+    closeModal();
+  };
 
   return (
     <>
@@ -73,12 +117,7 @@ function AgencyDashboard() {
 
         <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center ">
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                navigate("/admin/addproperty");
-              }}
-            >
+            <button className="btn btn-primary" onClick={openAdd}>
               <PlusCircleIcon className="size-8 mr-2" />
               Add property
             </button>
@@ -119,13 +158,28 @@ function AgencyDashboard() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
               {properties.map((property) => (
-                <PropertyTile property={property} key={property.id} />
+                <PropertyTile
+                  property={property}
+                  key={property.id}
+                  onEdit={openEdit}
+                />
               ))}
             </div>
           )}
         </div>
 
-        <AddPropertyModal />
+        <dialog id="property_modal" className="modal">
+          <div className="modal-box max-w-7xl">
+            <PropertyModal
+              initial={editing ? mapPropertyToForm(editing) : {}}
+              isEdit={!!editing}
+              onSubmit={handleSubmit}
+              onDelete={editing ? handleDelete : undefined}
+              onClose={closeModal}
+              showAgencyPicker={false}
+            />
+          </div>
+        </dialog>
       </div>
     </>
   );

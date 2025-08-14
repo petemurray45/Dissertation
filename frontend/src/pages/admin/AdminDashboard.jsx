@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AdminNavBar from "../../components/admin/AdminNavBar";
 import AdminHero from "../../components/admin/AdminHero";
 import AdminCard from "../../components/admin/AdminCard";
-import AddPropertyModal from "../../components/admin/AddPropertyModel.jsx";
+import AddPropertyModal from "../../components/admin/PropertyModal.jsx";
 import PropertyTile from "../../components/admin/PropertyTile";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdBrowserUpdated } from "react-icons/md";
@@ -13,22 +13,83 @@ import { useListingStore } from "../../utils/useListingsStore.js";
 import { useUserStore } from "../../utils/useUserStore.js";
 import { useAgencyStore } from "../../utils/useAgencyStore.js";
 import { useNavigate } from "react-router-dom";
+import PropertyModal from "../../components/admin/PropertyModal.jsx";
+import { useAdminStore } from "../../utils/useAdminStore.js";
+
+function mapPropertyToForm(p) {
+  return {
+    title: p.title ?? "",
+    description: p.description ?? "",
+    price_per_month: p.price_per_month ?? "",
+    propertyType: p.property_type ?? p.propertyType ?? "",
+    ensuite: p.ensuite ?? "",
+    bedType: p.bed_type ?? p.bedType ?? "",
+    wifi: p.wifi ?? "",
+    pets: p.pets ?? "",
+    location: p.location ?? "",
+    latitude: p.latitude ?? "",
+    longitude: p.longitude ?? "",
+    images: (p.imageUrls || p.images || []).map((u) => u),
+    agency_id: p.agency_id ?? null,
+  };
+}
 
 function AdminDashboard() {
-  const { properties, loading, error, fetchProperties } = useListingStore();
+  const {
+    properties,
+    loading,
+    error,
+    fetchProperties,
+    addProperty,
+    updateProperty,
+    deleteProperty,
+  } = useListingStore();
 
-  const { user } = useUserStore();
-  const { agency } = useAgencyStore();
+  const { token: adminToken } = useAdminStore();
 
-  const displayName = agency?.agency_name || user?.name || "Admin";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  console.log("Admin Token:", adminToken);
 
   useEffect(() => {
-    fetchProperties();
-  }, [fetchProperties]);
+    if (adminToken) {
+      fetchProperties(adminToken);
+    }
+  }, [fetchProperties, adminToken]);
 
-  const navigate = useNavigate();
+  const openAdd = () => {
+    setEditing(null);
+    setIsModalOpen(true);
+    document.getElementById("property_modal")?.showModal?.();
+  };
 
-  console.log("Properties: ", properties);
+  const openEdit = (prop) => {
+    setEditing(prop);
+    setIsModalOpen(true);
+    document.getElementById("property_modal")?.showModal?.();
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditing(null);
+    document.getElementById("property_modal")?.close?.();
+  };
+
+  const handleSubmit = async (payload) => {
+    if (editing) {
+      await updateProperty(editing.id, payload, adminToken);
+    } else {
+      await addProperty(payload, adminToken);
+    }
+    closeModal();
+  };
+
+  const handleDelete = async () => {
+    if (!editing) return;
+    await deleteProperty(editing.id, adminToken);
+    closeModal();
+  };
 
   return (
     <>
@@ -70,12 +131,7 @@ function AdminDashboard() {
 
         <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center ">
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                navigate("/admin/addproperty");
-              }}
-            >
+            <button className="btn btn-primary" onClick={openAdd}>
               <PlusCircleIcon className="size-8 mr-2" />
               Add property
             </button>
@@ -113,13 +169,29 @@ function AdminDashboard() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
               {properties.map((property) => (
-                <PropertyTile property={property} key={property.id} />
+                <PropertyTile
+                  property={property}
+                  key={property.id}
+                  onEdit={openEdit}
+                />
               ))}
             </div>
           )}
         </div>
 
-        <AddPropertyModal />
+        <dialog id="property_modal" className="modal">
+          <div className="modal-box max-w-7xl">
+            <PropertyModal
+              initial={editing ? mapPropertyToForm(editing) : {}}
+              isEdit={!!editing}
+              onSubmit={handleSubmit}
+              onDelete={editing ? handleDelete : undefined}
+              onClose={closeModal}
+              showAgencyPicker={!!adminToken}
+              adminToken={adminToken}
+            />
+          </div>
+        </dialog>
       </div>
     </>
   );

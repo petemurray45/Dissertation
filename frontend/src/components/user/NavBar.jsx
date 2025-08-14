@@ -14,7 +14,7 @@ function NavBar() {
   };
 
   const handleLogin = (e) => {
-    navigate("/login");
+    navigate("/user/login");
   };
 
   return (

@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sql } from "../config/db.js";
 import { login } from "./authController.js";
+import e from "cors";
 
 export const registerAgency = async (req, res) => {
   const { agency_name, agency_email, phone, loginId, website } = req.body;
@@ -73,6 +74,7 @@ export const fetchPropertyByAgency = async (req, res) => {
 
 export const getAgencyMe = async (req, res) => {
   try {
+    if (!req.auth?.agencyId) return res.status(401).json({ error: "No auth" });
     const { agencyId } = req.auth;
     const rows =
       await sql`SELECT id, agency_name, agency_email, phone, logo_url, created_at, updated_at, website FROM agencies WHERE id = ${agencyId} LIMIT 1`;
@@ -86,3 +88,30 @@ export const getAgencyMe = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch agency" });
   }
 };
+
+export const listAgencies = async (req, res) => {
+  try {
+    const rows = await sql`
+        SELECT id, agency_name FROM
+        agencies
+        ORDER BY agency_name ASC`;
+    res.json({ agencies: rows });
+  } catch (err) {
+    console.error("Error listing agencies", err);
+    res.status(500).json({ error: "Failed to fetch agencies" });
+  }
+};
+
+export const updateAgency = async (req, res) => {
+  const { agency_name, email, website, location, latitude, longitude, current_password, new_password } = req.body;
+  const { agencyId } = req.auth;
+
+  try {
+    const response = await sql`SELECT * FROM agencies WHERE id = ${agencyId}`;
+    const agency = response[0];
+
+    if (!agency){
+      return res.status(404).json({error:"Agency not found."})
+    }
+  }
+}

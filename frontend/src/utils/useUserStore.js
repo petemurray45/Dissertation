@@ -8,10 +8,12 @@ export const useUserStore = create((set, get) => ({
   token: localStorage.getItem("token") || null,
   isLoggedIn: !!localStorage.getItem("token"),
   likedPropertyIds: [],
+  hasHydrated: false,
 
   setUser: (user) => set({ user }),
   setToken: (token) => set({ token }),
   setLikedPropertyIds: (ids) => set({ likedPropertyIds: ids }),
+  setHasHydrated: () => set({ hasHydrated: true }),
   logout: () => set({ user: null, token: null }),
 
   login: async (email, password) => {
@@ -66,12 +68,15 @@ export const useUserStore = create((set, get) => ({
           token,
           user: res.data.user,
           isLoggedIn: true,
+          hasHydrated: true,
         });
         await get().fetchLikedProperties();
       } catch (err) {
         console.log("Rehydration Failed", err);
         localStorage.removeItem("token");
         set({ user: null, token: null, isLoggedIn: false });
+      } finally {
+        set({ hasHydrated: true });
       }
     }
   },
