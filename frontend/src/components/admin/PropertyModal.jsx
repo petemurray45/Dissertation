@@ -13,8 +13,9 @@ import {
   SaveIcon,
   Trash2Icon,
 } from "lucide-react";
-import toast from "react-hot-toast";
+
 import axios from "axios";
+import { Toaster, toast } from "react-hot-toast";
 import LocationAutocomplete from "./LocationAutocomplete.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAdminStore } from "../../utils/useAdminStore.js";
@@ -104,6 +105,9 @@ function PropertyModal({
     try {
       await onSubmit(finalPayload);
       toast.success(isEdit ? "Property updated!" : "Property added!");
+      setTimeout(() => {
+        onClose();
+      }, 1000);
       navigate(backTo);
     } catch (err) {
       console.error("Submit error", err);
@@ -119,7 +123,21 @@ function PropertyModal({
 
   return (
     <div className="card bg-base-100 w-full">
-      <div className="w-full flex justify-end items-center mb-4">
+      <Toaster
+        position="top-center"
+        containerClassName="!absolute !top-0"
+        toastOptions={{
+          style: {
+            borderRadius: "8px",
+            background: "#333",
+            color: "#fff",
+            fontSize: "1.2rem",
+            padding: "1rem 1.5rem",
+            width: "full",
+          },
+        }}
+      />
+      <div className="w-full flex justify-between items-center mb-4">
         {onClose && (
           <button type="button" onClick={onClose} className="btn">
             Close
@@ -340,8 +358,8 @@ function PropertyModal({
                 }}
               >
                 <option className="font-raleway" disabled selected></option>
-                <option>Yes</option>
-                <option>No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
               </select>
             </div>
           </div>
@@ -350,7 +368,7 @@ function PropertyModal({
             <label className="label">
               <span className="label-text text-base font-medium">Location</span>
             </label>
-            <div className="relative">
+            <div className="relative z-[99]">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
                 <MapPinPlusInside className="size-5" />
               </div>
@@ -450,16 +468,15 @@ function PropertyModal({
               type="submit"
               className="btn btn-primary"
               disabled={
-                !formData.title ||
-                !formData.description ||
-                !formData.price_per_month ||
-                !formData.bedType ||
-                formData.wifi === undefined ||
-                formData.pets === undefined ||
-                formData.ensuite === undefined ||
-                !formData.propertyType ||
-                !formData.location ||
-                formData.images.length === 0 ||
+                formData.title === "" ||
+                formData.description === "" ||
+                formData.price_per_month === "" ||
+                formData.bedType === "" ||
+                formData.wifi === "" ||
+                formData.pets === "" ||
+                formData.ensuite === "" ||
+                formData.propertyType === "" ||
+                formData.location === "" ||
                 (showAgencyPicker && !selectedAgencyId)
               }
             >
@@ -469,20 +486,18 @@ function PropertyModal({
                 <PlusCircleIcon className="size-5 mr-2" />
               )}
               {submitLabel}
-
-              {isEdit && onDelete ? (
-                <button
-                  type="button"
-                  className="btn btn-error"
-                  onClick={onDelete}
-                >
-                  <Trash2Icon className="size-5" />
-                  Delete Property
-                </button>
-              ) : (
-                <div />
-              )}
             </button>
+
+            {isEdit && onDelete && (
+              <button
+                type="button"
+                className="btn btn-error"
+                onClick={onDelete}
+              >
+                <Trash2Icon className="size-5 mr-2" />
+                Delete Property
+              </button>
+            )}
           </div>
         </form>
       </div>

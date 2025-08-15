@@ -6,6 +6,8 @@ import { getAgencyMe } from "../controllers/agencyController.js";
 import { ensureSelfOrAdmin } from "../middleware/guards.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { listAgencies } from "../controllers/agencyController.js";
+import { updateAgency } from "../controllers/agencyController.js";
+import { deleteAgency } from "../controllers/agencyController.js";
 const router = express.Router();
 
 router.post("/registerAgency", registerAgency);
@@ -16,7 +18,17 @@ router.get(
   ensureSelfOrAdmin,
   fetchPropertyByAgency
 );
-router.get("/agencies", requireAuth("admin"), listAgencies);
+router.get("/agencies", requireAuth("admin", "agent"), listAgencies);
 router.get("/me", requireAuth("agent"), getAgencyMe);
+router.put(
+  "/me",
+  requireAuth("agent", "admin"),
+  ensureSelfOrAdmin,
+  updateAgency
+);
+router.delete(
+  "/me",
+  requireAuth("agent", "admin", ensureSelfOrAdmin, deleteAgency)
+);
 
 export default router;

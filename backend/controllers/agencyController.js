@@ -103,15 +103,70 @@ export const listAgencies = async (req, res) => {
 };
 
 export const updateAgency = async (req, res) => {
-  const { agency_name, email, website, location, latitude, longitude, current_password, new_password } = req.body;
+  const {
+    agency_name,
+    agency_email,
+    phone,
+    logo_url,
+    current_login_id_hash,
+    new_login_id_hash,
+    website,
+  } = req.body;
   const { agencyId } = req.auth;
 
   try {
     const response = await sql`SELECT * FROM agencies WHERE id = ${agencyId}`;
     const agency = response[0];
 
-    if (!agency){
-      return res.status(404).json({error:"Agency not found."})
+    if (!agency) {
+      return res.status(404).json({ error: "Agency not found." });
     }
+
+    let login_id_hashed = agency.login_id_hash;
+    if (new_login_id_hash) {
+      if (!current_login_id_hash) {
+        return res
+          .status(400)
+          .json({ error: "Current password is required to change password." });
+      }
+
+      const passwordMatch = await bcrypt.compare(
+        current_login_id_hash,
+        agency.login_id_hash
+      );
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid current password" });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      login_id_hashed = await bcrypt.hash(new_login_id_hash, salt);
+    }
+
+    const [updatedAgency] = await sql`
+    UPDATE agencies SET
+    agency_name = ${agency_name || agency.agency_name},
+    agency_email = ${agency_email || agency.agency_email},
+    login_id_hash = ${login_id_hashed || agency.login_id_hash},
+    phone = ${phone || agency.phone},
+    logo_url = ${logo_url || agency.logo_url},
+    website = ${website || agency.website}
+    WHERE id = ${agencyId}
+    RETURNING id, agency_name, agency_email, phone, logo_url, website
+    `;
+    res.status(200).json(updatedAgency);
+  } catch (err) {
+    console.error("Update agency error", err);
+    res.status(500).json({ error: "Server error" });
   }
-}
+};
+
+export const deleteAgency = async (req, res) => {
+  const { agencyId } = req.auth;
+  try {
+    await sql`DELETE FROM agencies WHERE id = ${agencyId}`;
+    res.status(204).send;
+  } catch (err) {
+    console.error("Delete agency error", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

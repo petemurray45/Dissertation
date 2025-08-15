@@ -11,11 +11,13 @@ import AgencyAuth from "./components/user/auth/AgencyAuth";
 import UserAuth from "./components/user/auth/UserAuth";
 import AgencyDashboard from "./pages/agency/AgencyDashboard";
 import AdminAuth from "./components/user/auth/AdminAuth";
-import RouteProtector from "./components/routing/RouteProtection";
 import { useUserStore } from "./utils/useUserStore";
 import { useEffect } from "react";
 import { useAdminStore } from "./utils/useAdminStore";
 import { useAgencyStore } from "./utils/useAgencyStore";
+import AdminEditProperty from "./pages/admin/AdminEditProperty";
+import AgencyAddProperty from "./pages/agency/AgencyAddProperty";
+import AgencyEditProperty from "./pages/agency/AgencyEditProperty";
 function App() {
   const { rehydrate: rehydrateUser, hasHydrated: useHasHydrated } =
     useUserStore();
@@ -42,13 +44,21 @@ function App() {
 
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/addproperty" element={<AdminAddProperty />} />
-          <Route path="/admin/property/:id" element={<AdminProductPage />} />
+          <Route
+            path="/admin/properties/edit/:id"
+            element={<AdminEditProperty />}
+          />
 
           <Route path="/admin/login" element={<AdminAuth />} />
 
           {/* Agency Routes */}
 
           <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+          <Route path="/agency/addproperty" element={<AgencyAddProperty />} />
+          <Route
+            path="/agency/editproperty/:id"
+            element={<AgencyEditProperty />}
+          />
 
           <Route path="/agencyLogin" element={<AgencyAuth />} />
 

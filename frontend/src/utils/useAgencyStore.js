@@ -132,4 +132,39 @@ export const useAgencyStore = create((set, get) => ({
       set({ agenciesLoading: false });
     }
   },
+
+  updateAgency: async (payload) => {
+    try {
+      const { token } = get();
+      const { data } = await axios.put(`${BASE_URL}/api/agency/me`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      set({ agency: data, error: null });
+      return data;
+    } catch (err) {
+      console.error("Update agency failed", err);
+      set({ error: "Failed to update agency details" });
+      throw err;
+    }
+  },
+
+  deleteAgency: async () => {
+    try {
+      const { token } = get();
+      await axios.delete(`${BASE_URL}/api/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      set({
+        agency: null,
+        token: null,
+        agencies: [],
+        isLoggedIn: false,
+        error: null,
+      });
+    } catch (err) {
+      console.error("Delete agency failed", err);
+      set({ error: "Failed to delete agency account" });
+      throw err;
+    }
+  },
 }));

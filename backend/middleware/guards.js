@@ -1,12 +1,11 @@
 export const ensureSelfOrAdmin = (req, res, next) => {
   const { role, agencyId } = req.auth || {};
   if (role === "admin") return next();
-  if (String(req.params.id) !== String(agencyId)) {
-    return res
-      .status(403)
-      .json({ error: "Forbidden: Cannot access another agencies data." });
-  }
-  next();
+  if (role === "agent" && agencyId) return next();
+
+  return res
+    .status(403)
+    .json({ error: "Forbidden: Cannot update this agency account" });
 };
 
 export const canManageProperty = async (req, res, next) => {

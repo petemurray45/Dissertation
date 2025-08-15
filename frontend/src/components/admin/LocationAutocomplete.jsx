@@ -1,14 +1,13 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
-import axios from "axios";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-console.log("API KEY LOADED IN AUTOCOMPLETE", GOOGLE_MAPS_API_KEY);
 const libraries = ["places"];
 
-const LocationAutocomplete = ({ onPlaceSelect }) => {
+export default function LocationAutocomplete({ onPlaceSelect }) {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
+  const listenerRef = useRef(null);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -16,36 +15,44 @@ const LocationAutocomplete = ({ onPlaceSelect }) => {
   });
 
   useEffect(() => {
-    if (isLoaded && inputRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(
-        inputRef.current,
-        {
-          types: ["geocode"],
-        }
-      );
+    // only init once when script is loaded and input is mounted
+    if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
 
-      autocompleteRef.current.addListener("place_changed", () => {
-        const place = autocompleteRef.current.getPlace();
-        if (!place.geometry) return;
+    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
+      types: ["geocode"],
+      // ask for only what you need
+      fields: ["formatted_address", "geometry"],
+    });
+    autocompleteRef.current = ac;
 
-        const locationData = {
-          location: place.formatted_address,
-          latitude: place.geometry.location.lat(),
-          longitude: place.geometry.location.lng(),
-        };
-        onPlaceSelect(locationData);
+    listenerRef.current = ac.addListener("place_changed", () => {
+      const place = ac.getPlace();
+      if (!place || !place.geometry) return;
+
+      onPlaceSelect?.({
+        location: place.formatted_address || "",
+        latitude: place.geometry.location?.lat?.() ?? "",
+        longitude: place.geometry.location?.lng?.() ?? "",
       });
-    }
-  }, [isLoaded, inputRef.current]);
+    });
+
+    // cleanup on unmount
+    return () => {
+      if (listenerRef.current) {
+        window.google.maps.event.removeListener(listenerRef.current);
+        listenerRef.current = null;
+      }
+      autocompleteRef.current = null;
+    };
+  }, [isLoaded, onPlaceSelect]);
 
   return (
     <input
+      ref={inputRef}
       type="text"
       placeholder="Enter location"
-      ref={inputRef}
+      autoComplete="off"
       className="input input-bordered w-full pl-10 font-raleway"
     />
   );
-};
-
-export default LocationAutocomplete;
+}

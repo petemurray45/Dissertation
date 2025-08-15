@@ -52,29 +52,13 @@ function AdminDashboard() {
 
   console.log("Admin Token:", adminToken);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (adminToken) {
       fetchProperties(adminToken);
     }
   }, [fetchProperties, adminToken]);
-
-  const openAdd = () => {
-    setEditing(null);
-    setIsModalOpen(true);
-    document.getElementById("property_modal")?.showModal?.();
-  };
-
-  const openEdit = (prop) => {
-    setEditing(prop);
-    setIsModalOpen(true);
-    document.getElementById("property_modal")?.showModal?.();
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditing(null);
-    document.getElementById("property_modal")?.close?.();
-  };
 
   const handleSubmit = async (payload) => {
     if (editing) {
@@ -101,37 +85,34 @@ function AdminDashboard() {
             title="Add a property"
             icon={<IoCreateOutline className="size-11" />}
             description="Add a property to the site"
-            onClick={() => {
-              document.getElementById("add_property_modal").showModal();
-            }}
             action="Add"
           />
           <AdminCard
             title="Update a property"
             icon={<MdBrowserUpdated className="size-11" />}
             description="Update an existing property"
-            // onlcick =
             action="Update"
           />
           <AdminCard
             title="View properties"
             icon={<HiOutlineViewfinderCircle className="size-11" />}
             description="View all properties"
-            // onclick=
             action="View"
           />
           <AdminCard
             title="Delete listing"
             icon={<MdOutlineDeleteOutline className="size-11" />}
             description="Delete a property"
-            //onlick=
             action="Delete"
           />
         </div>
 
         <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center ">
-            <button className="btn btn-primary" onClick={openAdd}>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/admin/addproperty")}
+            >
               <PlusCircleIcon className="size-8 mr-2" />
               Add property
             </button>
@@ -172,26 +153,14 @@ function AdminDashboard() {
                 <PropertyTile
                   property={property}
                   key={property.id}
-                  onEdit={openEdit}
+                  onEdit={() =>
+                    navigate(`/admin/properties/edit/${property.id}`)
+                  }
                 />
               ))}
             </div>
           )}
         </div>
-
-        <dialog id="property_modal" className="modal">
-          <div className="modal-box max-w-7xl">
-            <PropertyModal
-              initial={editing ? mapPropertyToForm(editing) : {}}
-              isEdit={!!editing}
-              onSubmit={handleSubmit}
-              onDelete={editing ? handleDelete : undefined}
-              onClose={closeModal}
-              showAgencyPicker={!!adminToken}
-              adminToken={adminToken}
-            />
-          </div>
-        </dialog>
       </div>
     </>
   );
