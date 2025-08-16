@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { useAuthStore } from "./useAuthStore";
 const BASE_URL = "http://localhost:3000";
 
 export const useAgencyStore = create((set, get) => ({
@@ -16,12 +17,41 @@ export const useAgencyStore = create((set, get) => ({
   agenciesLoading: false,
   agenciesError: null,
 
+  //enquiries catalog
+  enquiries: [],
+  enquiriesLoading: false,
+  enquiriesError: null,
+  enquiriesPage: 1,
+  enquiriesLimit: 10,
+  enquiriesTotal: 0,
+
+  page: 1,
+  limit: 6,
+  totalCount: 0,
+
+  setPage: (page) => set({ page }),
+  setLimit: (limit) => set({ limit }),
+
+  setEnquiriesPage: (page) => set({ enquiriesPage: page }),
+  setEnquiriesLimit: (limit) => set({ enquiriesLimit: limit }),
+
   setAgency: (agency) => set({ agency }),
   setHasHydrated: () => set({ hasHydrated: true }),
-  logout: () => {
-    localStorage.removeItem("agency_token");
-    set({ agency: null, token: null, isLoggedIn: false });
-  },
+  reset: () =>
+    set({
+      agency: null,
+      token: null,
+      isLoggedIn: false,
+      properties: [],
+      error: null,
+      agencies: [],
+      agenciesLoading: false,
+      agenciesError: null,
+      loading: false,
+      page: 1,
+      limit: 6,
+      totalCount: 0,
+    }),
 
   rehydrate: async () => {
     const token = localStorage.getItem("agency_token");
@@ -58,6 +88,8 @@ export const useAgencyStore = create((set, get) => ({
       );
       localStorage.setItem("agency_token", data.token);
       set({ agency: data.agency, token: data.token, isLoggedIn: true });
+      useAuthStore.getState().login(data.agency, "agent", data.token);
+
       return data.agency;
     } catch (err) {
       const message = err?.response?.data?.error || "Failed to register";
@@ -77,6 +109,7 @@ export const useAgencyStore = create((set, get) => ({
       });
       localStorage.setItem("agency_token", data.token);
       set({ agency: data.agency, token: data.token, isLoggedIn: true });
+      useAuthStore.getState().login(data.agency, "agent", data.token);
       return data.agency;
     } catch (err) {
       const message = err?.response?.data?.error || "Login Failed";
@@ -87,8 +120,10 @@ export const useAgencyStore = create((set, get) => ({
     }
   },
 
-  fetchPropertiesByAgency: async (agencyId) => {
-    const { token } = get();
+  fetchPropertiesByAgency: async (agencyId, opts = {}) => {
+    const { token, page: currentPage, limit: currentLimit } = get();
+    const page = opts.page ?? currentPage ?? 1;
+    const limit = opts.limit ?? currentLimit ?? 6;
 
     if (!token) {
       set({ error: "Unathorized" });
@@ -96,16 +131,22 @@ export const useAgencyStore = create((set, get) => ({
     }
 
     try {
-      set({ loading: true, error: null });
+      set({ loading: true, error: null, properties: [] });
       const { data } = await axios.get(
         `${BASE_URL}/api/agency/${agencyId}/agencyProperties`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            params: { page, limit },
           },
         }
       );
-      set({ properties: data });
+      set({
+        properties: data?.properties || [],
+        totalCount: data?.totalCount ?? 0,
+        page: data?.page ?? page,
+        limit: data?.limit ?? limit,
+      });
     } catch (err) {
       console.error("Error fetching agency properties", err);
     } finally {
@@ -151,7 +192,7 @@ export const useAgencyStore = create((set, get) => ({
   deleteAgency: async () => {
     try {
       const { token } = get();
-      await axios.delete(`${BASE_URL}/api/me`, {
+      await axios.delete(`${BASE_URL}/api/agency/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({
@@ -165,6 +206,57 @@ export const useAgencyStore = create((set, get) => ({
       console.error("Delete agency failed", err);
       set({ error: "Failed to delete agency account" });
       throw err;
+    }
+  },
+
+  fetchAgencyEnquiries: async (agencyId, { page, limit } = {}) => {
+    const { token, enquiriesPage, enquiriesLimit } = get();
+    if (!token) {
+      set({ enquiriesError: "Unauthorized" });
+      return;
+    }
+
+    const p = page ?? enquiriesPage;
+    const l = limit ?? enquiriesLimit;
+
+    try {
+      set({ enquiriesLoading: true, enquiriesError: null });
+      const { data } = await axios.get(
+        `${BASE_URL}/api/agency/${agencyId}/enquiries?page=${p}&limit=${l}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      set({
+        enquiries: data.data || [],
+        enquiriesTotal: data.totalCount || 0,
+        enquiriesPage: data.page,
+        enquiriesLimit: data.limit,
+      });
+    } catch (err) {
+      set({
+        enquiriesError:
+          err?.response?.data?.error || "Failed to load enquiries",
+      });
+    } finally {
+      set({ enquiriesLoading: false });
+    }
+  },
+
+  updateEnquiryStatus: async (agencyId, enquiryId, status) => {
+    const { token, enquiries } = get();
+
+    try {
+      await axios.put(
+        `${BASE_URL}/api/agency/${agencyId}/enquiries/${enquiryId}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      set({
+        enquiries: enquiries.map((e) =>
+          e.id === enquiryId ? { ...e, status } : e
+        ),
+      });
+    } catch (err) {
+      console.error("Error updating enquiry status", err);
     }
   },
 }));

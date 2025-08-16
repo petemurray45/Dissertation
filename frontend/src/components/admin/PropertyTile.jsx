@@ -7,14 +7,7 @@ import { useNavigate } from "react-router-dom";
 function PropertyTile({ property, onEdit }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   const navigate = useNavigate();
-
-  const handleSelect = (property) => {
-    navigate(`/admin/property/${property.id}`, {
-      state: { property }, // passing property object to admin product page
-    });
-  };
 
   const goToNextImage = () => {
     if (hasImages) {
@@ -31,6 +24,14 @@ function PropertyTile({ property, onEdit }) {
           (prevIndex - 1 + property.imageUrls.length) %
           property.imageUrls.length
       );
+    }
+  };
+
+  const handleSelect = () => {
+    if (typeof onEdit === "function") {
+      onEdit(property);
+    } else {
+      navigate(`/agency/editproperty/${property.id}`);
     }
   };
   return (
@@ -79,7 +80,7 @@ function PropertyTile({ property, onEdit }) {
             <button
               className="btn btn-primary"
               type="button"
-              onClick={() => onEdit?.(property)}
+              onClick={handleSelect}
             >
               Select
             </button>

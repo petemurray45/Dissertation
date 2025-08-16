@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-import { EthernetPort } from "lucide-react";
+import { useAuthStore } from "./useAuthStore";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -13,6 +13,7 @@ export const useAdminStore = create((set, get) => ({
   hasHydrated: false,
 
   setHasHydrated: () => set({ hasHydrated: true }),
+  reset: () => set({ agency: null, properties: [] }),
 
   login: async ({ username, password }) => {
     try {
@@ -23,6 +24,7 @@ export const useAdminStore = create((set, get) => ({
       });
       localStorage.setItem("admin_token", data.token);
       set({ admin: data.user, token: data.token, isLoggedIn: true });
+      useAuthStore.getState().login(data.agency, "agent", data.token);
       return data.user;
     } catch (err) {
       set({ error: "Login failed" });
@@ -30,11 +32,6 @@ export const useAdminStore = create((set, get) => ({
     } finally {
       set({ loading: false });
     }
-  },
-
-  logout: () => {
-    localStorage.removeItem("admin_token");
-    set({ admin: null, token: null, isLoggedIn: false });
   },
 
   rehydrate: async () => {

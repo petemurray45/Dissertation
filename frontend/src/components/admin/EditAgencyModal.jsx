@@ -88,7 +88,7 @@ function EditAgencyModal({
         setTimeout(() => {
           onClose();
         }, 1000);
-        navigate("/agency/dashboard");
+        navigate("/home");
       } catch (err) {
         console.error("Delete error", err);
         toast.error("Something went wrong with the deletion.");

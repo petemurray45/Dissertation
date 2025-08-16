@@ -262,7 +262,6 @@ export const useListingStore = create((set, get) => ({
       await axios.post(`${BASE_URL}/api/properties`, payload, { headers });
       await get().fetchProperties();
       get().resetForm();
-      toast.success("Property added successfully");
 
       // close modal
       document.getElementById("add_property_modal").close();
@@ -301,7 +300,6 @@ export const useListingStore = create((set, get) => ({
           properties: prev.properties.filter((property) => property.id !== id),
         };
       });
-      toast.success("Property deleted successfully");
     } catch (err) {
       console.log(
         "Error deleting property",
@@ -363,17 +361,23 @@ export const useListingStore = create((set, get) => ({
     }
   },
 
-  updateProperty: async (id, token) => {
+  updateProperty: async (id, payload, token) => {
     set({ loading: true });
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const { formData } = get();
       const response = await axios.put(
         `${BASE_URL}/api/properties/${id}`,
-        formData,
+        payload,
         { headers }
       );
-      set({ currentProperty: response.data.data });
+      const updated =
+        response.data?.property ?? response.data?.data ?? response.data;
+      set((state) => ({
+        properties: state.properties.map((p) =>
+          p.id === Number(id) ? { ...p, ...updated } : p
+        ),
+        currentProperty: updated,
+      }));
       toast.success("Property updated successfully");
     } catch (err) {
       console.log("Error updating property");

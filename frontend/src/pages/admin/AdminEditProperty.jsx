@@ -8,7 +8,6 @@ import { useListingStore } from "../../utils/useListingsStore.js";
 import { useAdminStore } from "../../utils/useAdminStore.js";
 
 function mapPropertyToForm(p) {
-  // Same mapping function as before
   return {
     title: p.title ?? "",
     description: p.description ?? "",
@@ -27,9 +26,9 @@ function mapPropertyToForm(p) {
 }
 
 function AdminEditProperty() {
-  const { id } = useParams(); // Get the property ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { properties, fetchProperties, updateProperty, deleteProperty } =
+  const { properties, updateProperty, deleteProperty, fetchProperty } =
     useListingStore();
   const { token: adminToken } = useAdminStore();
 
@@ -37,26 +36,31 @@ function AdminEditProperty() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function loadProperty() {
+      setLoading(true);
+      try {
+        await fetchProperty(id);
+      } catch (err) {
+        console.error("Failed to fetch property:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     const foundProperty = properties.find((p) => p.id === Number(id));
+
     if (foundProperty) {
       setProperty(foundProperty);
       setLoading(false);
     } else {
-      // If property not found in store, fetch all properties again
-      fetchProperties(adminToken).then(() => {
-        const p = properties.find((prop) => prop.id === Number(id));
-        if (p) {
-          setProperty(p);
-        }
-        setLoading(false);
-      });
+      loadProperty();
     }
-  }, [id, properties, fetchProperties, adminToken]);
+  }, [id, fetchProperty, properties]);
 
   const handleSubmit = async (payload) => {
     try {
       await updateProperty(id, payload, adminToken);
-      navigate("/admin");
+      navigate("/agency/dashboard");
     } catch (err) {
       console.error("Failed to update property", err);
     }
@@ -65,7 +69,7 @@ function AdminEditProperty() {
   const handleDelete = async () => {
     try {
       await deleteProperty(id, adminToken);
-      navigate("/admin");
+      navigate("/agency/dashboard");
     } catch (err) {
       console.error("Failed to delete property", err);
     }

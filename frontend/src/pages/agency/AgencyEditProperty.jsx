@@ -32,13 +32,13 @@ function AgencyEditProperty() {
   const navigate = useNavigate();
   const { properties, fetchProperties, updateProperty, deleteProperty } =
     useListingStore();
-  const { token: agencyToken, agencyId } = useAgencyStore(); // Get agency-specific token and ID
+  const { token: agencyToken, agency } = useAgencyStore();
+  const agencyId = agency?.id;
 
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If we don't have properties in the store, fetch them
     if (properties.length === 0) {
       fetchProperties(agencyToken).then(() => setLoading(false));
     } else {
@@ -47,16 +47,13 @@ function AgencyEditProperty() {
   }, [properties, fetchProperties, agencyToken]);
 
   useEffect(() => {
-    // Once properties are loaded, find the specific one
-    if (!loading) {
+    if (!loading && agencyId != null) {
       const foundProperty = properties.find((p) => p.id === Number(id));
 
       if (foundProperty) {
-        // ✅ CRITICAL LOGIC: Check if the property belongs to the logged-in agency
         if (foundProperty.agency_id === agencyId) {
           setProperty(foundProperty);
         } else {
-          // Redirect if the agency does not own this property
           toast.error("You can only edit your own properties.");
           navigate("/agency/dashboard");
         }
@@ -79,8 +76,10 @@ function AgencyEditProperty() {
     if (window.confirm("Are you sure you want to delete this property?")) {
       try {
         await deleteProperty(id, agencyToken);
-        toast.success("Property deleted successfully!");
-        navigate("/agency/dashboard");
+        toast.success("Property deleted successfully!", { id: "delete-toast" });
+        setTimeout(() => {
+          navigate("/agency/dashboard");
+        }, 1000);
       } catch (err) {
         console.error("Failed to delete property", err);
         toast.error("Something went wrong with the deletion.");

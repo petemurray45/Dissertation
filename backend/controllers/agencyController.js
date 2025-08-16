@@ -1,8 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sql } from "../config/db.js";
-import { login } from "./authController.js";
-import e from "cors";
 
 export const registerAgency = async (req, res) => {
   const { agency_name, agency_email, phone, loginId, website } = req.body;
@@ -56,19 +54,65 @@ export const agencyLogin = async (req, res) => {
 };
 
 export const fetchPropertyByAgency = async (req, res) => {
-  const { id } = req.params;
+  const paramId = Number(req.params.id);
+
   console.log("=== Fetch Property Debug ===");
-  console.log("req.auth:", req.auth); // what authenticateAgency put here
-  console.log("req.params.id:", req.params.id); // from URL :id
+  console.log("req.auth:", req.auth);
+  console.log("req.params.id:", req.params.id);
   console.log("============================");
 
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.max(1, Number(req.query.limit) || 6);
+  const offset = (page - 1) * limit;
+
   try {
-    const result =
-      await sql`SELECT * FROM properties WHERE agency_id = ${id} ORDER BY created_at DESC`;
-    res.json(result);
+    const properties = await sql`
+      SELECT *
+      FROM properties
+      WHERE agency_id = ${paramId}
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset};
+    `;
+
+    const [{ count: totalCount }] = await sql`
+      SELECT COUNT(*)::int AS count
+      FROM properties
+      WHERE agency_id = ${paramId};
+    `;
+
+    const propertyIds = properties.map((p) => Number(p.id));
+    if (propertyIds.length === 0) {
+      return res.json({ properties: [], totalCount });
+    }
+
+    const images = await sql`
+      SELECT property_id, image_url
+      FROM images
+      WHERE property_id = ANY(${propertyIds}::integer[])
+      ORDER BY property_id, id;
+    `;
+
+    const imgsByProp = new Map();
+    for (const row of images) {
+      const pid = Number(row.property_id);
+      if (!imgsByProp.has(pid)) imgsByProp.set(pid, []);
+      imgsByProp.get(pid).push(row.image_url);
+    }
+
+    const propertiesWithImages = properties.map((p) => ({
+      ...p,
+      imageUrls: imgsByProp.get(Number(p.id)) ?? [],
+    }));
+
+    return res.json({
+      properties: propertiesWithImages,
+      totalCount,
+      page,
+      limit,
+    });
   } catch (err) {
     console.error("Error fetching agency properties", err);
-    res.status(500).json({ error: "Failed to fetch properties" });
+    return res.status(500).json({ error: "Failed to fetch properties" });
   }
 };
 
@@ -168,5 +212,105 @@ export const deleteAgency = async (req, res) => {
   } catch (err) {
     console.error("Delete agency error", err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const fetchAgencyEnquiries = async (req, res) => {
+  const agencyId = Number(req.params.id);
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
+  const offset = (page - 1) * limit;
+
+  try {
+    const enquiries = await sql`
+    SELECT
+        e.id,
+        e.message,
+        e.created_at,
+        e.status,
+        e.property_id,
+        p.location      AS property_location,
+        p.title         AS property_title,
+        u.full_name     AS user_full_name,
+        u.email         AS user_email
+      FROM enquiries e
+      JOIN properties p ON p.id = e.property_id
+      LEFT JOIN users u ON u.id = e.user_id
+      WHERE e.agency_id = ${agencyId}
+      ORDER BY e.created_at DESC
+      LIMIT ${limit} OFFSET ${offset};`;
+
+    const [{ count }] = await sql`
+      SELECT COUNT(*)::int AS count
+      FROM enquiries
+      WHERE agency_id = ${agencyId};
+    `;
+
+    const data = enquiries.map((row) => ({
+      id: row.id,
+      message: row.message,
+      createdAt: row.created_at,
+      status: row.status,
+      propertyId: row.property_id,
+      propertyLocation: row.property_location,
+      propertyTitle: row.property_title,
+      userFullName: row.user_full_name,
+      userEmail: row.user_email,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data,
+      page,
+      limit,
+      totalCount: count,
+    });
+  } catch (err) {
+    console.error("Fetch agency enquiries error", err);
+    return res.status(500).json({
+      success: false,
+      error: "Failed to fetch enquiries",
+    });
+  }
+};
+
+export const updateEnquiryStatus = async (req, res) => {
+  const agencyId = Number(req.params.agencyId);
+  const enquiryId = Number(req.params.enquiryId);
+  const { status } = req.body;
+
+  if (!["accepted", "declined", "pending"].includes(status)) {
+    return res.status(400).json({ success: false, error: "Invalid status" });
+  }
+
+  try {
+    const [row] = await sql`
+      UPDATE enquiries
+      SET status = ${status}
+      WHERE id = ${enquiryId} AND agency_id = ${agencyId}
+      RETURNING id, status, agency_id, property_id, created_at;
+    `;
+
+    if (!row) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Enquiry not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: row.id,
+        status: row.status,
+        agencyId: row.agency_id,
+        propertyId: row.property_id,
+        createdAt: row.created_at,
+      },
+    });
+  } catch (err) {
+    console.error("Update enquiry status error", err);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to update status" });
   }
 };

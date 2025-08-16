@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { useAuthStore } from "./useAuthStore";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -14,7 +15,13 @@ export const useUserStore = create((set, get) => ({
   setToken: (token) => set({ token }),
   setLikedPropertyIds: (ids) => set({ likedPropertyIds: ids }),
   setHasHydrated: () => set({ hasHydrated: true }),
-  logout: () => set({ user: null, token: null }),
+  reset: () =>
+    set({
+      user: null,
+      token: null,
+      isLoggedIn: false,
+      likedPropertyIds: [],
+    }),
 
   login: async (email, password) => {
     try {
@@ -23,6 +30,7 @@ export const useUserStore = create((set, get) => ({
         password,
       });
       const { token, user } = res.data;
+      useAuthStore.getState().login(user, "user", token);
       localStorage.setItem("token", token);
 
       const userRes = await axios.get(`${BASE_URL}/api/auth/me`, {
@@ -30,14 +38,10 @@ export const useUserStore = create((set, get) => ({
       });
 
       set({ user, token, isLoggedIn: true });
+      useAuthStore.getState().login(user, "user", token);
     } catch (err) {
       console.error("login failed", err);
     }
-  },
-
-  logout: () => {
-    localStorage.removeItem("token");
-    set({ user: null, token: null, isLoggedIn: false });
   },
 
   register: async (name, email, password) => {
@@ -51,6 +55,7 @@ export const useUserStore = create((set, get) => ({
       const { token, user } = res.data;
       localStorage.setItem("token", token);
       set({ user, token, isLoggedIn: true });
+      useAuthStore.getState().login(user, "user", token);
     } catch (err) {
       console.error("failed to register", err);
     }

@@ -8,6 +8,8 @@ import { requireAuth } from "../middleware/authMiddleware.js";
 import { listAgencies } from "../controllers/agencyController.js";
 import { updateAgency } from "../controllers/agencyController.js";
 import { deleteAgency } from "../controllers/agencyController.js";
+import { fetchAgencyEnquiries } from "../controllers/agencyController.js";
+import { updateEnquiryStatus } from "../controllers/agencyController.js";
 const router = express.Router();
 
 router.post("/registerAgency", registerAgency);
@@ -28,7 +30,21 @@ router.put(
 );
 router.delete(
   "/me",
-  requireAuth("agent", "admin", ensureSelfOrAdmin, deleteAgency)
+  requireAuth("agent", "admin"),
+  ensureSelfOrAdmin,
+  deleteAgency
+);
+router.get(
+  "/:id/enquiries",
+  requireAuth("admin", "agent"),
+  ensureSelfOrAdmin,
+  fetchAgencyEnquiries
+);
+router.put(
+  "/:agencyId/enquiries/:enquiryId/status",
+  requireAuth("admin", "agent"),
+  ensureSelfOrAdmin,
+  updateEnquiryStatus
 );
 
 export default router;
