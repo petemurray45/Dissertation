@@ -9,13 +9,12 @@ export const register = async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, 10);
     const result =
-      await sql`INSERT INTO users (full_name, email, password_hash, role, photo_url created_at) VALUES (${name}, ${email}, ${hashed}, 'user', ${photoUrl || null}, NOW()) RETURNING id, email`;
+      await sql`INSERT INTO users (full_name, email, password_hash, role, photo_url, created_at) VALUES (${name}, ${email}, ${hashed}, 'user', ${photoUrl || null}, NOW()) RETURNING id, full_name email, photo_url`;
     let user;
 
-    // check if is array and contains at least one row
     if (Array.isArray(result) && result.length > 0) {
-      user = result[0]; // Get the first (and only) user object from the array
-      console.log("Extracted user object:", user); // Log the correctly extracted user object
+      user = result[0];
+      console.log("Extracted user object:", user);
     } else {
       console.error(
         "Register error: No user object returned in array after insert.",
@@ -40,7 +39,7 @@ export const register = async (req, res) => {
       { id: user.id, name: user.full_name, email: user.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: "2hr",
+        expiresIn: "2h",
       }
     );
     res.status(201).json({
@@ -123,9 +122,11 @@ export const getMe = async (req, res) => {
     if (!token) return res.status(401).json({ message: "No token provided" });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const result =
-      await sql`SELECT id, full_name, email, photo_url FROM users WHERE id = ${decoded.userId}`;
-    const user = result[0];
+    const [user] = await sql`
+      SELECT id, full_name, email, photo_url
+      FROM users
+      WHERE id = ${decoded.id}
+    `;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

@@ -1,11 +1,13 @@
 import { useUserStore } from "../../utils/useUserStore";
+import { useAuthStore } from "../../utils/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 function NavBar() {
-  const { user, logout } = useUserStore();
+  const { user } = useUserStore();
+  const { logout } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 

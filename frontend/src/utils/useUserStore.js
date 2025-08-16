@@ -33,10 +33,6 @@ export const useUserStore = create((set, get) => ({
       useAuthStore.getState().login(user, "user", token);
       localStorage.setItem("token", token);
 
-      const userRes = await axios.get(`${BASE_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
       set({ user, token, isLoggedIn: true });
       useAuthStore.getState().login(user, "user", token);
     } catch (err) {

@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserDashboard from "./pages/user/UserDashboard";
-import AdminProductPage from "./pages/admin/AdminProductPage";
 import AdminAddProperty from "./pages/admin/AdminAddProperty";
 import PropertyPage from "./pages/user/PropertyPage";
 import ViewListing from "./pages/user/ViewListing";
@@ -18,6 +17,7 @@ import { useAgencyStore } from "./utils/useAgencyStore";
 import AdminEditProperty from "./pages/admin/AdminEditProperty";
 import AgencyAddProperty from "./pages/agency/AgencyAddProperty";
 import AgencyEditProperty from "./pages/agency/AgencyEditProperty";
+import RequireRole from "./guards/RequireRole";
 function App() {
   const { rehydrate: rehydrateUser, hasHydrated: useHasHydrated } =
     useUserStore();
@@ -42,29 +42,35 @@ function App() {
         <Routes>
           {/* Admin Routes */}
 
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/addproperty" element={<AdminAddProperty />} />
-          <Route
-            path="/admin/properties/edit/:id"
-            element={<AdminEditProperty />}
-          />
+          <Route element={<RequireRole role={"admin"} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/addproperty" element={<AdminAddProperty />} />
+            <Route
+              path="/admin/properties/edit/:id"
+              element={<AdminEditProperty />}
+            />
+          </Route>
 
           <Route path="/admin/login" element={<AdminAuth />} />
 
           {/* Agency Routes */}
 
-          <Route path="/agency/dashboard" element={<AgencyDashboard />} />
-          <Route path="/agency/addproperty" element={<AgencyAddProperty />} />
-          <Route
-            path="/agency/editproperty/:id"
-            element={<AgencyEditProperty />}
-          />
+          <Route element={<RequireRole role={"agent"} />}>
+            <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+            <Route path="/agency/addproperty" element={<AgencyAddProperty />} />
+            <Route
+              path="/agency/editproperty/:id"
+              element={<AgencyEditProperty />}
+            />
+          </Route>
 
           <Route path="/agencyLogin" element={<AgencyAuth />} />
 
           {/* User Routes */}
 
-          <Route path="profile" element={<Profile />} />
+          <Route element={<RequireRole role={"user"} />}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
           <Route path="home" element={<UserDashboard />} />
           <Route path="properties" element={<PropertyPage />} />
