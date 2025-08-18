@@ -6,6 +6,7 @@ import Overview from "../../components/user/profile/Overview";
 import LikedProperties from "../../components/user/profile/LikedProperties";
 import EditProfile from "../../components/user/profile/EditProfile";
 import Notes from "../../components/user/profile/Notes";
+import Enquiries from "../../components/user/profile/Enquiries";
 
 function Profile() {
   const { user } = useUserStore();
@@ -15,12 +16,14 @@ function Profile() {
     likedProperties: <LikedProperties />,
     edit: <EditProfile />,
     notes: <Notes />,
+    enquiries: <Enquiries />,
   };
 
   const tabSelectors = [
     { key: "likedProperties", label: "Liked Properties" },
     { key: "edit", label: "Edit Profile" },
     { key: "notes", label: "Notes" },
+    { key: "enquiries", label: "Enquiries" },
   ];
 
   return (
@@ -57,6 +60,7 @@ function Profile() {
           {activeTab === "likedProperties" && <LikedProperties />}
           {activeTab === "edit" && <EditProfile />}
           {activeTab === "notes" && <Notes />}
+          {activeTab === "enquiries" && <Enquiries />}
         </div>
       </div>
     </div>

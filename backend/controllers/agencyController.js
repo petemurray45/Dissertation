@@ -223,22 +223,23 @@ export const fetchAgencyEnquiries = async (req, res) => {
 
   try {
     const enquiries = await sql`
-    SELECT
+      SELECT
         e.id,
         e.message,
         e.created_at,
         e.status,
         e.property_id,
-        p.location      AS property_location,
-        p.title         AS property_title,
-        u.full_name     AS user_full_name,
-        u.email         AS user_email
+        p.location AS property_location,
+        p.title    AS property_title,
+        COALESCE(u.full_name, e.full_name) AS user_full_name,
+        COALESCE(u.email, e.email)         AS user_email
       FROM enquiries e
       JOIN properties p ON p.id = e.property_id
       LEFT JOIN users u ON u.id = e.user_id
       WHERE e.agency_id = ${agencyId}
       ORDER BY e.created_at DESC
-      LIMIT ${limit} OFFSET ${offset};`;
+      LIMIT ${limit} OFFSET ${offset};
+    `;
 
     const [{ count }] = await sql`
       SELECT COUNT(*)::int AS count
@@ -260,7 +261,7 @@ export const fetchAgencyEnquiries = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data,
+      data: enquiries,
       page,
       limit,
       totalCount: count,
@@ -275,12 +276,32 @@ export const fetchAgencyEnquiries = async (req, res) => {
 };
 
 export const updateEnquiryStatus = async (req, res) => {
-  const agencyId = Number(req.params.agencyId);
+  const agencyIdFromToken = req.auth?.agencyId;
+  const agencyIdParam = req.params.agencyId;
+
+  const agencyId =
+    req.auth?.role === "admin"
+      ? Number(agencyIdParam)
+      : Number(agencyIdFromToken);
+
   const enquiryId = Number(req.params.enquiryId);
   const { status } = req.body;
 
   if (!["accepted", "declined", "pending"].includes(status)) {
     return res.status(400).json({ success: false, error: "Invalid status" });
+  }
+
+  if (!Number.isFinite(agencyId) || !Number.isFinite(enquiryId)) {
+    console.warn("Bad params for updateEnquiryStatus:", {
+      agencyIdParam,
+      agencyIdFromToken,
+      agencyId,
+      enquiryIdParam: req.params.enquiryId,
+      enquiryId,
+    });
+    return res
+      .status(400)
+      .json({ success: false, error: "Invalid agencyId or enquiryId" });
   }
 
   try {

@@ -392,7 +392,12 @@ export const useListingStore = create((set, get) => ({
 
     try {
       console.log("Payload recieved", payload);
-      await axios.post(`${BASE_URL}/api/properties/insert-enquiry`, payload);
+      const res = await axios.post(
+        `${BASE_URL}/api/properties/insert-enquiry`,
+        payload
+      );
+      if (!res.data.success)
+        throw new Error(res.data.error || "Failed to create enquiry");
     } catch (err) {
       console.log("Error inserting property", err);
     } finally {

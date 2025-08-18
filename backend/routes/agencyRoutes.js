@@ -41,7 +41,7 @@ router.get(
   fetchAgencyEnquiries
 );
 router.put(
-  "/:agencyId/enquiries/:enquiryId/status",
+  "/:id/enquiries/:enquiryId/status",
   requireAuth("admin", "agent"),
   ensureSelfOrAdmin,
   updateEnquiryStatus

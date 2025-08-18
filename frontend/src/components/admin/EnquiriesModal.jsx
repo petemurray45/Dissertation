@@ -4,6 +4,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { ArrowLeftIcon } from "lucide-react";
 function EnquiriesModal({ agencyId, onClose }) {
   const {
+    agency,
     enquiries,
     enquiriesLoading,
     enquiriesError,
@@ -23,7 +24,7 @@ function EnquiriesModal({ agencyId, onClose }) {
 
   const handleStatusChange = async (enquiryId, newStatus) => {
     try {
-      await updateEnquiryStatus(agencyId, enquiryId, newStatus);
+      await updateEnquiryStatus(agency?.id, enquiryId, newStatus);
       toast.success("Enquiry status updated!");
     } catch (err) {
       console.error("Status update error", err);
@@ -104,6 +105,30 @@ function EnquiriesModal({ agencyId, onClose }) {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-6 flex justify-center items-center gap-4">
+          <button
+            className="btn btn-sm"
+            disabled={enquiriesPage <= 1}
+            onClick={() =>
+              fetchAgencyEnquiries(agencyId, { page: enquiriesPage - 1 })
+            }
+          >
+            Prev
+          </button>
+          <span className="mx-2">
+            Page {enquiriesPage} of {totalPages || 1}
+          </span>
+          <button
+            className="btn btn-sm"
+            disabled={enquiriesPage >= totalPages}
+            onClick={() =>
+              fetchAgencyEnquiries(agencyId, { page: enquiriesPage + 1 })
+            }
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

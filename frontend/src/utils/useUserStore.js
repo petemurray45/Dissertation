@@ -22,6 +22,11 @@ export const useUserStore = create((set, get) => ({
       isLoggedIn: false,
       likedPropertyIds: [],
     }),
+  enquiries: [],
+  enquiriesLoading: false,
+  enquiriesError: null,
+
+  clearEnquiries: () => set({ enquiries: [] }),
 
   login: async (email, password) => {
     try {
@@ -83,16 +88,12 @@ export const useUserStore = create((set, get) => ({
   },
 
   addToLikes: async (property) => {
-    const { user, token, likedPropertyIds, setLikedPropertyIds } = get();
-    if (!user) return;
+    const { token, likedPropertyIds, setLikedPropertyIds } = get();
+    if (!token) return;
 
     try {
-      //check if liked
       const res = await axios.get(`${BASE_URL}/api/user/checkLikes`, {
-        params: {
-          userId: user.id,
-          propertyId: property.id,
-        },
+        params: { propertyId: property.id },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -101,35 +102,23 @@ export const useUserStore = create((set, get) => ({
 
       if (res.data.liked) {
         await axios.delete(`${BASE_URL}/api/user/removelike`, {
-          params: {
-            userId: user.id,
-            propertyId: property.id,
-          },
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          data: { propertyId: property.id },
         });
         console.log("Removed from likes");
 
-        // update ui straight away
         setLikedPropertyIds(
           likedPropertyIds.filter((id) => id !== property.id)
         );
       } else {
         await axios.post(
           `${BASE_URL}/api/user/likes`,
-          {
-            userId: user.id,
-            propertyId: property.id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { propertyId: property.id },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // update ui straight away
         setLikedPropertyIds([...likedPropertyIds, property.id]);
       }
     } catch (err) {
@@ -149,16 +138,12 @@ export const useUserStore = create((set, get) => ({
   },
 
   fetchLikedProperties: async () => {
-    const { user, token } = get();
-
-    if (!user || !token) return;
+    const { token } = get();
+    if (!token) return;
 
     try {
       const res = await axios.get(`${BASE_URL}/api/user/getLikes`, {
-        params: { userId: user.id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       set({ likedPropertyIds: res.data.liked });
@@ -206,7 +191,7 @@ export const useUserStore = create((set, get) => ({
       );
       return res.data;
     } catch (err) {
-      console.err("Error fetching notes", err);
+      console.error("Error fetching notes", err);
     }
   },
 
@@ -225,7 +210,7 @@ export const useUserStore = create((set, get) => ({
       );
       return res.data;
     } catch (err) {
-      console.err("Error fetching all Notes", err);
+      console.error("Error fetching all Notes", err);
     }
   },
 
@@ -263,6 +248,38 @@ export const useUserStore = create((set, get) => ({
       return data.user;
     } catch (err) {
       console.log("Error updating user", err);
+    }
+  },
+
+  fetchUserEnquiries: async () => {
+    const token = get().token;
+
+    if (!token) {
+      set({ enquiriesLoading: false, enquiriesError: null, enquiries: [] });
+      return;
+    }
+
+    set({ enquiriesLoading: true, enquiriesError: null });
+    try {
+      const res = await axios.get(`${BASE_URL}/api/user/enquiries`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const rows = Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+      rows.sort(
+        (a, b) =>
+          new Date(b.created_at || b.createdAt) -
+          new Date(a.created_at || a.createdAt)
+      );
+
+      set({ enquiries: rows });
+    } catch (err) {
+      set({
+        enquiriesError:
+          err?.response?.data?.error || "Failed to load enquiries",
+      });
+    } finally {
+      set({ enquiriesLoading: false });
     }
   },
 }));

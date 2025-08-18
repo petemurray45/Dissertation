@@ -70,11 +70,15 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
     }
   };
 
-  const getTransformedUrl = (url, width = 600, height = 400) => {
-    return url.replace(
-      "/upload/",
-      `/upload/w_${width},h_${height},c_fill,f_auto,q_60/`
-    );
+  const safeTransform = (url, w = 80, h = 80) => {
+    if (!url || typeof url !== "string") return null;
+    if (url.includes("/upload/")) {
+      return url.replace(
+        "/upload/",
+        `/upload/w_${w},h_${h},c_fit,f_auto,q_70/`
+      );
+    }
+    return url;
   };
 
   console.log("Rendered property ID:", property.id);
@@ -93,14 +97,22 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           {hasImages ? (
             <>
               <img
-                src={getTransformedUrl(
+                src={safeTransform(
                   property.imageUrls[currentImageIndex],
                   350,
                   200
                 )}
                 alt={property.title}
-                className="w-full h-full aspect-[4/3] object-cover rounded-bl-none rounded-br-none shadow-md" // Ensure image covers the area
+                className="w-full h-full aspect-[4/3] object-cover rounded-bl-none rounded-br-none shadow-md"
               />
+
+              <div className="absolute bottom-2 left-2 z-20 bg-white/80 p-1 rounded-md shadow-md">
+                <img
+                  src={safeTransform(property.agency_logo_url, 350, 200)}
+                  alt="agency logo"
+                  className="w-12 h-12 object-contain rounded-md"
+                />
+              </div>
 
               {/* Previous Button */}
               {property.imageUrls.length > 1 && (

@@ -2,8 +2,15 @@ import { sql } from "../config/db.js";
 
 export const ensureSelfOrAdmin = (req, res, next) => {
   const { role, agencyId } = req.auth || {};
+  const targetAgencyId = req.params.id || req.params.agencyId; //
   if (role === "admin") return next();
-  if (role === "agent" && agencyId) return next();
+  if (
+    role === "agent" &&
+    agencyId &&
+    String(agencyId) === String(targetAgencyId)
+  ) {
+    return next();
+  }
 
   return res
     .status(403)

@@ -93,7 +93,11 @@ function ViewListing() {
         </div>
         <div className="flex flex-row gap-10 w-full rounded-2xl mx-auto px-20 py-2 max-h-[750px]">
           <div className="w-full md:w-2/3">
-            <ImageGallery images={currentProperty.images} />
+            <ImageGallery
+              images={currentProperty.images}
+              agencyLogoUrl={currentProperty.agency_logo_url}
+              agencyName={currentProperty.agency_name}
+            />
           </div>
 
           <div className="w-full md:w-1/3">

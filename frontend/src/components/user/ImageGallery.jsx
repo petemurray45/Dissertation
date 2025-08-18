@@ -4,16 +4,22 @@ import {
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
 
-function ImageGallery({ images }) {
+function ImageGallery({ images, agencyLogoUrl, agencyName }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const handleSelect = (index) => setCurrentIndex(index);
 
-  // image transformation to increase performence
-  const getTransformedUrl = (url, width = 800, height = 600) => {
-    return url.replace(
-      "/upload/",
-      `/upload/w_${width},h_${height},c_fill,f_auto,q_auto/`
-    );
+  const getTransformed = (url, w = 1300, h = 800) => {
+    if (!url || typeof url !== "string") return url;
+    return url.includes("/upload/")
+      ? url.replace("/upload/", `/upload/w_${w},h_${h},c_fill,f_auto,q_auto/`)
+      : url;
+  };
+
+  const getLogoTransformed = (url, w = 200, h = 200) => {
+    if (!url || typeof url !== "string") return url;
+    return url.includes("/upload/")
+      ? url.replace("/upload/", `/upload/w_${w},h_${h},c_fit,f_auto,q_70/`)
+      : url;
   };
 
   // guard
@@ -45,10 +51,21 @@ function ImageGallery({ images }) {
         <>
           <div className="aspect-[13/8] w-full max-w-[1300px] relative overflow-hidden">
             <img
-              src={getTransformedUrl(images[currentIndex], 1300, 800)}
+              src={getTransformed(images[currentIndex], 1300, 800)}
               alt={`Property image ${currentIndex + 1}`}
               className="w-full h-full object-cover rounded-lg shadow-2xl"
             />
+
+            {agencyLogoUrl && (
+              <div className="absolute bottom-3 left-3 z-20 w-40 h-36 bg-white/80 backdrop-blur-sm p-2 rounded-md shadow">
+                <img
+                  src={getLogoTransformed(agencyLogoUrl)}
+                  alt={agencyName ? `${agencyName} logo` : "Agency logo"}
+                  className="w-full h-full object-contain"
+                  onError={(e) => (e.currentTarget.style.display = "none")}
+                />
+              </div>
+            )}
 
             {/* Previous Button */}
             {images.length > 1 && (

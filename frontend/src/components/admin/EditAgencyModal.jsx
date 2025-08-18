@@ -13,6 +13,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAgencyStore } from "../../utils/useAgencyStore.js";
 import { Toaster, toast } from "react-hot-toast";
+import { Image as ImageIcon, X } from "lucide-react";
+import axios from "axios";
 
 function EditAgencyModal({
   initial = {},
@@ -47,6 +49,21 @@ function EditAgencyModal({
       });
     }
   }, [initial]);
+
+  const uploadLogoToCloudinary = async (file) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", "property-app");
+    fd.append("cloud_name", "dnldppxxg");
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dnldppxxg/image/upload",
+      fd,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    return res.data.secure_url;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,17 +234,69 @@ function EditAgencyModal({
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text text-base font-medium">Logo URL</span>
+              <span className="label-text text-base font-medium">
+                Agency Logo
+              </span>
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                <Image className="size-5" />
+
+            {formData.logo_url ? (
+              <div className="flex items-center gap-3">
+                <div className="avatar">
+                  <div className="w-16 h-16 rounded ring ring-offset-2">
+                    <img
+                      src={formData.logo_url}
+                      alt="Agency logo preview"
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline"
+                  onClick={() => setFormData((p) => ({ ...p, logo_url: "" }))}
+                >
+                  <X className="size-4 mr-1" /> Remove
+                </button>
               </div>
+            ) : (
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                  <ImageIcon className="size-5" />
+                </div>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full pl-10 py-2 rounded-md"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    try {
+                      if (!file.type.startsWith("image/")) {
+                        return toast.error("Please select an image file");
+                      }
+
+                      const url = await uploadLogoToCloudinary(file);
+                      setFormData((p) => ({ ...p, logo_url: url }));
+                      toast.success("Logo uploaded");
+                    } catch (err) {
+                      console.error("Logo upload failed", err);
+                      toast.error("Failed to upload logo");
+                    } finally {
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            <div className="mt-2">
               <input
-                type="text"
+                type="url"
                 name="logo_url"
-                placeholder="Enter logo URL"
-                className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
+                placeholder="OR enter a logo url"
+                className="input input-bordered w-full"
                 value={formData.logo_url}
                 onChange={handleChange}
               />

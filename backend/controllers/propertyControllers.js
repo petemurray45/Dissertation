@@ -13,7 +13,16 @@ export const getAllProperties = async (req, res) => {
   const offset = (page - 1) * limit;
   try {
     const [properties, [{ count }]] = await Promise.all([
-      sql`SELECT * FROM properties ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+      sql`
+      SELECT 
+        p.*, 
+        a.agency_name, 
+        a.logo_url AS agency_logo_url
+      FROM properties p
+      JOIN agencies a ON a.id = p.agency_id
+      ORDER BY p.created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+      `,
       sql`SELECT COUNT(*)::int FROM properties`,
     ]);
 
@@ -137,7 +146,14 @@ export const getProperty = async (req, res) => {
 
   try {
     const property = await sql`
-    SELECT * FROM properties WHERE id = ${id}`;
+    SELECT 
+      p.*, 
+      a.agency_name, 
+      a.logo_url AS agency_logo_url
+    FROM properties p
+    JOIN agencies a ON a.id = p.agency_id
+    WHERE p.id = ${id}
+    `;
 
     const fetchedProperty = property[0];
 
@@ -448,18 +464,26 @@ export const insertEnquiries = async (req, res) => {
   }
 
   try {
-    await sql`INSERT INTO enquiries (property_id, user_id, full_name, email, message) VALUES (${property_id}, ${
-      user_id || null
-    }, ${full_name}, ${email}, ${message})`;
+    const propertyRows = await sql`
+      SELECT agency_id, location FROM properties WHERE id = ${property_id}
+    `;
 
-    const propertyRequest =
-      await sql`SELECT location FROM properties WHERE id = ${property_id}`;
+    if (!propertyRows.length) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Property not found" });
+    }
 
-    const propertyTitle = propertyRequest[0]?.location || "a property.";
+    const { agency_id, location } = propertyRows[0];
 
-    await sendEnquiryConfirmation(email, full_name, propertyTitle);
+    const [inserted] = await sql`
+      INSERT INTO enquiries (property_id, user_id, full_name, email, message, agency_id)
+      VALUES (${property_id}, ${user_id || null}, ${full_name}, ${email}, ${message}, ${agency_id})
+      RETURNING *
+    `;
 
-    res.status(201).json({ success: true });
+    await sendEnquiryConfirmation(email, full_name, location || "a property");
+    return res.status(201).json({ success: true, data: inserted });
   } catch (err) {
     console.error("Error inserting enquiry", err);
     res.status(500).json({ error: "Failed to create enquiry" });
@@ -467,28 +491,42 @@ export const insertEnquiries = async (req, res) => {
 };
 
 export const getEnquiries = async (req, res) => {
-  const { userId, role, agencyId } = req.auth || {};
   try {
+    const role = req.auth?.role;
+    const agencyId = req.auth?.agencyId;
+    const uid = req.auth?.userId ?? req.auth?.id ?? null;
+
     if (role === "admin") {
       const rows = await sql`SELECT * from enquiries ORDER BY created_at DESC`;
-      return res.json(rows);
+      return res.json({ data: rows });
     }
 
     if (role === "agent") {
-      const rows = await sql`SELECT e.*
+      const rows = await sql`
+        SELECT e.*,
+               p.title     AS property_title,
+               p.location  AS property_location
         FROM enquiries e
         JOIN properties p ON p.id = e.property_id
         WHERE p.agency_id = ${agencyId}
-        ORDER BY e.created_at DESC;`;
-      return res.json(rows);
+        ORDER BY e.created_at DESC
+      `;
+      return res.json({ data: rows });
     }
 
     if (role === "user") {
+      if (!uid) return res.status(401).json({ error: "No user id on token" });
+
       const rows = await sql`
-        SELECT * FROM enquiries
-        WHERE user_id = ${userId}
-        ORDER BY created_at DESC`;
-      return res.json(rows);
+        SELECT e.*,
+               p.title     AS property_title,
+               p.location  AS property_location
+        FROM enquiries e
+        JOIN properties p ON p.id = e.property_id
+        WHERE e.user_id = ${uid}
+        ORDER BY e.created_at DESC
+      `;
+      return res.json({ data: rows });
     }
 
     return res.sendStatus(403);

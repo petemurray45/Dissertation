@@ -17,7 +17,7 @@ function EnquireForm({ property }) {
   useEffect(() => {
     if (user) {
       setEmail(user.email);
-      setName(user.full_name);
+      setName(user.name);
     }
   }, [user]);
 
@@ -26,9 +26,9 @@ function EnquireForm({ property }) {
     try {
       const payload = {
         property_id: property.id,
-        full_name: name,
-        email: email,
-        message: message,
+        full_name: user?.name ?? name,
+        email: user?.email ?? email,
+        message: message?.trim(),
         ...(user && { user_id: user.id }),
       };
       const res = await addEnquiry(payload);

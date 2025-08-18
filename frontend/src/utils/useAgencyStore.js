@@ -216,14 +216,17 @@ export const useAgencyStore = create((set, get) => ({
       return;
     }
 
-    const p = page ?? enquiriesPage;
-    const l = limit ?? enquiriesLimit;
+    const p = Number(page ?? enquiriesPage ?? 1);
+    const l = Number(limit ?? enquiriesLimit ?? 10);
 
     try {
       set({ enquiriesLoading: true, enquiriesError: null });
       const { data } = await axios.get(
-        `${BASE_URL}/api/agency/${agencyId}/enquiries?page=${p}&limit=${l}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${BASE_URL}/api/agency/${agencyId}/enquiries`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { page: p, limit: l },
+        }
       );
       set({
         enquiries: data.data || [],
@@ -243,6 +246,13 @@ export const useAgencyStore = create((set, get) => ({
 
   updateEnquiryStatus: async (agencyId, enquiryId, status) => {
     const { token, enquiries } = get();
+    if (!agencyId || !enquiryId) {
+      console.error("updateEnquiryStatus called with bad ids:", {
+        agencyId,
+        enquiryId,
+      });
+      throw new Error("Missing IDs");
+    }
 
     try {
       await axios.put(
