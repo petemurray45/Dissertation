@@ -2,12 +2,21 @@ import { neon } from "@neondatabase/serverless";
 import dotenv from "dotenv";
 dotenv.config();
 
-// database connection variables
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
+const isTest =
+  process.env.NODE_ENV === "test" || process.env.ARQJET_ENV === "test";
+const pre = isTest ? "TEST_" : "";
 
-// creates a SQL connection using env variables
+const PGHOST = process.env[`${pre}PGHOST`];
+const PGDATABASE = process.env[`${pre}PGDATABASE`];
+const PGUSER = process.env[`${pre}PGUSER`];
+const PGPASSWORD = process.env[`${pre}PGPASSWORD`];
+
+if (!PGHOST || !PGDATABASE || !PGUSER || !PGPASSWORD) {
+  throw new Error(
+    `Missing PG vars for ${isTest ? "TEST" : "default"} environment`
+  );
+}
+
 export const sql = neon(
   `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?sslmode=require`
 );
-
-// this sql function we export is used as a tagged template literal which allows us to write sql queries safely
