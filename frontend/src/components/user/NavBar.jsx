@@ -25,21 +25,21 @@ function NavBar() {
         <div className="max-w-full mx-auto flex items-center justify-between relative">
           <div className="flex flex-1 justify-start">
             {user && (
-              <div className="text-gray-200 text-shadow-md font-raleway text-3xl mr-5 ml-0">
+              <div className="text-gray-200 text-shadow-md font-raleway md:text-3xl lg: text-3xl sm:text-xl mr-5 ml-0">
                 {user.name}
               </div>
             )}
           </div>
-          <div className="hidden  md:flex flex-1 justify-center">
+          <div className="hidden  lg:flex items-center flex-1 justify-center">
             {/* Nav links */}
-            <ul className="flex flex-wrap justify-center gap-3 sm:gap-6 text-white font-raleway text-base sm:text-xl md:text-2xl">
+            <ul className="flex flex-nowrap justify-center gap-3 sm:gap-6 text-white font-raleway text-base sm:text-xl md:text-2xl">
               <li>
                 <NavLink
                   to="/home"
                   className={({ isActive }) =>
                     isActive
                       ? "border-b-4 border-b-[#02343F] text-3xl shadow-lg"
-                      : "hover:border-b-4 border-b-[#02343F] text-3xl text-shadow-lg"
+                      : "hover:border-b-4 border-b-[#02343F] md:text-3xl text-shadow-lg"
                   }
                 >
                   Home
@@ -87,7 +87,7 @@ function NavBar() {
             </ul>
           </div>
 
-          <div className="hidden md:flex flex-1 justify-end">
+          <div className="hidden  lg:flex flex-1 justify-end">
             {user?.name ? (
               <>
                 <button
@@ -108,10 +108,10 @@ function NavBar() {
           </div>
           {/* Mobile */}
           <button
-            className="md:hidden text-white"
+            className="lg:hidden text-white"
             onClick={() => setIsOpen(true)}
           >
-            <Menu size={28} />
+            <Menu size={44} />
           </button>
 
           {isOpen && (
@@ -174,6 +174,22 @@ function NavBar() {
                       onClick={() => setIsOpen(false)}
                     >
                       PropPal
+                    </NavLink>
+                  </li>
+
+                  <li>
+                    <NavLink
+                      to="/profile"
+                      className={({ isActive }) =>
+                        `block py-1 ${
+                          isActive
+                            ? "font-semibold text-gray-200"
+                            : "text-white/90 hover:text-white"
+                        }`
+                      }
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Profile
                     </NavLink>
                   </li>
 

@@ -36,21 +36,32 @@ function MainSearch() {
   };
   const currentHeading = stepHeading[step] || "Start your search";
   return (
-    <div className="sm:h-80 md:h-64  my-5 rounded-md px-10 py-3 flex items-center justify-center mx-10 gap-3  shadow-2xl  bg-[#02343F]">
-      <div className=" flex flex-col justify-start items-center py-8 w-full">
-        <h1 className="text-white sm:text-xl md:text-4xl font-raleway text-center">
+    <section className="w-full px-0 lg:px-8 sm:px-10">
+      <div
+        className="
+        w-full max-w-[1800px] mx-auto bg-[#02343F] shadow-2xl rounded-md
++                  px-4 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8
+      "
+      >
+        <h1
+          className="text-white font-raleway text-center
+                       text-bae sm:text-2xl md:text-2xl"
+        >
           {currentHeading}
         </h1>
-        <div className="sm:pt-5 md:pt-10 w-full ">
-          <form className="sm:grid-cols-1 md:flex lg:flex justify-between w-full items-center gap-10">
+        <div className="sm:pt-5 md:pt-3 w-full ">
+          <form className="mt-4 sm:mt-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-3 md:gap-8">
             <div className="form-control w-full">
               <label className="label">
-                <span className="sm:text-xl md:text-3xl font-thin font-raleway text-gray-200">
+                <span
+                  className="text-gray-200 font-raleway
+                               text-sm sm:text-xl md:text-lg"
+                >
                   Location 1
                 </span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-white/70">
                   <MapPinPlusInside />
                 </div>
                 <UserAutocomplete
@@ -61,7 +72,9 @@ function MainSearch() {
                       longitude,
                     })
                   }
-                  className="sm:h-4 md:h-16 w-full rounded-md"
+                  className="w-full rounded-md
+                  h-11 sm:h-12 md:h-14
+                  pl-10"
                   placeholder="e.g. Workplace"
                 />
               </div>
@@ -69,12 +82,15 @@ function MainSearch() {
 
             <div className="form-control w-full">
               <label className="label">
-                <span className="sm:text-xl md:text-3xl font-thin font-raleway text-gray-200">
+                <span
+                  className="text-gray-200 font-raleway
+                               text-sm sm:text-xl md:text-lg"
+                >
                   Location 2
                 </span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-white/70">
                   <MapPinPlusInside />
                 </div>
                 <UserAutocomplete
@@ -85,19 +101,22 @@ function MainSearch() {
                       longitude,
                     })
                   }
-                  className="w-full sm:h-4 md:h-16 rounded-md"
+                  className="w-full rounded-md h-11 sm:h-12 md:h-14 pl-10"
                   placeholder="e.g. School"
                 />
               </div>
             </div>
             <div className="form-control w-full">
               <label className="label">
-                <span className="sm:text-xl md:text-3xl font-thin font-raleway text-gray-200">
+                <span
+                  className="text-gray-200 font-raleway
+                               text-sm sm:text-xl md:text-lg"
+                >
                   Location 3
                 </span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-white/70">
                   <MapPinPlusInside />
                 </div>
                 <UserAutocomplete
@@ -108,92 +127,32 @@ function MainSearch() {
                       longitude,
                     })
                   }
-                  className="w-full sm:h-4 md:h-16 rounded-md"
+                  className="w-full rounded-md h-11 sm:h-12 md:h-14 pl-10"
                   placeholder="e.g. Gym"
                 />
               </div>
             </div>
-            {!loading ? (
-              <div className="flex justify-center items-center  pt-10 w-full ">
+            <div className="col-span-full">
+              {!loading ? (
                 <button
                   type="button"
-                  className="bg-white w-full sm:h-16 md:h-16 rounded-md font-raleway mt-3 sm:text-2xl md:text-3xl text-[#02343F] hover:bg-[#F0EDCC]"
+                  className="block w-full h-12 md:h-14 rounded-md font-raleway
+                          text-lg md:text-xl bg-white text-[#02343F] hover:bg-[#F0EDCC]
+                          px-6 md:px-8 mt-2 md:mt-0 sm:mt-6"
                   onClick={handleSearch}
                 >
                   Next
                 </button>
-              </div>
-            ) : (
-              <div className="flex justify-center items-center  pt-10 w-full ">
-                <div className="loading loading-spinner text-white text-xl" />
-              </div>
-            )}
+              ) : (
+                <div className="flex justify-center items-center pt-4 h-14">
+                  <span className="loading loading-spinner text-white" />
+                </div>
+              )}
+            </div>
           </form>
         </div>
-        {/*}
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              
-            </motion.div>
-          )}
-            */}
-        {/*}
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="pt-10">
-                <form className="w-full grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cold-3 gap-16">
-                  {locationEntries.map((location, index) => (
-                    <div key={location.key} className="form-control">
-                      <label className="label flex justify-center text-gray-600 font-raleway bg-gray-100 rounded-lg mb-5 ">
-                        {" "}
-                        {location.name || "Location " + (index + 1)}
-                      </label>
-
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                          <Clock />
-                        </div>
-                        <div className="flex justify-center">
-                          <input
-                            type="number"
-                            value={location.maxTravelTime}
-                            placeholder="e.g. 30 minutes"
-                            className="input w-96 h-16 rounded-md pl-10 py-1  focus:input-primary focus:border-[#02343F] transition-colors  duration-200 input-bordered placeholder:pl-3"
-                            onChange={(e) =>
-                              setSearchFilters({
-                                [location.key]: {
-                                  ...searchFilters[location.key],
-                                  maxTravelTime: e.target.value,
-                                },
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </form>
-              </div>
-            </motion.div>
-          )}
-            
-        </AnimatePresence>
-        */}
       </div>
-    </div>
+    </section>
   );
 }
 

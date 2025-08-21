@@ -76,7 +76,7 @@ function ViewListing() {
   return (
     <>
       <div
-        className="overflow-x-hidden    h-screen w-full"
+        className="overflow-x-hidden min-h-screen w-full"
         style={{
           backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
         }}
@@ -91,7 +91,7 @@ function ViewListing() {
             Back to search
           </button>
         </div>
-        <div className="flex flex-row gap-10 w-full rounded-2xl mx-auto px-20 py-2 max-h-[750px]">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-10 w-full rounded-2xl mx-auto px-4 sm:px-8 lg:px-20 py-2">
           <div className="w-full md:w-2/3">
             <ImageGallery
               images={currentProperty.images}
@@ -100,7 +100,7 @@ function ViewListing() {
             />
           </div>
 
-          <div className="w-full md:w-1/3">
+          <div className="w-full md:w-1/3 mt-6 md:mt-0">
             <PropertyInfo
               property={currentProperty}
               key={currentProperty.id}
@@ -110,7 +110,7 @@ function ViewListing() {
           </div>
         </div>
 
-        <div className="w-full items-center px-20 pt-10 ">
+        <div className="w-full items-center px-4 sm:px-8 lg:px-20 mt-6 md:mt-10">
           <Description property={currentProperty} />
         </div>
 

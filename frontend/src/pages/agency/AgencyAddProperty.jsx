@@ -14,7 +14,6 @@ function AgencyAddProperty() {
   const navigate = useNavigate();
 
   const handleSubmit = async (payload) => {
-    // Attach the agency ID from the store to the payload before submitting
     const payloadWithAgencyId = {
       ...payload,
       agency_id: agencyId,
@@ -23,7 +22,7 @@ function AgencyAddProperty() {
     try {
       await addProperty(payloadWithAgencyId, agencyToken);
       toast.success("Property added successfully!");
-      navigate("/agency/dashboard"); // Redirect back to the agency dashboard
+      navigate("/agency/dashboard"); 
     } catch (err) {
       console.error("Failed to add property", err);
       toast.error("Something went wrong with adding the property.");
@@ -31,7 +30,7 @@ function AgencyAddProperty() {
   };
 
   const handleClose = () => {
-    navigate("/agency/dashboard"); // Navigate back to the dashboard if the user closes the form
+    navigate("/agency/dashboard"); 
   };
 
   return (

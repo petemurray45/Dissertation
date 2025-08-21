@@ -87,10 +87,10 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="h-auto flex flex-col flex-grow relative bg-[#f5f8f6] shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden w-full gap-10s  rounded-2xl ">
+      <div className="w-full rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden">
         <div className="relative w-full max-h-[250px]">
           {showLikeMessage && (
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-100 px-3 py-1 rounded-md text-xl shadow-md font-raleway">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-100 px-5 py-1 rounded-md text-xl shadow-md font-raleway">
               {likeMessageText}
             </div>
           )}
@@ -103,14 +103,16 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
                   200
                 )}
                 alt={property.title}
-                className="w-full h-full aspect-[4/3] object-cover rounded-bl-none rounded-br-none shadow-md"
+                className="w-full h-56 sm:h-64 object-cover aspect-[16/10]"
               />
 
-              <div className="absolute bottom-2 left-2 z-20 bg-white/80 p-1 rounded-md shadow-md">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
+
+              <div className="absolute bottom-3 left-3 bg-white/85 backdrop-blur rounded-md p-1 shadow-sm">
                 <img
                   src={safeTransform(property.agency_logo_url, 350, 200)}
                   alt="agency logo"
-                  className="w-12 h-12 object-contain rounded-md"
+                  className="h-20 w-20 object-contain"
                 />
               </div>
 
@@ -118,9 +120,9 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               {property.imageUrls.length > 1 && (
                 <button
                   onClick={goToPrevImage}
-                  className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10"
+                  className="absolute top-1/2 -translate-y-1/2 left-2 rounded-full bg-black/55 text-white p-1"
                 >
-                  <MdOutlineArrowCircleLeft className="size-6" />
+                  <MdOutlineArrowCircleLeft className="text-2xl" />
                 </button>
               )}
 
@@ -128,21 +130,21 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               {property.imageUrls.length > 1 && (
                 <button
                   onClick={goToNextImage}
-                  className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10"
+                  className="absolute top-1/2 -translate-y-1/2 right-2 rounded-full bg-black/55 text-white p-1"
                 >
-                  <MdOutlineArrowCircleRight className="size-6" />
+                  <MdOutlineArrowCircleRight className="text-2xl" />
                 </button>
               )}
 
               {user && (
                 <button
                   onClick={handleLikeClick}
-                  className="absolute top-2 right-2 text-xl"
+                  className="absolute top-3 right-3 grid place-items-center rounded-full bg-white/90 backdrop-blur h-10 w-10 shadow-sm"
                 >
                   {liked ? (
-                    <AiFillHeart className="text-red-500 drop-shadow-sm text-4xl" />
+                    <AiFillHeart className="text-red-500 text-2xl" />
                   ) : (
-                    <AiOutlineHeart className=" hover:text-red-500 text-4xl" />
+                    <AiOutlineHeart className=" text-2xl text-gray-700" />
                   )}
                 </button>
               )}
@@ -156,7 +158,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           {travelSearchSubmitted && (
             <button
               onClick={() => setShowTimes(!showTimes)}
-              className="w-full sm:h-12 md:h-12 bg-[#02343F] text-white sm:text-sm md:text-xl py-1  flex items-center justify-center gap-1 font-raleway"
+              className="w-full text-sm sm:text-base font-raleway text-[#02343F] bg-[#F0EDCC] hover:bg-[#e6e3bf] py-2"
             >
               {showTimes ? "Hide Travel Times" : "Show Travel Times"}
               {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -208,22 +210,41 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           )}
         </AnimatePresence>
 
-        <div className="card-body flex flex-col items-center text-center sm:items-start sm:text-left  px-4">
-          <div className="grid grid-cols-2 w-full md:flex justify-between items-start gap-10 sm:mt-5 mb-2 text-gray-600 text-shadow-none flex-1">
-            <h2 className="w-full text-left text-md md:text-3xl font-thin  gap-2 mb-2">
+        <div className="card-body flex flex-col flex-1 items-center text-center sm:items-start sm:text-left px-4">
+          <div className="w-full grid grid-cols-1 md:grid-cols-[1fr_auto] items-start gap-3 sm:gap-4 text-gray-600">
+            <h2
+              className="w-full text-left font-thin
+                text-base sm:text-xl md:text-2xl
+                leading-snug break-words"
+              title={property.location}
+            >
               {property.location}
             </h2>
-            <div className="sm:h-8 md:h-12 flex justify-center items-center">
-              <span className="bg-[#02343F] text-white px-2 py-1 text-sm sm:text-md md:text-xl font-raleway ">
+
+            {/* Price pill */}
+            <div className="flex items-center justify-start md:justify-end gap-2 sm:gap-3">
+              <span
+                className="rounded px-1 py-0.5 sm:px-3 sm:py-1
+                  text-xs sm:text-sm md:text-base
+                  bg-[#02343F] text-white font-raleway"
+              >
                 Price
               </span>
-              <span className="bg-[#f0edcc] px-2 py-1 text-sm sm:text-md md:text-xl font-semibold font-raleway">
+              <span
+                className="rounded font-semibold font-raleway
+                  px-1 py-0.5 sm:px-3 sm:py-1
+                  text-xs sm:text-sm md:text-base
+                  bg-[#f0edcc] text-[#02343F]"
+              >
                 £{property.price_per_month}pm
               </span>
             </div>
           </div>
           <div className="w-full flex justify-start">
-            <p className="font-raleway text-left sm:text-lg md:text-2xl sm:mb-2 md:mb-4  text-[#02343F] text-shadow-none">
+            <p
+              className="font-raleway text-left text-sm sm:text-base md:text-xl
++               sm:mb-2 md:mb-4 text-[#02343F]"
+            >
               {property.title}
             </p>
           </div>
@@ -231,7 +252,8 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           <div className="w-full flex justify-end md:w-full md:flex md:justify-end mt-auto">
             <button
               type="button"
-              className="w-full md:w-auto sm:w-96 btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black font-raleway text-md md:text-xl font-thin mt-2 rounded-md"
+              className="w-full md:w-auto btn bg-[#02343F] text-white hover:bg-[#F0EDCC] hover:text-black 
+             font-raleway text-md md:text-xl font-thin mt-2 rounded-md"
               onClick={() => handleSelect(property)}
             >
               View

@@ -45,11 +45,11 @@ function ImageGallery({ images, agencyLogoUrl, agencyName }) {
 
   return (
     <>
-      <div className={`flex flex-col w-full gap-4 ${galleryWidthClass}`}>
+      <div className={`flex flex-col w-full gap-4 px-4 sm:px-6 tab:px-8 `}>
         {/* Main Image */}
 
         <>
-          <div className="aspect-[13/8] w-full max-w-[1300px] relative overflow-hidden">
+          <div className="aspect-[13/8] w-full  relative overflow-hidden">
             <img
               src={getTransformed(images[currentIndex], 1300, 800)}
               alt={`Property image ${currentIndex + 1}`}
@@ -57,7 +57,7 @@ function ImageGallery({ images, agencyLogoUrl, agencyName }) {
             />
 
             {agencyLogoUrl && (
-              <div className="absolute bottom-3 left-3 z-20 w-40 h-36 bg-white/80 backdrop-blur-sm p-2 rounded-md shadow">
+              <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3  z-20 w-40 h-36 sm:w-28 sm:h-24 md:w-36 md:h-28 bg-white/80 backdrop-blur-sm p-2 rounded-md shadow">
                 <img
                   src={getLogoTransformed(agencyLogoUrl)}
                   alt={agencyName ? `${agencyName} logo` : "Agency logo"}
@@ -71,7 +71,7 @@ function ImageGallery({ images, agencyLogoUrl, agencyName }) {
             {images.length > 1 && (
               <button
                 onClick={goToPrevImage}
-                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10 mx-5"
+                className="absolute top-1/2 left-1 sm:left-2 -translate-y-1/2 bg-gray-800 text-white p-1 sm:p-2 rounded-full opacity-80 hover:opacity-100 z-10"
               >
                 <MdOutlineArrowCircleLeft className="size-10" />
               </button>
@@ -81,7 +81,7 @@ function ImageGallery({ images, agencyLogoUrl, agencyName }) {
             {images.length > 1 && (
               <button
                 onClick={goToNextImage}
-                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 z-10 mx-5"
+                className="absolute top-1/2 right-1 sm:right-2 -translate-y-1/2 bg-gray-800 text-white p-1 sm:p-2 rounded-full opacity-80 hover:opacity-100 z-10"
               >
                 <MdOutlineArrowCircleRight className="size-10" />
               </button>

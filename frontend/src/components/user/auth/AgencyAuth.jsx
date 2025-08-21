@@ -89,34 +89,40 @@ function AgencyAuth() {
   };
   return (
     <div
-      className="h-screen flex justify-center items-center"
+      className="min-h-screen flex items-center justify-center px-4 sm:px-6"
       style={{
         backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
       }}
     >
-      <div className="relative h-[1000px] w-[800px] bg-white  rounded-2xl shadow-2xl">
-        <div className="flex flex-col justify-end bg-[url('https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] h-[45%] w-full rounded-tl-2xl rounded-tr-2xl bg-cover">
-          <h1 className="flex flex-col  flex-reverse text-6xl text-white font-extrabold pl-4 pb-4 shadow-2xl">
+      <div className="relative w-full max-w-xl md:max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div
+          className="h-40 sm:h-48 md:h-56 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1740&auto=format&fit=crop)",
+          }}
+        >
+          <h1 className="text-white font-extrabold text-4xl sm:text-5xl md:text-6xl px-4 pb-4 pt-16 drop-shadow-lg">
             Welcome Agent
           </h1>
         </div>
         {/* Tabs */}
-        <div className="flex justify-center gap-20 mt-8">
+        <div className="flex justify-center gap-8 sm:gap-16 md:gap-20 mt-6 px-4">
           <button
-            className={`pb-2 text-2xl font-semibold  ${
+            className={`pb-2 text-lg sm:text-xl md:text-2xl font-semibold border-b-4 transition ${
               mode === "sign-in"
-                ? "text-[#02343F] border-t-4 border-t-[#02343F]"
-                : "border-transparent text-gray-300 shadow:lg"
+                ? "text-[#02343F] border-[#02343F]"
+                : "text-gray-400 border-transparent"
             }`}
             onClick={() => setmode("sign-in")}
           >
             Sign In
           </button>
           <button
-            className={`pb-2 text-2xl font-semibold  ${
+            className={`pb-2 text-lg sm:text-xl md:text-2xl font-semibold border-b-4 transition ${
               mode === "register"
-                ? "text-[#02343F] border-t-4 border-t-[#02343F]"
-                : "border-transparent text-gray-300"
+                ? "text-[#02343F] border-[#02343F]"
+                : "text-gray-400 border-transparent"
             }`}
             onClick={() => setmode("register")}
           >
@@ -124,154 +130,170 @@ function AgencyAuth() {
           </button>
         </div>
 
-        {mode === "sign-in" ? (
-          <div className=" flex justify-center w-full h-auto">
-            <div className="flex w-full h-[20rem] justify-center">
-              <form id="signin-form" onSubmit={handleSubmit}>
-                <div className="form-control">
-                  <div>
-                    <div className=" px-9 flex items-center  mt-12">
-                      <UserRound className="size-10 mr-6" />
-                      <input
-                        type="text"
-                        placeholder="Enter agency name"
-                        value={agencyName}
-                        onChange={(e) => setAgencyName(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+        <div className="p-4 sm:p-6 md:p-8">
+          {mode === "sign-in" ? (
+            <div className=" flex justify-center w-full h-auto">
+              <div className="flex w-full h-[20rem] justify-center">
+                <form
+                  id="signin-form"
+                  onSubmit={handleSubmit}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-3  focus-within:border-[#02343F]">
+                    <div>
+                      <div className=" px-9 flex items-center  mt-12">
+                        <UserRound className="size-10 mr-6" />
+                        <input
+                          type="text"
+                          placeholder="Enter agency name"
+                          value={agencyName}
+                          onChange={(e) => setAgencyName(e.target.value)}
+                          className="w-full py-3 outline-none text-lg border-b-2 p-4"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] px-9 flex items-center  mt-12">
-                      <Key className="size-10 mr-6" />
-                      <input
-                        type="password"
-                        placeholder="Enter Agency Login ID"
-                        value={loginId}
-                        onChange={(e) => setLoginId(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+                  <div className="flex items-center gap-3  border-gray-300 focus-within:border-[#02343F]">
+                    <div>
+                      <div className="w-[500px] px-9 flex items-center  mt-12">
+                        <Key className="size-10 mr-6" />
+                        <input
+                          type="password"
+                          placeholder="Enter Agency Login ID"
+                          value={loginId}
+                          onChange={(e) => setLoginId(e.target.value)}
+                          className="w-full py-3 outline-none text-lg border-b-2"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </form>
-              <button
-                type="button"
-                className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
-                onClick={handleSubmit}
-              >
-                <FaArrowAltCircleRight className="size-24 shadow-2xl" />
-              </button>
+                  <button
+                    type="submit"
+                    className="md:hidden w-full h-12 rounded-xl bg-[#02343F] text-white font-semibold"
+                  >
+                    Continue
+                  </button>
+                </form>
+                <button
+                  type="button"
+                  className="hidden md:flex items-center justify-center absolute bottom-6 right-6 bg-[#02343F] text-white rounded-full p-2 shadow-md hover:opacity-90"
+                  onClick={handleSubmit}
+                >
+                  <FaArrowAltCircleRight className="size-16" />
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className=" flex justify-center w-full h-auto ">
-            <div className="flex w-full justify-center ">
-              <form id="signup-form" onSubmit={handleSubmit}>
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center mt-12">
-                      <UserRound className="size-10 mr-6" />
-                      <input
-                        type="text"
-                        placeholder="Enter agency name"
-                        value={agencyName}
-                        onChange={(e) => {
-                          setAgencyName(e.target.value);
-                        }}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+          ) : (
+            <div className=" flex justify-center w-full h-auto ">
+              <div className="flex w-full justify-center ">
+                <form
+                  id="signup-form"
+                  onSubmit={handleSubmit}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-3 border-b border-gray-300 focus-within:border-[#02343F]">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center mt-12">
+                        <UserRound className="size-6 sm:size-7 text-gray-600" />
+                        <input
+                          type="text"
+                          placeholder="Enter agency name"
+                          value={agencyName}
+                          onChange={(e) => {
+                            setAgencyName(e.target.value);
+                          }}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
-                      <AtSign className="size-10 mr-6" />
-                      <input
-                        type="url"
-                        placeholder="Enter website"
-                        value={website}
-                        onChange={(e) => setWebsite(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+                  <div className="form-control">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
+                        <AtSign className="size-10 mr-6" />
+                        <input
+                          type="url"
+                          placeholder="Enter website"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center mt-12">
-                      <UserRound className="size-10 mr-6" />
-                      <input
-                        type="email"
-                        placeholder="Enter agency email"
-                        value={agencyEmail}
-                        onChange={(e) => {
-                          setAgencyEmail(e.target.value);
-                        }}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+                  <div className="form-control">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center mt-12">
+                        <UserRound className="size-10 mr-6" />
+                        <input
+                          type="email"
+                          placeholder="Enter agency email"
+                          value={agencyEmail}
+                          onChange={(e) => {
+                            setAgencyEmail(e.target.value);
+                          }}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center   mt-12">
-                      <Key className="size-10 mr-6" />
-                      <input
-                        type="number"
-                        placeholder="Enter phone number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
-                      />
+                  <div className="form-control">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center   mt-12">
+                        <Key className="size-10 mr-6" />
+                        <input
+                          type="number"
+                          placeholder="Enter phone number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
-                      <Key className="size-10 mr-6" />
-                      <input
-                        type="password"
-                        placeholder="Enter a login ID"
-                        value={loginId}
-                        onChange={(e) => setLoginId(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
-                      />
+                  <div className="form-control">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
+                        <Key className="size-10 mr-6" />
+                        <input
+                          type="password"
+                          placeholder="Enter a login ID"
+                          value={loginId}
+                          onChange={(e) => setLoginId(e.target.value)}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="form-control">
-                  <div>
-                    <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
-                      <Key className="size-10 mr-6" />
-                      <input
-                        type="password"
-                        placeholder="Confirm login ID"
-                        value={confirmLoginId}
-                        onChange={(e) => setConfirmLoginId(e.target.value)}
-                        className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
-                      />
+                  <div className="form-control">
+                    <div>
+                      <div className="w-[500px] h-[15px] px-9 flex items-center  mt-12">
+                        <Key className="size-10 mr-6" />
+                        <input
+                          type="password"
+                          placeholder="Confirm login ID"
+                          value={confirmLoginId}
+                          onChange={(e) => setConfirmLoginId(e.target.value)}
+                          className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="w-full text-center mt-[6rem] mb-[2rem]"></div>
-              </form>
-              <button
-                type="button"
-                className="absolute bottom-12 -right-14 bg-[#02343F]  text-white p-3 rounded-full hover:bg-[#02343F] hover:border-black"
-                onClick={handleSubmit}
-              >
-                <FaArrowAltCircleRight className="size-24 shadow-2xl" />
-              </button>
+                  <div className="w-full text-center mt-[6rem] mb-[2rem]"></div>
+                </form>
+                <button
+                  type="button"
+                  className="absolute bottom-12 -right-14 bg-[#02343F]  text-white p-3 rounded-full hover:bg-[#02343F] hover:border-black"
+                  onClick={handleSubmit}
+                >
+                  <FaArrowAltCircleRight className="size-24 shadow-2xl" />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ function SearchDrawer() {
   };
 
   return (
-    <div className=" w-full px-10 mx-auto mt-5 font-raleway mb-10">
+    <div className=" w-full px-14 sm:px-10 mx-auto mt-5 font-raleway mb-10">
       <button
         onClick={() => setOpen(!open)}
         className="w-full bg-[#02343F] text-white px-4 py-3 rounded-t-lg text-center text-2xl flex justify-center items-center font-semibold"

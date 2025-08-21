@@ -14,6 +14,14 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "480px",
+        sm: "640px",
+        md: "768px",
+        tab: "900px",
+        lg: "1024px",
+        xl: "1280px",
+      },
       backgroundImage: {
         "hero-pattern":
           "url('https://coolors.co/gradient-maker/f0edcc-ffffff?position=0,83&opacity=100,100&type=radial&rotation=90')",

@@ -8,8 +8,7 @@ import AdminNavBar from "../../components/admin/AdminNavBar";
 import { Toaster, toast } from "react-hot-toast";
 import PropertyModal from "../../components/admin/PropertyModal.jsx";
 
-// You need to define this function, as it was in AdminDashboard
-// It maps the property data to the form format
+
 function mapPropertyToForm(p) {
   return {
     title: p.title ?? "",
@@ -33,14 +32,12 @@ function AdminAddProperty() {
   const { token: adminToken } = useAdminStore();
   const navigate = useNavigate();
 
-  // Define state and handlers here for the new page
-  const [editing, setEditing] = useState(null); // This is not needed for adding, but useful for a single component
+  const [editing, setEditing] = useState(null); 
 
   const handleSubmit = async (payload) => {
-    // This function will now handle adding a property
     try {
       await addProperty(payload, adminToken);
-      navigate("/admin"); // Redirect back to the dashboard after success
+      navigate("/admin"); 
     } catch (err) {
       console.error("Failed to add property", err);
       toast.error("Something went wrong");
@@ -48,7 +45,6 @@ function AdminAddProperty() {
   };
 
   const handleClose = () => {
-    // This function navigates away from the page
     navigate("/admin");
   };
 
@@ -58,8 +54,8 @@ function AdminAddProperty() {
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-4xl mb-6">Add a Property</h2>
         <PropertyModal
-          initial={{}} // For adding, initial is an empty object
-          isEdit={false} // This is always false for adding a property
+          initial={{}} 
+          isEdit={false} 
           onSubmit={handleSubmit}
           onClose={handleClose}
           showAgencyPicker={!!adminToken}

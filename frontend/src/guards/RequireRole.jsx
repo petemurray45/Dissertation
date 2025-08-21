@@ -5,7 +5,7 @@ import { useUserStore } from "../utils/useUserStore";
 
 export default function RequireRole({ role }) {
   const location = useLocation();
-  const { role: authRole, token, user } = useAuthStore();
+  const { role: authRole, token} = useAuthStore();
 
   const { hasHydrated: userHydrated } = useUserStore();
   const { hasHydrated: agencyHydrated } = useAgencyStore();
@@ -20,7 +20,7 @@ export default function RequireRole({ role }) {
     );
   }
   if (!token) {
-    let loginPath = "/login"; // default user login
+    let loginPath = "/login";
 
     if (role === "admin") loginPath = "/admin/login";
     if (role === "agent") loginPath = "/agencyLogin";

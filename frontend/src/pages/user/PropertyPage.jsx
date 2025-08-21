@@ -100,26 +100,30 @@ function PropertyPage() {
   return (
     <>
       <div
-        className="relative overflow-hidden  "
+        className="relative overflow-hidden min-h-screen"
         style={{
           backgroundImage: `linear-gradient(to right top, #ffffff, #d3d4d9, #a5abb5, #778491, #49606e, #435f6c, #3e5e69, #395d66, #5d7d85, #829fa6, #a9c3c8, #d1e7eb)`,
         }}
       >
         <div>
           <NavBar />
-          <div className="w-full pt-48">
-            <div className="flex flex-wrap sm:flex-row sm:flex-wrap  justify-center">
-              <h1 className="sm:text-4xl md:text-6xl text-center text-white font-raleway font-bold text-shadow-xl">
-                Designed to find a room that suits ALL of your life.
-              </h1>
-              <h2 className="sm:text-4xl md:text-4xl text-center text-white text-shadow-xl pt-5 pb-10">
-                Use our tailored search function below to begin!
-              </h2>
+          <header className="pt-24 md:pt-32">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+              <div className="max-w-screen-lg mx-auto text-center">
+                <h1 className="font-raleway font-bold text-white text-2xl sm:text-3xl md:text-5xl leading-tight">
+                  Designed to find a room that suits ALL of your life.
+                </h1>
+                <h2 className="text-white text-base sm:text-lg md:text-2xl pt-4 md:pt-6">
+                  Use our tailored search function below to begin!
+                </h2>
+              </div>
             </div>
-          </div>
+          </header>
         </div>
 
-        <MainSearch />
+        <div className="lg:mt-10 sm:mt-7">
+          <MainSearch />
+        </div>
 
         <div>
           {location && radius && (
