@@ -9,10 +9,13 @@ import {
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useListingStore } from "../../utils/useListingsStore";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { FaCarAlt } from "react-icons/fa";
+import { BsPersonWalking } from "react-icons/bs";
+import { IoBicycleOutline } from "react-icons/io5";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useTravelStore } from "../../utils/useTravelStore";
 import { useUserStore } from "../../utils/useUserStore";
-import { Toaster, toast } from "react-hot-toast";
 function PropertyTile({ property, isLiked, onToggleLike }) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -87,8 +90,8 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
   return (
     <>
-      <div className="w-full rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden">
-        <div className="relative w-full max-h-[250px]">
+      <div className="flex flex-col h-full rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden">
+        <div className="relative h-56 sm:h-64 w-full">
           {showLikeMessage && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-100 px-5 py-1 rounded-md text-xl shadow-md font-raleway">
               {likeMessageText}
@@ -108,9 +111,9 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
 
               <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
 
-              <div className="absolute bottom-3 left-3 bg-white/85 backdrop-blur rounded-md p-1 shadow-sm">
+              <div className="absolute bottom-16 left-3 bg-white/85 backdrop-blur rounded-md p-1 shadow-sm">
                 <img
-                  src={safeTransform(property.agency_logo_url, 350, 200)}
+                  src={safeTransform(property.logo_url, 350, 200)}
                   alt="agency logo"
                   className="h-20 w-20 object-contain"
                 />
@@ -153,15 +156,17 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
             <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 font-raleway">
               No Image Available
             </div>
-          )}
-
+          )}{" "}
           {travelSearchSubmitted && (
             <button
-              onClick={() => setShowTimes(!showTimes)}
-              className="w-full text-sm sm:text-base font-raleway text-[#02343F] bg-[#F0EDCC] hover:bg-[#e6e3bf] py-2"
+              onClick={() => setShowTimes((v) => !v)}
+              className="absolute inset-x-0 bottom-0 z-10
+                flex items-center justify-center gap-2
+               text-sm sm:text-base font-raleway
+                text-gray-200 bg-[#02343F]  py-2"
             >
               {showTimes ? "Hide Travel Times" : "Show Travel Times"}
-              {showTimes ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              {showTimes ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           )}
         </div>
@@ -174,33 +179,64 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="absolute w-full top-[280px] sm:top-[300px] bottom-0 left-0 right-0 overflow-auto  bg-[#02343F] px-4 space-y-2 text-lg text-gray-700 border-t border-gray-300 font-raleway py-4"
+              className="overflow-hidden bg-[#02343F] px-4 space-y-2 text-lg text-gray-700
+                  border-t border-gray-300 font-raleway py-4 rounded-b-2xl"
             >
-              <div className="h-full flex-col justify-between  bg-gray-200 rounded-2xl px-4 py-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
-                    Driving
-                  </span>
-                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
-                    Bicycle
-                  </span>
-                  <span className="text-lg text-center bg-gray-100 shadow-sm rounded-lg">
-                    Walking
-                  </span>
+              <div className="h-full flex-col justify-between  bg-gray-200 rounded-2xl px-4 py-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 py-2">
+                  <button
+                    onClick={() => setMode("driving")}
+                    className={`flex justify-center p-2 rounded-md ${
+                      mode === "driving"
+                        ? "bg-[#02343F] text-white"
+                        : "bg-gray-100"
+                    }`}
+                    type="button"
+                  >
+                    <FaCarAlt size={20} />
+                  </button>
+                  <button
+                    onClick={() => setMode("bicycling")}
+                    className={`flex justify-center p-2 rounded-md ${
+                      mode === "bicycling"
+                        ? "bg-[#02343F] text-white"
+                        : "bg-gray-100"
+                    }`}
+                    type="button"
+                  >
+                    <IoBicycleOutline size={20} />
+                  </button>
+                  <button
+                    onClick={() => setMode("walking")}
+                    className={`flex justify-center p-2 rounded-md ${
+                      mode === "walking"
+                        ? "bg-[#02343F] text-white"
+                        : "bg-gray-100"
+                    }`}
+                    type="button"
+                  >
+                    <BsPersonWalking size={20} />
+                  </button>
                 </div>
 
-                {property.travelTimes && property.travelTimes.length > 0 ? (
-                  <ul className="space-y-1 flex flex-col">
-                    {property.travelTimes.map((time, index) => (
-                      <li key={index} className="flex">
-                        <span className="text-xl pr-5">
-                          {time.duration} to{}
-                        </span>
-                        <span className="italic text-xl">
-                          {searchDestinations[index]?.label || time.destination}
-                        </span>
-                      </li>
-                    ))}
+                {Array.isArray(property.travelTimes) &&
+                property.travelTimes.length > 0 ? (
+                  <ul className="space-y-2">
+                    {property.travelTimes
+                      .filter((t) => t.mode === mode)
+                      .map((t) => (
+                        <li
+                          key={`${t.mode}-${t.destination}`}
+                          className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+                        >
+                          <span className="text-sm font-medium text-gray-700">
+                            {t.duration ?? "N/A"} &#8594;
+                          </span>
+                          <span className="flex items-center gap-1 text-sm italic text-gray-600">
+                            {t.destination}
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 ) : (
                   <p>No travel time available</p>
@@ -243,7 +279,7 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           <div className="w-full flex justify-start">
             <p
               className="font-raleway text-left text-sm sm:text-base md:text-xl
-+               sm:mb-2 md:mb-4 text-[#02343F]"
+               sm:mb-2 md:mb-4 text-[#02343F]"
             >
               {property.title}
             </p>

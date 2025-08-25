@@ -50,7 +50,7 @@ export async function seedDb() {
       -5.9301,
       'Double',
       true, true, false,
-      'APARTMENT',  -- adjust to your enum
+      'Detatched',  -- adjust to your enum
       ${agency.id}
     )
     RETURNING id`;

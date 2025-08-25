@@ -57,6 +57,7 @@ export const useAgencyStore = create((set, get) => ({
     const token = localStorage.getItem("agency_token");
     if (!token) {
       set({ hasHydrated: true });
+      return;
     }
 
     try {

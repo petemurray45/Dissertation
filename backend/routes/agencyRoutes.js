@@ -22,12 +22,7 @@ router.get(
 );
 router.get("/agencies", requireAuth("admin", "agent"), listAgencies);
 router.get("/me", requireAuth("agent"), getAgencyMe);
-router.put(
-  "/me",
-  requireAuth("agent", "admin"),
-  ensureSelfOrAdmin,
-  updateAgency
-);
+router.put("/me", requireAuth("agent", "admin"), updateAgency);
 router.delete(
   "/me",
   requireAuth("agent", "admin"),

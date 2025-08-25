@@ -158,6 +158,9 @@ export const updateAgency = async (req, res) => {
   } = req.body;
   const { agencyId } = req.auth;
 
+  console.log("updateAgency agencyId=", req.auth?.agencyId);
+  console.log("updateAgency body.logo_url=", req.body?.logo_url);
+
   try {
     const response = await sql`SELECT * FROM agencies WHERE id = ${agencyId}`;
     const agency = response[0];
@@ -192,7 +195,7 @@ export const updateAgency = async (req, res) => {
     agency_email = ${agency_email || agency.agency_email},
     login_id_hash = ${login_id_hashed || agency.login_id_hash},
     phone = ${phone || agency.phone},
-    logo_url = ${logo_url || agency.logo_url},
+    logo_url = ${logo_url ?? agency.logo_url},
     website = ${website || agency.website}
     WHERE id = ${agencyId}
     RETURNING id, agency_name, agency_email, phone, logo_url, website

@@ -21,13 +21,14 @@ function EditAgencyModal({
   onClose,
   backTo = "/agency/dashboard",
 }) {
+  const safeInitial = initial ?? {};
   const [formData, setFormData] = useState({
-    agency_name: "",
-    agency_email: "",
-    phone: "",
-    logo_url: "",
-    website: "",
-    ...initial,
+    agency_name: safeInitial.agency_name ?? "",
+    agency_email: safeInitial.agency_email ?? "",
+    phone: safeInitial.phone ?? "",
+    logo_url:
+      typeof safeInitial.logo_url === "string" ? safeInitial.logo_url : "",
+    website: safeInitial.website ?? "",
   });
 
   const [loginId, setLoginId] = useState({
@@ -39,15 +40,17 @@ function EditAgencyModal({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (initial) {
-      setFormData({
-        agency_name: initial.agency_name || "",
-        agency_email: initial.agency_email || "",
-        phone: initial.phone || "",
-        logo_url: initial.logo_url || "",
-        website: initial.website || "",
-      });
-    }
+    const i = initial ?? {};
+    setFormData((prev) => ({
+      agency_name: i.agency_name ?? prev.agency_name,
+      agency_email: i.agency_email ?? prev.agency_email,
+      phone: i.phone ?? prev.phone,
+      logo_url:
+        typeof i.logo_url === "string" && i.logo_url.trim() !== ""
+          ? i.logo_url
+          : prev.logo_url,
+      website: i.website ?? prev.website,
+    }));
   }, [initial]);
 
   const uploadLogoToCloudinary = async (file) => {
@@ -83,7 +86,7 @@ function EditAgencyModal({
         ...formData,
         ...(loginId.new_password && { ...loginId }),
       };
-
+      console.log("Submitting payload:", payload);
       await updateAgency(payload, token);
       toast.success("Agency details updated!");
       setTimeout(() => {

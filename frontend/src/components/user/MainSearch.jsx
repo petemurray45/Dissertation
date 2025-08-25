@@ -17,7 +17,7 @@ function MainSearch() {
 
   const { setTravelSearchSubmitted } = useListingStore();
 
-  const modes = ["DRIVING"];
+  const modes = ["DRIVING", "BICYCLING", "WALKING"];
 
   const handleSearch = async () => {
     const results = await getPropertiesWithTravelTime(modes);
@@ -39,9 +39,7 @@ function MainSearch() {
     <section className="w-full px-0 lg:px-8 sm:px-10">
       <div
         className="
-        w-full max-w-[1800px] mx-auto bg-[#02343F] shadow-2xl rounded-md
-+                  px-4 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8
-      "
+        w-full max-w-[1800px] mx-auto bg-[#02343F] shadow-2xl rounded-md px-4 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8"
       >
         <h1
           className="text-white font-raleway text-center

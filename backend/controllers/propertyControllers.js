@@ -17,7 +17,7 @@ export const getAllProperties = async (req, res) => {
       SELECT 
         p.*, 
         a.agency_name, 
-        a.logo_url AS agency_logo_url
+        a.logo_url AS logo_url
       FROM properties p
       JOIN agencies a ON a.id = p.agency_id
       ORDER BY p.created_at DESC
@@ -149,7 +149,7 @@ export const getProperty = async (req, res) => {
     SELECT 
       p.*, 
       a.agency_name, 
-      a.logo_url AS agency_logo_url
+      a.logo_url AS logo_url
     FROM properties p
     JOIN agencies a ON a.id = p.agency_id
     WHERE p.id = ${id}
@@ -270,135 +270,116 @@ export const deleteProperty = async (req, res) => {
       .json({ success: false, message: "Error deleting property" });
   }
 };
-
 export const getPropertiesWithTravelTime = async (req, res) => {
   const { destinations, modes = ["DRIVING"] } = req.body;
-  console.log("Recieved", modes);
 
-  console.log("destinations", destinations);
-
-  if (
-    !destinations ||
-    !Array.isArray(destinations) ||
-    destinations.length === 0
-  ) {
+  if (!Array.isArray(destinations) || destinations.length === 0) {
     return res
       .status(400)
       .json({ error: "At least one destination is required" });
   }
 
+  const ALLOWED = new Set(["DRIVING", "WALKING", "BICYCLING"]);
+  const selectedModes = (Array.isArray(modes) ? modes : ["DRIVING"])
+    .map((m) => String(m).toUpperCase().trim())
+    .filter((m) => ALLOWED.has(m));
+  if (selectedModes.length === 0) selectedModes.push("DRIVING");
+
+  const normalizeDest = (d) => {
+    if (typeof d === "string") {
+      return { coords: d, label: d };
+    }
+    const lat = d?.latitude ?? d?.lat;
+    const lng = d?.longitude ?? d?.lng;
+    const label =
+      d?.label ?? (lat != null && lng != null ? `${lat},${lng}` : "Unknown");
+    return { coords: `${lat},${lng}`, label };
+  };
+
   try {
-    const properties =
-      await sql`SELECT * FROM properties ORDER BY created_at DESC`;
+    const properties = await sql`
+      SELECT p.*, a.agency_name, a.logo_url AS logo_url
+      FROM properties p
+      JOIN agencies a ON a.id = p.agency_id
+      ORDER BY p.created_at DESC
+    `;
 
-    // fetch properties with images
-    const propertyIds = properties.map((property) => Number(property.id));
+    const ids = properties.map((p) => Number(p.id));
     let images = [];
-
-    if (propertyIds.length > 0) {
-      images =
-        await sql`SELECT property_id, image_url FROM images WHERE property_id = ANY(${propertyIds}::integer[]) ORDER BY property_id, id;`;
+    if (ids.length) {
+      images = await sql`
+        SELECT property_id, image_url
+        FROM images
+        WHERE property_id = ANY(${ids}::integer[])
+        ORDER BY property_id, id;
+      `;
     }
 
-    // combine properties with images
     const propertiesWithImages = properties.map((p) => {
-      const propertyImages = images
-        .filter((img) => img.property_id === p.id)
-        .map((img) => img.image_url);
-
-      return {
-        ...p,
-        imageUrls: propertyImages,
-      };
+      const imgs = images
+        .filter((im) => im.property_id === p.id)
+        .map((im) => im.image_url);
+      return { ...p, imageUrls: imgs };
     });
 
-    const travelTimes = await Promise.all(
+    const result = await Promise.all(
       propertiesWithImages.map(async (property) => {
         if (!property.latitude || !property.longitude) {
           return { ...property, travelTimes: [] };
         }
+
         const origin = `${property.latitude},${property.longitude}`;
+        const normalizedDests = destinations.map(normalizeDest);
 
-        const travelResults = [];
+        const calls = [];
+        for (const { coords, label } of normalizedDests) {
+          for (const mode of selectedModes) {
+            const apiMode = mode.toLowerCase();
+            calls.push(
+              (async () => {
+                try {
+                  const apiRes = await axios.get(
+                    "https://maps.googleapis.com/maps/api/directions/json",
+                    {
+                      params: {
+                        origin,
+                        destination: coords,
+                        mode: apiMode,
+                        key: API_KEY,
+                        t: Date.now(), // cache buster
+                      },
+                    }
+                  );
 
-        for (const destination of destinations) {
-          const destinationLabel =
-            typeof destination === "string"
-              ? destination
-              : destination.label ||
-                `${destination.latitude},${destination.longitude}`;
+                  const duration =
+                    apiRes.data?.routes?.[0]?.legs?.[0]?.duration?.text ?? null;
 
-          const destCoordinates =
-            typeof destination === "string"
-              ? destination
-              : `${destination.latitude},${destination.longitude}`;
-
-          for (const mode of modes) {
-            try {
-              console.log(
-                "Mode =",
-                mode,
-                "Destination =",
-                destination,
-                "Origin =",
-                origin
-              );
-              const apiRes = await axios.get(
-                "https://maps.googleapis.com/maps/api/directions/json",
-                {
-                  params: {
-                    origin,
-                    destination: destCoordinates,
-                    mode,
-                    key: API_KEY,
-                  },
+                  return {
+                    destination: label,
+                    mode: apiMode, // keep lowercase for the UI filter
+                    duration,
+                  };
+                } catch (e) {
+                  return {
+                    destination: label,
+                    mode: apiMode,
+                    duration: null,
+                  };
                 }
-              );
-              console.log(
-                "API response:",
-                JSON.stringify(apiRes.data, null, 2)
-              );
-              console.log(
-                `Google returned:`,
-                apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text,
-                "for mode:",
-                mode
-              );
-              console.log("Full URL:", apiRes.request?.path);
-
-              const duration =
-                apiRes.data.routes?.[0]?.legs?.[0]?.duration?.text || null;
-              travelResults.push({
-                destination: destinationLabel,
-                mode: mode.toLowerCase(),
-                duration,
-              });
-              console.log(
-                `Got duration: ${duration} for mode: ${mode}, destination: ${destinationLabel}`
-              );
-            } catch (err) {
-              console.error(
-                `Error fetching ${mode} time to ${destinationLabel}`,
-                err.message
-              );
-              travelResults.push({
-                destination: destinationLabel,
-                mode: mode.toLowerCase(),
-                duration: null,
-              });
-            }
+              })()
+            );
           }
         }
-        return { ...property, travelTimes: travelResults };
+
+        const travelTimes = await Promise.all(calls);
+        return { ...property, travelTimes };
       })
     );
 
-    // google directions api to calculate travel times for each destination
-
-    res.status(200).json(travelTimes);
+    return res.status(200).json(result);
   } catch (err) {
     console.error("Error calculating travel time", err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -569,18 +550,20 @@ export const searchWithRadius = async (req, res) => {
     console.log("Final WHERE:", whereClause); // ✅ Works
 
     const properties = await sql`
-      SELECT * FROM (
-        SELECT *,
-          (6371 * acos(
-            cos(radians(${lat})) * cos(radians(latitude)) *
-            cos(radians(longitude) - radians(${lng})) +
-            sin(radians(${lat})) * sin(radians(latitude))
-          )) AS distance
-        FROM properties
-      ) AS subquery
-      WHERE ${whereClause}
-      ORDER BY distance ASC
-    `;
+    SELECT sub.*, a.agency_name, a.logo_url AS logo_url
+    FROM (
+      SELECT p.*,
+        (6371 * acos(
+          cos(radians(${lat})) * cos(radians(p.latitude)) *
+          cos(radians(p.longitude) - radians(${lng})) +
+          sin(radians(${lat})) * sin(radians(p.latitude))
+        )) AS distance
+      FROM properties p
+    ) AS sub
+    JOIN agencies a ON a.id = sub.agency_id
+    WHERE ${whereClause}
+    ORDER BY distance ASC
+  `;
 
     const propertyIds = properties.map((property) => property.id);
     let images = [];

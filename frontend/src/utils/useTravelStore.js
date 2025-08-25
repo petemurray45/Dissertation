@@ -17,7 +17,15 @@ export const useTravelStore = create((set, get) => ({
   setDestinations: (destination) => {
     const current = get().searchDestinations;
     // prevent dupes
-    if (!current.includes(destination)) {
+    const toKey = (d) =>
+      typeof d === "string"
+        ? d.trim().toLowerCase()
+        : `${Number(d.latitude)},${Number(d.longitude)}`;
+
+    const newKey = toKey(destination);
+    const exists = current.some((d) => toKey(d) === newKey);
+
+    if (!exists) {
       set({ searchDestinations: [...current, destination] });
     }
   },
@@ -31,7 +39,9 @@ export const useTravelStore = create((set, get) => ({
   setSelectedTravelTime: (travelTime) =>
     set({ selectedTravelTime: travelTime }),
 
-  getPropertiesWithTravelTime: async (modes) => {
+  getPropertiesWithTravelTime: async (
+    modes = ["DRIVING", "BICYCLING", "WALKING"]
+  ) => {
     set({ loading: true });
     try {
       const destinations = get().searchDestinations;
@@ -39,10 +49,10 @@ export const useTravelStore = create((set, get) => ({
       const { data } = await axios.post(
         `${BASE_URL}/api/properties/travel-time`,
         {
-          destinations: destinations.map((destination) =>
-            typeof destination === "string"
-              ? destination
-              : `${destination.latitude},${destination.longitude}`
+          destinations: destinations.map((d) =>
+            typeof d === "string"
+              ? { label: d, latitude: null, longitude: null }
+              : { label: d.label, latitude: d.latitude, longitude: d.longitude }
           ),
           modes,
         }
