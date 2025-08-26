@@ -92,6 +92,7 @@ export async function seedTestData() {
     console.log("[seed] properties already present - skipping insert");
   }
   console.log("[seed] done");
+  return { agencyId };
 }
 
 // allows running file directly to manually seed
@@ -103,3 +104,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(1);
     });
 }
+
+export { seedTestData };

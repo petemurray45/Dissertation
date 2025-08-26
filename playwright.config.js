@@ -17,7 +17,7 @@ export default defineConfig({
   globalSetup: "./tests/setup/global-setup.js",
 
   webServer: {
-    command: "npm run dev",
+    command: "npm run dev:test",
     url: process.env.FRONTEND_URL || "http://localhost:5173",
     reuseExistingServer: true,
     timeout: 120_000,

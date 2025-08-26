@@ -64,6 +64,8 @@ function PropertyPage() {
       ? filteredProperties
       : properties;
 
+  console.log("PROPERTY LIST:", propertyList);
+
   useEffect(() => {
     const scrollToResults = () => {
       const resultsSection = document.getElementById("results");
@@ -164,16 +166,21 @@ function PropertyPage() {
               ref={resultsRef}
             >
               {Array.isArray(propertyList) &&
-                propertyList.map((property, i) => {
-                  const uid = `${i}::${property.id}`;
-                  console.log("uid:", uid, "propId:", property.id);
+                propertyList.map((property) => {
+                  console.log("Current open tile ID:", openTileId);
+                  console.log(
+                    "Property list with IDs:",
+                    propertyList.map((p) => p.id)
+                  );
                   return (
                     <PropertyTile
                       property={property}
-                      key={uid}
-                      isOpen={openTileId === uid}
+                      key={property.id}
+                      isOpen={openTileId === property.id}
                       onToggleOpen={() =>
-                        setOpenTileId((prev) => (prev === uid ? null : uid))
+                        setOpenTileId((prev) =>
+                          prev === property.id ? null : property.id
+                        )
                       }
                       onToggleLike={() => toggleLike(property)}
                       isLiked={likedPropertyIds.includes(property.id)}

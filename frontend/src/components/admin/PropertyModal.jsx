@@ -47,6 +47,10 @@ function PropertyModal({
     ...initial,
   });
 
+  // enables test components such like image upload url
+
+  const isTestMode = import.meta.env?.VITE_TEST_MODE === "true";
+
   const { token } = useAdminStore();
   const { agencies, agenciesLoading, agenciesError, fetchAgencies } =
     useAgencyStore();
@@ -192,6 +196,9 @@ function PropertyModal({
                 <House className="size-5" />
               </div>
               <input
+                name="title"
+                aria-label="Property Title"
+                data-testid="prop-title"
                 type="text"
                 placeholder="Enter property title"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
@@ -212,6 +219,9 @@ function PropertyModal({
                 <PoundSterling className="size-5" />
               </div>
               <input
+                name="price"
+                aria-label="Price per month"
+                data-testid="prop-price"
                 type="text"
                 placeholder="Enter property price"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
@@ -238,7 +248,9 @@ function PropertyModal({
               </div>
 
               <select
-                name="propertyType"
+                name="type"
+                aria-label="Property Type"
+                data-testid="prop-type"
                 className="select select-bordered w-full pl-10"
                 placeholder="Pick a property type"
                 value={formData.propertyType || ""}
@@ -246,7 +258,7 @@ function PropertyModal({
                   setFormData({ ...formData, propertyType: e.target.value })
                 }
               >
-                <option className="font-raleway" disabled selected></option>
+                <option className="font-raleway" disabled></option>
                 <option value="Bungalow">Bungalow</option>
                 <option value="Semi Detached">Semi Detached</option>
                 <option value="Detached">Detached</option>
@@ -266,7 +278,9 @@ function PropertyModal({
                 <BedDouble className="size-5" />
               </div>
               <select
-                name="bedType"
+                name="bed type"
+                aria-label="Bed type"
+                data-testid="bed-type"
                 className="select select-bordered w-full pl-10"
                 placeholder="Pick a bed type"
                 value={formData.bedType || ""}
@@ -274,12 +288,7 @@ function PropertyModal({
                   setFormData({ ...formData, bedType: e.target.value })
                 }
               >
-                <option
-                  value=""
-                  className="font-raleway"
-                  disabled
-                  selected
-                ></option>
+                <option value="" className="font-raleway" disabled></option>
                 <option value="Double">Double</option>
                 <option value="Single">Single</option>
                 <option value="Bunk">Bunk Bed</option>
@@ -299,13 +308,15 @@ function PropertyModal({
               </div>
               <select
                 name="ensuite"
+                aria-label="ensuite"
+                data-testid="en-suite"
                 className="select select-bordered w-full pl-10"
                 value={formData.ensuite || ""}
                 onChange={(e) => {
                   setFormData({ ...formData, ensuite: e.target.value });
                 }}
               >
-                <option className="font-raleway" disabled selected></option>
+                <option className="font-raleway" disabled></option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
@@ -323,18 +334,15 @@ function PropertyModal({
 
               <select
                 name="wifi"
+                aria-label="wifi"
+                data-testid="wifi"
                 className="select select-bordered w-full pl-10"
                 value={formData.wifi || ""}
                 onChange={(e) => {
                   setFormData({ ...formData, wifi: e.target.value });
                 }}
               >
-                <option
-                  className="font-raleway"
-                  value=""
-                  disabled
-                  selected
-                ></option>
+                <option className="font-raleway" value="" disabled></option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
@@ -351,13 +359,15 @@ function PropertyModal({
               </div>
               <select
                 name="pets"
+                aria-label="pets"
+                data-testid="pets"
                 className="select select-bordered w-full pl-10"
                 value={formData.pets || ""}
                 onChange={(e) => {
                   setFormData({ ...formData, pets: e.target.value });
                 }}
               >
-                <option className="font-raleway" disabled selected></option>
+                <option className="font-raleway" disabled></option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
@@ -369,19 +379,40 @@ function PropertyModal({
               <span className="label-text text-base font-medium">Location</span>
             </label>
             <div className="relative z-[99]">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
-                <MapPinPlusInside className="size-5" />
-              </div>
-              <LocationAutocomplete
-                onPlaceSelect={({ location, latitude, longitude }) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    location,
-                    latitude,
-                    longitude,
-                  }))
-                }
-              />
+              {isTestMode ? (
+                <input
+                  name="location"
+                  aria-label="Location"
+                  placeholder="Enter location"
+                  data-testid="prop-location"
+                  className="input input-bordered w-full"
+                  value={formData.location || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      location: e.target.value,
+                      latitude: 53.4808,
+                      longitude: -2.2426,
+                    })
+                  }
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
+                    <MapPinPlusInside className="size-5" />
+                  </div>
+                  <LocationAutocomplete
+                    onPlaceSelect={({ location, latitude, longitude }) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        location,
+                        latitude,
+                        longitude,
+                      }))
+                    }
+                  />
+                </>
+              )}
             </div>
           </div>
 
@@ -400,7 +431,7 @@ function PropertyModal({
                 accept="image/*"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 onChange={async (e) => {
-                  console.log("FILES:", e.target.files);
+                  if (isTestMode) return;
                   const filesArray = Array.from(e.target.files);
                   const uploadedUrls = await uploadImagestoCloudinary(
                     filesArray
@@ -410,8 +441,48 @@ function PropertyModal({
                     images: [...prev.images, ...uploadedUrls],
                   }));
                 }}
+                data-testid="prop-image-file"
               />
             </div>
+            {isTestMode && (
+              <div className="mt-2 flex gap-2">
+                <input
+                  type="url"
+                  aria-label="Image URL"
+                  placeholder="Paste image URL"
+                  data-testid="prop-image-url"
+                  className="input input-bordered w-full"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.currentTarget.value) {
+                      setFormData((p) => ({
+                        ...p,
+                        images: [...p.images, e.currentTarget.value],
+                      }));
+                      e.currentTarget.value = "";
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn"
+                  data-testid="add-image-url"
+                  onClick={() => {
+                    const el = document.querySelector(
+                      "[data-testid='prop-image-url']"
+                    );
+                    if (el?.value) {
+                      setFormData((p) => ({
+                        ...p,
+                        images: [...p.images, el.value],
+                      }));
+                      el.value = "";
+                    }
+                  }}
+                >
+                  Add URL
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="form-control col-span-3 row-span-3">
@@ -423,6 +494,8 @@ function PropertyModal({
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50"></div>
               <textarea
+                aria-label="Property Description"
+                data-testid="prop-description"
                 className="textarea textarea-bordered w-full h-36"
                 value={formData.description}
                 onChange={(e) =>
@@ -446,6 +519,8 @@ function PropertyModal({
                   <div className="text-sm text-red-600">{agenciesError}</div>
                 ) : (
                   <select
+                    aria-label="Assign to Agency"
+                    data-testid="assign-agency"
                     className="select select-bordered"
                     value={selectedAgencyId}
                     onChange={(e) => setSelectedAgencyId(e.target.value)}
@@ -455,7 +530,11 @@ function PropertyModal({
                     </option>
                     {Array.isArray(agencies) &&
                       agencies.map((a) => (
-                        <option key={a.id} value={a.id}>
+                        <option
+                          key={a.id}
+                          value={a.id}
+                          data-testid={`agency-option-${a.id}`}
+                        >
                           {a.agency_name} {a.website ? `— ${a.website}` : ""}
                         </option>
                       ))}
@@ -466,6 +545,8 @@ function PropertyModal({
 
             <button
               type="submit"
+              aria-label={isEdit ? "Save Property" : "Add Property"}
+              data-testid="submit-property"
               className="btn btn-primary"
               disabled={
                 formData.title === "" ||
@@ -491,6 +572,8 @@ function PropertyModal({
             {isEdit && onDelete && (
               <button
                 type="button"
+                aria-label="Delete Property"
+                data-testid="delete-property"
                 className="btn btn-error"
                 onClick={onDelete}
               >

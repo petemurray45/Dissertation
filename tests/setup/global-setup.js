@@ -2,8 +2,9 @@ import { request } from "@playwright/test";
 import path from "path";
 import dotenv from "dotenv";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 import { pathToFileURL } from "url";
-import { seedTestData } from "./seed-test-db";
+import { seedTestData } from "./seed-test-db.js";
 
 dotenv.config();
 
@@ -17,18 +18,18 @@ const TEST_USER = {
 };
 
 async function globalSetup() {
+  // seed DB and get agencyId
+  const { agencyId } = await seedTestData();
+  console.log("[global setup] seeded test data with agencyId", agencyId);
+
   const requestContext = await request.newContext();
 
+  // ensure test user exists
   try {
     const registerResponse = await requestContext.post(
       `${BACKEND_URL}/api/auth/register`,
-      {
-        data: {
-          ...TEST_USER,
-        },
-      }
+      { data: { ...TEST_USER } }
     );
-
     if (!registerResponse.ok()) {
       const status = registerResponse.status();
       if (![400, 401, 409].includes(status)) {
@@ -44,10 +45,10 @@ async function globalSetup() {
     console.warn("[globalSetup] register warning:", e.message);
   }
 
+  // login user to get token
   const loginRes = await requestContext.post(`${BACKEND_URL}/api/auth/login`, {
     data: { email: TEST_USER.email, password: TEST_USER.password },
   });
-
   if (!loginRes.ok()) {
     const body = await loginRes.json().catch(() => ({}));
     throw new Error(
@@ -56,35 +57,56 @@ async function globalSetup() {
       }`
     );
   }
-
   const loginBody = await loginRes.json();
-  const token = loginBody?.token;
-  if (!token) throw new Error("Login response missing token");
+  const userToken = loginBody?.token;
+  if (!userToken) throw new Error("Login response missing token");
 
-  const storageState = {
+  //creating an agent token (signed same as backend)
+  if (!agencyId) throw new Error("Missing agencyId from seeder");
+  if (!process.env.JWT_SECRET) throw new Error("Missing JWT_SECRET");
+  const agencyToken = jwt.sign(
+    { agencyId, role: "agent" },
+    process.env.JWT_SECRET,
+    { expiresIn: "2h" }
+  );
+
+  // both storage states
+  const outDir = path.join(process.cwd(), "tests", ".auth");
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const userStorage = {
     cookies: [],
     origins: [
       {
         origin: FRONTEND_ORIGIN,
         localStorage: [
-          { name: "token", value: token },
+          { name: "token", value: userToken },
           { name: "role", value: "user" },
         ],
       },
     ],
   };
+  const userFile = path.join(outDir, "storageState.json");
+  fs.writeFileSync(userFile, JSON.stringify(userStorage, null, 2), "utf-8");
+  console.log(`[globalSetup] wrote ${userFile}`);
 
-  const outDir = path.join(process.cwd(), "tests", ".auth");
-  fs.mkdirSync(outDir, { recursive: true });
-  const outFile = path.join(outDir, "storageState.json");
-  fs.writeFileSync(outFile, JSON.stringify(storageState, null, 2), "utf-8");
+  const agentStorage = {
+    cookies: [],
+    origins: [
+      {
+        origin: FRONTEND_ORIGIN,
+        localStorage: [
+          { name: "token", value: agencyToken },
+          { name: "role", value: "agent" },
+        ],
+      },
+    ],
+  };
+  const agentFile = path.join(outDir, "agentStorage.json");
+  fs.writeFileSync(agentFile, JSON.stringify(agentStorage, null, 2), "utf-8");
+  console.log(`[globalSetup] wrote ${agentFile}`);
 
   await requestContext.dispose();
-  console.log(`[globalSetup] wrote ${outFile}`);
-
-  // seed test db
-  await seedTestData();
-  console.log("[global setup] seeded test data");
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
