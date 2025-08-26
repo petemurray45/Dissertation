@@ -165,16 +165,15 @@ function PropertyPage() {
             >
               {Array.isArray(propertyList) &&
                 propertyList.map((property, i) => {
-                  const tileId = `${property.id} - ${i}`;
+                  const uid = `${i}::${property.id}`;
+                  console.log("uid:", uid, "propId:", property.id);
                   return (
                     <PropertyTile
                       property={property}
-                      key={tileId}
-                      isOpen={openTileId === tileId}
+                      key={uid}
+                      isOpen={openTileId === uid}
                       onToggleOpen={() =>
-                        setOpenTileId((prev) =>
-                          prev === tileId ? null : tileId
-                        )
+                        setOpenTileId((prev) => (prev === uid ? null : uid))
                       }
                       onToggleLike={() => toggleLike(property)}
                       isLiked={likedPropertyIds.includes(property.id)}

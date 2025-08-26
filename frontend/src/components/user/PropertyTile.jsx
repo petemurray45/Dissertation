@@ -96,7 +96,11 @@ function PropertyTile({
 
   return (
     <>
-      <div className="flex flex-col h-full rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden">
+      <div
+        className="flex flex-col h-full rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden"
+        data-testid="property-tile"
+        data-has-multi={property.imageUrls?.length > 1 ? "true" : "false"}
+      >
         <div className="relative h-56 sm:h-64 w-full">
           {showLikeMessage && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-100 px-5 py-1 rounded-md text-xl shadow-md font-raleway">
@@ -128,6 +132,8 @@ function PropertyTile({
               {/* Previous Button */}
               {property.imageUrls.length > 1 && (
                 <button
+                  aria-label="previous"
+                  data-testid="previous-image"
                   onClick={goToPrevImage}
                   className="absolute top-1/2 -translate-y-1/2 left-2 rounded-full bg-black/55 text-white p-1"
                 >
@@ -138,6 +144,8 @@ function PropertyTile({
               {/* Next Button */}
               {property.imageUrls.length > 1 && (
                 <button
+                  aria-label="next"
+                  data-testid="next-image"
                   onClick={goToNextImage}
                   className="absolute top-1/2 -translate-y-1/2 right-2 rounded-full bg-black/55 text-white p-1"
                 >
@@ -148,12 +156,20 @@ function PropertyTile({
               {user && (
                 <button
                   onClick={handleLikeClick}
+                  data-testid="like-button"
+                  aria-label={liked ? "unlike" : "like"}
                   className="absolute top-3 right-3 grid place-items-center rounded-full bg-white/90 backdrop-blur h-10 w-10 shadow-sm"
                 >
                   {liked ? (
-                    <AiFillHeart className="text-red-500 text-2xl" />
+                    <AiFillHeart
+                      data-testid="liked-icon"
+                      className="text-red-500 text-2xl"
+                    />
                   ) : (
-                    <AiOutlineHeart className=" text-2xl text-gray-700" />
+                    <AiOutlineHeart
+                      data-testid="unliked-icon"
+                      className=" text-2xl text-gray-700"
+                    />
                   )}
                 </button>
               )}

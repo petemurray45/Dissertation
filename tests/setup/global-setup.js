@@ -3,6 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 import fs from "fs";
 import { pathToFileURL } from "url";
+import { seedTestData } from "./seed-test-db";
 
 dotenv.config();
 
@@ -80,6 +81,10 @@ async function globalSetup() {
 
   await requestContext.dispose();
   console.log(`[globalSetup] wrote ${outFile}`);
+
+  // seed test db
+  await seedTestData();
+  console.log("[global setup] seeded test data");
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {

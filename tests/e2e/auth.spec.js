@@ -2,6 +2,21 @@ import { test, expect } from "@playwright/test";
 
 const base = process.env.FRONTEND_URL || "http://localhost:5173";
 
+const PROTECTED = [
+  { path: "/profile", expectedLogin: "/user/login", name: "User Home" },
+  { path: "/admin", expectedLogin: "/admin/login", name: "Admin Dashboard" },
+  {
+    path: "/agency/dashboard",
+    expectedLogin: "/agencyLogin",
+    name: "Agency Dashboard",
+  },
+  {
+    path: "/agency/addproperty",
+    expectedLogin: "/agencyLogin",
+    name: "Agency Add Property",
+  },
+];
+
 test.describe("Auth flows", () => {
   test("can register a new user", async ({ page }) => {
     await page.goto(base + "/user/login");
@@ -41,4 +56,15 @@ test.describe("Auth flows", () => {
       page.getByText(/searching for a room that suits/i)
     ).toBeVisible();
   });
+});
+
+test.describe("anonymous user redirects to correct login", () => {
+  test.use({ storageState: null });
+
+  for (const { path, expectedLogin, name } of PROTECTED) {
+    test(`anonymous visiting ${name} -> ${expectedLogin}`, async ({ page }) => {
+      await page.goto(base + path);
+      await expect(page).toHaveURL(expectedLogin);
+    });
+  }
 });
