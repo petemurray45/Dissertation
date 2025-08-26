@@ -15,20 +15,41 @@ function UserAuth() {
   const register = useUserStore((state) => state.register);
   const navigate = useNavigate();
 
+  const clearCustomValidity = (e) => e.target.setCustomValidity("");
+  const setValidity = (el, msg) => el.setCustomValidity(msg || "");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (mode === "sign-in") {
-      await login(email, password);
-    } else {
-      if (password !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      }
-      console.log("Name:", name, "Email:", email, "Password:", password);
 
-      await register(name, email, password);
+    const form = e.currentTarget;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
     }
-    navigate("/home");
+
+    if (mode === "sign-up") {
+      const pwdEl = form.querySelector('input[name="password"]');
+      const confirmEl = form.querySelector('input[name="confirm"]');
+
+      if (pwdEl && confirmEl && pwdEl.value !== confirmEl.value) {
+        confirmEl.setCustomValidity("Passwords do not match");
+        confirmEl.reportValidity();
+        return;
+      } else if (confirmEl) {
+        confirmEl.setCustomValidity("");
+      }
+    }
+
+    try {
+      if (mode === "sign-in") {
+        await login(email, password);
+      } else {
+        await register(name, email, password);
+      }
+      navigate("/home");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -47,6 +68,7 @@ function UserAuth() {
         {/* Tabs */}
         <div className="flex justify-center gap-20 mt-8">
           <button
+            type="submit"
             className={`pb-2 text-2xl font-semibold  ${
               mode === "sign-in"
                 ? "text-[#02343F] border-t-4 border-t-[#02343F]"
@@ -57,6 +79,7 @@ function UserAuth() {
             Sign In
           </button>
           <button
+            type="submit"
             className={`pb-2 text-2xl font-semibold  ${
               mode === "sign-up"
                 ? "text-[#02343F] border-t-4 border-t-[#02343F]"
@@ -78,7 +101,17 @@ function UserAuth() {
                       <UserRound className="size-10 mr-6" />
                       <input
                         type="email"
+                        required
                         placeholder="Enter email"
+                        onInvalid={(e) =>
+                          setValidity(
+                            e.currentTarget,
+                            e.currentTarget.validity.typeMismatch
+                              ? "Please enter a valid email"
+                              : "Email is required"
+                          )
+                        }
+                        onInput={clearCustomValidity}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
@@ -92,27 +125,34 @@ function UserAuth() {
                       <Key className="size-10 mr-6" />
                       <input
                         type="password"
+                        required
+                        minLength={6}
                         placeholder="Enter password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onInvalid={(e) =>
+                          setValidity(
+                            e.currentTarget,
+                            e.currentTarget.validity.valueMissing
+                              ? "Password is required"
+                              : "Password must be at least 6 characters"
+                          )
+                        }
+                        onInput={clearCustomValidity}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                       />
                     </div>
                   </div>
                 </div>
-                <div className="w-full text-center mt-[6rem] mb-[2rem]">
-                  <h2 className="text-gray-400 text-2xl font-medium hover:text-[#02343F] hover:cursor-pointer">
-                    Forgot password?
-                  </h2>
-                </div>
+
+                <button
+                  type="submit"
+                  aria-label="Sign-in"
+                  className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
+                >
+                  <FaArrowAltCircleRight className="size-24 shadow-2xl" />
+                </button>
               </form>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
-              >
-                <FaArrowAltCircleRight className="size-24 shadow-2xl" />
-              </button>
             </div>
           </div>
         ) : (
@@ -126,10 +166,15 @@ function UserAuth() {
                       <input
                         type="text"
                         placeholder="Enter full name"
+                        required
                         value={name}
                         onChange={(e) => {
                           setName(e.target.value);
                         }}
+                        onInvalid={(e) =>
+                          setValidity(e.currentTarget, "Full name is required")
+                        }
+                        onInput={clearCustomValidity}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                       />
                     </div>
@@ -141,9 +186,19 @@ function UserAuth() {
                       <AtSign className="size-10 mr-6" />
                       <input
                         type="email"
+                        required
                         placeholder="Enter email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onInvalid={(e) =>
+                          setValidity(
+                            e.currentTarget,
+                            e.currentTarget.validity.typeMismatch
+                              ? "Please enter a valid email"
+                              : "Email is required"
+                          )
+                        }
+                        onInput={clearCustomValidity}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                       />
                     </div>
@@ -156,8 +211,19 @@ function UserAuth() {
                       <input
                         type="password"
                         placeholder="Enter password"
+                        required
+                        minLength={6}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onInvalid={(e) =>
+                          setValidity(
+                            e.currentTarget,
+                            e.currentTarget.validity.valueMissing
+                              ? "Password is required"
+                              : "Password must be at least 6 characters"
+                          )
+                        }
+                        onInput={clearCustomValidity}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors  focus:outline-none focus:border-b-2 focus:ring-0   w-full text-2xl"
                       />
                     </div>
@@ -170,22 +236,33 @@ function UserAuth() {
                       <input
                         type="password"
                         placeholder="Confirm password"
+                        required
+                        minLength={6}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        onInvalid={(e) =>
+                          setValidity(
+                            e.currentTarget,
+                            e.currentTarget.validity.valueMissing
+                              ? "Please confirm your password"
+                              : "Must be at least 6 characters"
+                          )
+                        }
+                        onInput={clearCustomValidity}
                         className="p-3 border-b-2 border-b-gray-300 pl-10 py-transition-colors focus:outline-none focus:border-b-2 focus:ring-0  w-full text-2xl"
                       />
                     </div>
                   </div>
                 </div>
                 <div className="w-full text-center mt-[6rem] mb-[2rem]"></div>
+                <button
+                  type="submit"
+                  aria-label="Sign-in"
+                  className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md hover:bg-[#02343F] hover:border-black"
+                >
+                  <FaArrowAltCircleRight className="size-24 shadow-2xl" />
+                </button>
               </form>
-              <button
-                type="button"
-                className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md hover:bg-[#02343F] hover:border-black"
-                onClick={handleSubmit}
-              >
-                <FaArrowAltCircleRight className="size-24 shadow-2xl" />
-              </button>
             </div>
           </div>
         )}

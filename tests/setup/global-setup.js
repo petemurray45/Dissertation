@@ -2,6 +2,7 @@ import { request } from "@playwright/test";
 import path from "path";
 import dotenv from "dotenv";
 import fs from "fs";
+import { pathToFileURL } from "url";
 
 dotenv.config();
 
@@ -27,13 +28,13 @@ async function globalSetup() {
       }
     );
 
-    if (!registerRes.ok()) {
-      const status = registerRes.status();
+    if (!registerResponse.ok()) {
+      const status = registerResponse.status();
       if (![400, 401, 409].includes(status)) {
-        const body = await registerRes.json().catch(() => ({}));
+        const body = await registerResponse.json().catch(() => ({}));
         throw new Error(
           `Register failed (${status}): ${
-            body?.error || body?.message || registerRes.statusText()
+            body?.error || body?.message || registerResponse.statusText()
           }`
         );
       }
@@ -79,6 +80,18 @@ async function globalSetup() {
 
   await requestContext.dispose();
   console.log(`[globalSetup] wrote ${outFile}`);
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  globalSetup()
+    .then(() => {
+      console.log("[globalSetup] completed");
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error("[globalSetup] failed:", err);
+      process.exit(1);
+    });
 }
 
 export default globalSetup;

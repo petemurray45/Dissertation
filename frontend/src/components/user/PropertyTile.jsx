@@ -16,14 +16,20 @@ import { IoBicycleOutline } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTravelStore } from "../../utils/useTravelStore";
 import { useUserStore } from "../../utils/useUserStore";
-function PropertyTile({ property, isLiked, onToggleLike }) {
+function PropertyTile({
+  property,
+  isLiked,
+  onToggleLike,
+  isOpen,
+  onToggleOpen,
+}) {
   const hasImages = property.imageUrls && property.imageUrls.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const [showLikeMessage, setShowLikeMessage] = useState(false);
   const [likeMessageText, setLikeMessageText] = useState("");
   const [mode, setMode] = useState("driving");
-  const [showTimes, setShowTimes] = useState(false);
+
   const { searchDestinations } = useTravelStore();
   const { travelSearchSubmitted } = useListingStore();
   const { user } = useUserStore();
@@ -159,20 +165,20 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
           )}{" "}
           {travelSearchSubmitted && (
             <button
-              onClick={() => setShowTimes((v) => !v)}
+              onClick={onToggleOpen}
               className="absolute inset-x-0 bottom-0 z-10
                 flex items-center justify-center gap-2
                text-sm sm:text-base font-raleway
                 text-gray-200 bg-[#02343F]  py-2"
             >
-              {showTimes ? "Hide Travel Times" : "Show Travel Times"}
-              {showTimes ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {isOpen ? "Hide Travel Times" : "Show Travel Times"}
+              {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           )}
         </div>
 
         <AnimatePresence initial={false}>
-          {showTimes && (
+          {isOpen && (
             <motion.div
               key="travel-times"
               initial={{ height: 0, opacity: 0 }}
@@ -229,10 +235,10 @@ function PropertyTile({ property, isLiked, onToggleLike }) {
                           key={`${t.mode}-${t.destination}`}
                           className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
                         >
-                          <span className="text-sm font-medium text-gray-700">
+                          <span className="text-md font-medium text-gray-700">
                             {t.duration ?? "N/A"} &#8594;
                           </span>
-                          <span className="flex items-center gap-1 text-sm italic text-gray-600">
+                          <span className="flex items-center gap-1 text-md italic text-gray-600">
                             {t.destination}
                           </span>
                         </li>

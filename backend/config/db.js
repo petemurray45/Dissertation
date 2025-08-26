@@ -17,6 +17,12 @@ if (!PGHOST || !PGDATABASE || !PGUSER || !PGPASSWORD) {
   );
 }
 
+console.log(
+  `[DB] NODE_ENV=${process.env.NODE_ENV ?? "undefined"} -> using ${
+    isTest ? "TEST_*" : "default"
+  } vars: host=${PGHOST}, db=${PGDATABASE}`
+);
+
 export const sql = neon(
   `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?sslmode=require`
 );

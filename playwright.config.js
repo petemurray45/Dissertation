@@ -9,9 +9,17 @@ export default defineConfig({
     baseURL: process.env.FRONTEND_URL || "http://localhost:5173",
     headless: true,
     viewport: { width: 1280, height: 800 },
+    screenshot: "only-on-failure",
+    trace: "on-first-retry",
     video: "retain-on-failure",
     storageState: "tests/.auth/storageState.json",
   },
   globalSetup: "./tests/setup/global-setup.js",
-  globalTeardown: "./tests/setup/global-teardown.js",
+
+  webServer: {
+    command: "npm run dev",
+    url: process.env.FRONTEND_URL || "http://localhost:5173",
+    reuseExistingServer: true,
+    timeout: 120_000,
+  },
 });

@@ -1,5 +1,5 @@
 import { useListingStore } from "../../utils/useListingsStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PackageIcon } from "lucide-react";
 import NavBar from "../../components/user/NavBar";
@@ -27,6 +27,7 @@ function PropertyPage() {
   const { resetSearchDestinations } = useTravelStore();
   const resultsRef = useRef();
   const query = new URLSearchParams(useLocation().search);
+  const [openTileId, setOpenTileId] = useState(null);
   const location = query.get("location");
   const radius = query.get("radius");
 
@@ -163,14 +164,23 @@ function PropertyPage() {
               ref={resultsRef}
             >
               {Array.isArray(propertyList) &&
-                propertyList.map((property) => (
-                  <PropertyTile
-                    property={property}
-                    key={property.id}
-                    onToggleLike={() => toggleLike(property)}
-                    isLiked={likedPropertyIds.includes(property.id)}
-                  />
-                ))}
+                propertyList.map((property, i) => {
+                  const tileId = `${property.id} - ${i}`;
+                  return (
+                    <PropertyTile
+                      property={property}
+                      key={tileId}
+                      isOpen={openTileId === tileId}
+                      onToggleOpen={() =>
+                        setOpenTileId((prev) =>
+                          prev === tileId ? null : tileId
+                        )
+                      }
+                      onToggleLike={() => toggleLike(property)}
+                      isLiked={likedPropertyIds.includes(property.id)}
+                    />
+                  );
+                })}
             </div>
           )}
           <Pagination />
