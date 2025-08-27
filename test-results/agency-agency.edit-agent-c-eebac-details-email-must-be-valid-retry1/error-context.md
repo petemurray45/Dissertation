@@ -1,0 +1,166 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e6] [cursor=pointer]: Property-App
+    - generic [ref=e7]:
+      - button "Sign Out" [ref=e8] [cursor=pointer]
+      - button [ref=e10] [cursor=pointer]:
+        - img [ref=e11] [cursor=pointer]
+  - heading "Welcome Test Agency" [level=1] [ref=e13]:
+    - text: Welcome
+    - generic [ref=e14]: Test Agency
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e18]:
+        - figure [ref=e19]:
+          - img [ref=e20]
+        - generic [ref=e23]:
+          - heading "Add a property" [level=2] [ref=e24]
+          - paragraph [ref=e25]: Add a property to the site
+      - generic [ref=e28]:
+        - figure [ref=e29]:
+          - img [ref=e30]
+        - generic [ref=e33]:
+          - heading "Update a property" [level=2] [ref=e34]
+          - paragraph [ref=e35]: Update an existing property
+      - generic [ref=e38]:
+        - figure [ref=e39]:
+          - img [ref=e40]
+        - generic [ref=e42]:
+          - heading "View properties" [level=2] [ref=e43]
+          - paragraph [ref=e44]: View all properties
+      - generic [ref=e47]:
+        - figure [ref=e48]:
+          - img [ref=e49]
+        - generic [ref=e52]:
+          - heading "Delete listing" [level=2] [ref=e53]
+          - paragraph [ref=e54]: Delete a property
+    - generic [ref=e57]:
+      - button "Add Property" [ref=e58] [cursor=pointer]:
+        - img [ref=e59] [cursor=pointer]
+        - text: Add property
+      - button "Edit Agency Details" [ref=e61] [cursor=pointer]:
+        - img [ref=e62] [cursor=pointer]
+        - text: Edit Agency Details
+      - button "Refresh" [ref=e67] [cursor=pointer]:
+        - img [ref=e68] [cursor=pointer]
+        - text: Refresh
+      - button "Enquiries Inbox" [ref=e73] [cursor=pointer]:
+        - img [ref=e74] [cursor=pointer]
+        - text: Enquiries Inbox
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e80]:
+          - figure [ref=e81]:
+            - img "City Studio Apartment" [ref=e82]
+          - generic [ref=e83]:
+            - heading "City Studio Apartment" [level=2] [ref=e84]
+            - paragraph [ref=e85]: Leeds, UK
+            - generic [ref=e86]:
+              - paragraph [ref=e87]: £950.00
+              - button "Select" [ref=e88] [cursor=pointer]
+        - generic [ref=e90]:
+          - figure [ref=e91]:
+            - img "Sunny Double Room" [ref=e92]
+            - button [ref=e93] [cursor=pointer]:
+              - img [ref=e94] [cursor=pointer]
+            - button [ref=e97] [cursor=pointer]:
+              - img [ref=e98] [cursor=pointer]
+          - generic [ref=e101]:
+            - heading "Sunny Double Room" [level=2] [ref=e102]
+            - paragraph [ref=e103]: Manchester, UK
+            - generic [ref=e104]:
+              - paragraph [ref=e105]: £700.00
+              - button "Select" [ref=e106] [cursor=pointer]
+      - generic [ref=e107]:
+        - button "Prev" [disabled]
+        - generic [ref=e108]: Page 1 of 1
+        - button "Next" [disabled]
+        - combobox [ref=e109] [cursor=pointer]:
+          - option "6 per page" [selected]
+          - option "12 per page"
+          - option "24 per page"
+    - dialog [ref=e110]:
+      - generic [ref=e112]:
+        - status [ref=e118]:
+          - generic [ref=e119]: Please enter a valid email address
+        - generic [ref=e120]:
+          - button "Back to Dashboard" [ref=e121] [cursor=pointer]:
+            - img [ref=e122] [cursor=pointer]
+            - text: Back to Dashboard
+          - button "Close" [ref=e124] [cursor=pointer]
+        - generic [ref=e125]:
+          - heading "Update Agency Details" [level=2] [ref=e126]
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e130]: Agency Name
+              - generic [ref=e131]:
+                - generic:
+                  - img
+                - textbox "Enter agency name" [ref=e132]: Test Agency
+            - generic [ref=e133]:
+              - generic [ref=e135]: Email
+              - generic [ref=e136]:
+                - generic:
+                  - img
+                - textbox "Enter email" [ref=e137]: not-an-email
+            - generic [ref=e138]:
+              - generic [ref=e140]: Phone
+              - generic [ref=e141]:
+                - generic:
+                  - img
+                - textbox "Enter phone number" [ref=e142]: "07960692361"
+            - generic [ref=e143]:
+              - generic [ref=e145]: Website
+              - generic [ref=e146]:
+                - generic:
+                  - img
+                - textbox "Enter website URL" [ref=e147]: testagency.com
+            - generic [ref=e148]:
+              - generic [ref=e150]: Agency Logo
+              - generic [ref=e151]:
+                - generic:
+                  - img
+                - button "Choose File" [ref=e152]
+              - textbox "OR enter a logo url" [ref=e154]
+            - generic [ref=e155]:
+              - heading "Update Password" [level=3] [ref=e156]
+              - generic [ref=e157]:
+                - generic [ref=e158]:
+                  - generic [ref=e160]: Current Login ID
+                  - generic [ref=e161]:
+                    - generic:
+                      - img
+                    - textbox "Enter current password" [ref=e162]
+                - generic [ref=e163]:
+                  - generic [ref=e165]: New Login ID
+                  - generic [ref=e166]:
+                    - generic:
+                      - img
+                    - textbox "Enter new password" [ref=e167]
+            - generic [ref=e168]:
+              - button "Save Changes" [active] [ref=e169] [cursor=pointer]:
+                - img [ref=e170] [cursor=pointer]
+                - text: Save Changes
+              - button "Delete Account" [ref=e174] [cursor=pointer]:
+                - img [ref=e175] [cursor=pointer]
+                - text: Delete Account
+    - dialog:
+      - generic:
+        - generic:
+          - status [ref=e183]:
+            - generic [ref=e184]: Please enter a valid email address
+          - generic:
+            - button "Back to Dashboard":
+              - img
+              - text: Back to Dashboard
+          - generic:
+            - heading "Enquiries Inbox" [level=2]
+            - paragraph: No enquiries found
+            - generic:
+              - button "Prev" [disabled]
+              - generic: Page 1 of 1
+              - button "Next" [disabled]
+```

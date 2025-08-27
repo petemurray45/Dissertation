@@ -61,7 +61,9 @@ function AgencyDashboard() {
     <>
       <AdminNavBar />
       <div className="mx-20 my-20">
-        <h1 className="text-6xl text-center">Welcome {displayName}</h1>
+        <h1 className="text-6xl text-center">
+          Welcome <span data-testid="agency-name-display">{displayName}</span>
+        </h1>
       </div>
       <div className="flex flex-col overflow-x-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 m-10 font-raleway">
@@ -93,6 +95,8 @@ function AgencyDashboard() {
         <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
           <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 w-full gap-5 items-center">
             <button
+              data-testid="add-property"
+              aria-label="Add Property"
               className="btn btn-primary"
               onClick={() => navigate("/agency/addproperty")}
             >
@@ -100,7 +104,11 @@ function AgencyDashboard() {
               <PlusCircleIcon className="size-8 mr-2" />
               Add property
             </button>
-            <button className="btn btn-secondary" onClick={openAgencyModal}>
+            <button
+              className="btn btn-secondary"
+              onClick={openAgencyModal}
+              data-testid="open-edit-agency"
+            >
               <CiEdit className="size-8 mr-2" />
               Edit Agency Details
             </button>

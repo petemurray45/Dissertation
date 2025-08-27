@@ -81,14 +81,28 @@ function EditAgencyModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.agency_email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      toast.error(
+        <span data-testid="toast-invalid-email">
+          Please enter a valid email address
+        </span>
+      );
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
-        ...(loginId.new_password && { ...loginId }),
+        ...(loginId.new_password && {
+          current_login_id_hash: loginId.current_password,
+          new_login_id_hash: loginId.new_password,
+        }),
       };
       console.log("Submitting payload:", payload);
       await updateAgency(payload, token);
-      toast.success("Agency details updated!");
+      toast.success(
+        <span data-testid="toast-agency-saved">Agency details updated!</span>
+      );
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -130,11 +144,13 @@ function EditAgencyModal({
             padding: "1rem 1.5rem",
             width: "full",
           },
+          duration: 4000,
         }}
       />
       <div className="w-full flex justify-between items-center mb-4">
         <button
           type="button"
+          data-testid="agency-back"
           onClick={() => navigate(backTo)}
           className="btn btn-ghost"
         >
@@ -142,7 +158,12 @@ function EditAgencyModal({
           Back to Dashboard
         </button>
         {onClose && (
-          <button type="button" onClick={onClose} className="btn">
+          <button
+            type="button"
+            data-testid="agency-close"
+            onClick={onClose}
+            className="btn"
+          >
             Close
           </button>
         )}
@@ -155,6 +176,7 @@ function EditAgencyModal({
         <form
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-7 items-start"
           onSubmit={handleSubmit}
+          noValidate
         >
           {/* Agency Details */}
           <div className="form-control">
@@ -170,6 +192,7 @@ function EditAgencyModal({
               <input
                 type="text"
                 name="agency_name"
+                data-testid="agency-edit-name"
                 placeholder="Enter agency name"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 value={formData.agency_name}
@@ -189,6 +212,7 @@ function EditAgencyModal({
               <input
                 type="email"
                 name="agency_email"
+                data-testid="agency-edit-email"
                 placeholder="Enter email"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 value={formData.agency_email}
@@ -208,6 +232,7 @@ function EditAgencyModal({
               <input
                 type="text"
                 name="phone"
+                data-testid="agency-edit-phone"
                 placeholder="Enter phone number"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 value={formData.phone}
@@ -227,6 +252,7 @@ function EditAgencyModal({
               <input
                 type="text"
                 name="website"
+                data-testid="agency-edit-website"
                 placeholder="Enter website URL"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 value={formData.website}
@@ -255,6 +281,7 @@ function EditAgencyModal({
                 </div>
                 <button
                   type="button"
+                  data-testid="agency-remove-logo"
                   className="btn btn-sm btn-outline"
                   onClick={() => setFormData((p) => ({ ...p, logo_url: "" }))}
                 >
@@ -298,6 +325,7 @@ function EditAgencyModal({
               <input
                 type="url"
                 name="logo_url"
+                data-testid="agency-edit-logo-url"
                 placeholder="OR enter a logo url"
                 className="input input-bordered w-full"
                 value={formData.logo_url}
@@ -323,6 +351,7 @@ function EditAgencyModal({
                   <input
                     type="password"
                     name="current_password"
+                    data-testid="agency-current-loginid"
                     placeholder="Enter current password"
                     className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                     value={loginId.current_password}
@@ -343,6 +372,7 @@ function EditAgencyModal({
                   <input
                     type="password"
                     name="new_password"
+                    data-testid="agency-new-loginid"
                     placeholder="Enter new password"
                     className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                     value={loginId.new_password}
@@ -355,12 +385,17 @@ function EditAgencyModal({
 
           {/* Action Buttons */}
           <div className="col-span-2 flex justify-between items-center mt-6">
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              data-testid="agency-save"
+            >
               <SaveIcon className="size-5 mr-2" />
               Save Changes
             </button>
             <button
               type="button"
+              data-testid="agency-delete"
               className="btn btn-error"
               onClick={handleDelete}
             >

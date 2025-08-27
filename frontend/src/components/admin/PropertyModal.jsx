@@ -26,7 +26,7 @@ function PropertyModal({
   isEdit = false,
   onSubmit,
   showAgencyPicker = false,
-  adminToken = null, // keep only once
+  adminToken = null,
   onDelete,
   onClose,
   backTo = "/admin",
@@ -47,16 +47,15 @@ function PropertyModal({
     ...initial,
   });
 
-  // enables test components such like image upload url
-
-  const isTestMode = import.meta.env?.VITE_TEST_MODE === "true";
-
   const { token } = useAdminStore();
   const { agencies, agenciesLoading, agenciesError, fetchAgencies } =
     useAgencyStore();
 
   const navigate = useNavigate();
   const submitLabel = isEdit ? "Save changes" : "Add Property";
+
+  const isTestMode =
+    typeof window !== "undefined" && localStorage.getItem("E2E") === "1";
 
   // hydrate form when initial changes
   const [selectedAgencyId, setSelectedAgencyId] = useState(
@@ -108,7 +107,11 @@ function PropertyModal({
 
     try {
       await onSubmit(finalPayload);
-      toast.success(isEdit ? "Property updated!" : "Property added!");
+      toast.success(
+        <span data-testid="toast-prop-saved">
+          {isEdit ? "Property updated!" : "Property added!"}
+        </span>
+      );
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -124,6 +127,10 @@ function PropertyModal({
       ...p,
       images: p.images.filter((_, i) => i !== index),
     }));
+
+  // validate price string and disbale if not a number
+  const priceStr = String(formData.price_per_month ?? "").trim();
+  const priceValid = /^\d+(\.\d{1,2})?$/.test(priceStr);
 
   return (
     <div className="card bg-base-100 w-full">
@@ -223,6 +230,8 @@ function PropertyModal({
                 aria-label="Price per month"
                 data-testid="prop-price"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Enter property price"
                 className="input pl-10 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full"
                 value={formData.price_per_month}
@@ -551,7 +560,7 @@ function PropertyModal({
               disabled={
                 formData.title === "" ||
                 formData.description === "" ||
-                formData.price_per_month === "" ||
+                !priceValid ||
                 formData.bedType === "" ||
                 formData.wifi === "" ||
                 formData.pets === "" ||

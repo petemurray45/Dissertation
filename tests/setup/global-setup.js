@@ -65,7 +65,7 @@ async function globalSetup() {
   if (!agencyId) throw new Error("Missing agencyId from seeder");
   if (!process.env.JWT_SECRET) throw new Error("Missing JWT_SECRET");
   const agencyToken = jwt.sign(
-    { agencyId, role: "agent" },
+    { role: "agent", agencyId, agency_id: agencyId, id: agencyId },
     process.env.JWT_SECRET,
     { expiresIn: "2h" }
   );
@@ -74,37 +74,26 @@ async function globalSetup() {
   const outDir = path.join(process.cwd(), "tests", ".auth");
   fs.mkdirSync(outDir, { recursive: true });
 
-  const userStorage = {
-    cookies: [],
-    origins: [
-      {
-        origin: FRONTEND_ORIGIN,
-        localStorage: [
-          { name: "token", value: userToken },
-          { name: "role", value: "user" },
-        ],
-      },
-    ],
+  const writeStorage = (file, token, role) => {
+    const storage = {
+      cookies: [],
+      origins: [
+        {
+          origin: FRONTEND_ORIGIN,
+          localStorage: [
+            { name: "token", value: token },
+            { name: "role", value: role },
+            { name: "E2E", value: "1" },
+          ],
+        },
+      ],
+    };
+    fs.writeFileSync(file, JSON.stringify(storage, null, 2), "utf-8");
+    console.log(`[globalSetup] wrote ${file}`);
   };
-  const userFile = path.join(outDir, "storageState.json");
-  fs.writeFileSync(userFile, JSON.stringify(userStorage, null, 2), "utf-8");
-  console.log(`[globalSetup] wrote ${userFile}`);
 
-  const agentStorage = {
-    cookies: [],
-    origins: [
-      {
-        origin: FRONTEND_ORIGIN,
-        localStorage: [
-          { name: "token", value: agencyToken },
-          { name: "role", value: "agent" },
-        ],
-      },
-    ],
-  };
-  const agentFile = path.join(outDir, "agentStorage.json");
-  fs.writeFileSync(agentFile, JSON.stringify(agentStorage, null, 2), "utf-8");
-  console.log(`[globalSetup] wrote ${agentFile}`);
+  writeStorage(path.join(outDir, "storageState.json"), userToken, "user");
+  writeStorage(path.join(outDir, "agentStorage.json"), agencyToken, "agent");
 
   await requestContext.dispose();
 }

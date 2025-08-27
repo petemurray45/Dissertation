@@ -8,6 +8,8 @@ import { sql } from "../../backend/config/db.js";
 export async function seedTestData() {
   console.log("[seed] start");
 
+  // seed agency
+
   const AGENCY = {
     agency_name: "Test Agency",
     agency_email: "testagency@test.com",
@@ -16,18 +18,17 @@ export async function seedTestData() {
     loginId: "testlogin",
   };
 
-  let agencyRow =
-    await sql`SELECT id FROM agencies WHERE agency_name = ${AGENCY.agency_name} LIMIT 1`;
-  if (agencyRow.length === 0) {
-    const hash = await bcrypt.hash(AGENCY.loginId, 10);
-    agencyRow = await sql`
+  const agencyHash = await bcrypt.hash(AGENCY.loginId, 10);
+  const agencyRow = await sql`
     INSERT INTO agencies (agency_name, agency_email, phone, login_id_hash, website)
-      VALUES (${AGENCY.agency_name}, ${AGENCY.agency_email}, ${AGENCY.phone}, ${hash}, ${AGENCY.website})
-      RETURNING id`;
-    console.log("[seed] inserted agency");
-  } else {
-    console.log("[seed] agency exists; reusing");
-  }
+    VALUES (${AGENCY.agency_name}, ${AGENCY.agency_email}, ${AGENCY.phone}, ${agencyHash}, ${AGENCY.website})
+    ON CONFLICT (agency_email) DO UPDATE SET
+      agency_name   = EXCLUDED.agency_name,
+      phone         = EXCLUDED.phone,
+      website       = EXCLUDED.website,
+      login_id_hash = EXCLUDED.login_id_hash
+    RETURNING id`;
+
   const agencyId = agencyRow[0].id;
 
   const existingProps = await sql`SELECT id FROM properties LIMIT 1`;
@@ -91,8 +92,30 @@ export async function seedTestData() {
   } else {
     console.log("[seed] properties already present - skipping insert");
   }
+
+  // seed user
+
+  const USER = {
+    name: "Test User",
+    email: "testuser@example.com",
+    password: "password123",
+  };
+
+  let userRow =
+    await sql`SELECT id FROM users WHERE email = ${USER.email} LIMIT 1`;
+  if (userRow.length === 0) {
+    const hash = await bcrypt.hash(USER.password, 10);
+    userRow = await sql`
+      INSERT INTO users (full_name, email, password_hash)
+      VALUES (${USER.name}, ${USER.email}, ${hash})
+      RETURNING id`;
+    console.log("[seed] inserted test user");
+  } else {
+    console.log("[seed] test user exists; reusing");
+  }
+
   console.log("[seed] done");
-  return { agencyId };
+  return { agencyId, userId: userRow[0].id };
 }
 
 // allows running file directly to manually seed
@@ -104,5 +127,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(1);
     });
 }
-
-export { seedTestData };

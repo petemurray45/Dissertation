@@ -1,28 +1,25 @@
 import { test, expect } from "@playwright/test";
+import { resetTestDb } from "../setup/reset-test-db.js";
+
+test.describe.configure({ mode: "serial" });
 
 const base = process.env.FRONTEND_URL || "http://localhost:5173";
 
+test.beforeEach(async () => {
+  await resetTestDb();
+});
+
+export async function loginAsUser(page) {
+  await page.goto(base + "/user/login");
+
+  await page.getByTestId("user-email").fill("testuser@example.com");
+  await page.getByTestId("user-password").fill("password123");
+  await page.getByTestId("user-login-submit").click();
+
+  await expect(page).toHaveURL(/\/home/);
+}
+
 test.describe("Properties list", () => {
-  test.use({ storageState: "tests/.auth/storageState.json" });
-
-  /*
-
-  test("shows empty state when db has no properties", async ({ page }) => {
-    await page.goto(base + "/properties");
-
-    // wait for network to settle
-    await page.waitForLoadState("networkidle");
-    await page
-      .locator(".loading-spinner")
-      .first()
-      .waitFor({ state: "detached" })
-      .catch(() => {});
-
-    await expect(page.getByText(/No Properties Found/i)).toBeVisible();
-  });
-
-  */
-
   test("shows property tiles on home", async ({ page }) => {
     await page.goto(base + "/home");
     const tile = page.getByRole("img");
@@ -89,3 +86,5 @@ test.describe("Properties list", () => {
     await expect(likeButton).toHaveAccessibleName(/like/i);
   });
 });
+
+/// test pagination

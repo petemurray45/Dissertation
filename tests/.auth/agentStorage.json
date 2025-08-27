@@ -6,11 +6,11 @@
       "localStorage": [
         {
           "name": "token",
-          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsImlhdCI6MTc1NjMxMDQ2NCwiZXhwIjoxNzU2MzE3NjY0fQ.c3KrD8X9OfFklgAbxBJQ4HiQrcoP37nfLIggDwMjPSs"
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWdlbnQiLCJhZ2VuY3lJZCI6MSwiYWdlbmN5X2lkIjoxLCJpZCI6MSwiaWF0IjoxNzU2MzEwNDY0LCJleHAiOjE3NTYzMTc2NjR9.toGZGr-f1qyyH_TeTQP5cjO81N8DEhnhspxmk1VlMNQ"
         },
         {
           "name": "role",
-          "value": "user"
+          "value": "agent"
         },
         {
           "name": "E2E",

@@ -2,6 +2,16 @@ import { test, expect } from "@playwright/test";
 
 const base = process.env.FRONTEND_URL || "http://localhost:5173";
 
+export default async function loginAsAgent(page) {
+  await page.goto(base + "/agencyLogin");
+
+  await page.getByTestId("agency-name").fill("Test Agency");
+  await page.getByTestId("agency-loginid").fill("testlogin");
+  await page.getByTestId("agency-login-submit-desktop").click();
+
+  await expect(page).toHaveURL(/\/agency\/dashboard/);
+}
+
 const PROTECTED = [
   { path: "/profile", expectedLogin: "/user/login", name: "User Home" },
   { path: "/admin", expectedLogin: "/admin/login", name: "Admin Dashboard" },

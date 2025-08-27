@@ -103,6 +103,7 @@ function UserAuth() {
                         type="email"
                         required
                         placeholder="Enter email"
+                        data-testid="user-email"
                         onInvalid={(e) =>
                           setValidity(
                             e.currentTarget,
@@ -128,6 +129,7 @@ function UserAuth() {
                         required
                         minLength={6}
                         placeholder="Enter password"
+                        data-testid="user-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onInvalid={(e) =>
@@ -148,6 +150,7 @@ function UserAuth() {
                 <button
                   type="submit"
                   aria-label="Sign-in"
+                  data-testid="user-login-submit"
                   className="absolute bottom-12 -right-14 bg-gray-600 text-white p-3 rounded-full shadow-md  hover:bg-[#02343F] hover:border-black"
                 >
                   <FaArrowAltCircleRight className="size-24 shadow-2xl" />
