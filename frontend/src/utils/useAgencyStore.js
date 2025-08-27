@@ -203,7 +203,11 @@ export const useAgencyStore = create((set, get) => ({
         isLoggedIn: false,
         error: null,
       });
+      useAuthStore.getState().logout();
     } catch (err) {
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        useAuthStore.getState().logout();
+      }
       console.error("Delete agency failed", err);
       set({ error: "Failed to delete agency account" });
       throw err;

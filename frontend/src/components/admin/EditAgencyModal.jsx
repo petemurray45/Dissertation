@@ -90,6 +90,15 @@ function EditAgencyModal({
       return;
     }
 
+    if (!formData.phone.match(/^[0-9\s\-\+]{7,15}$/)) {
+      toast.error(
+        <span data-testid="toast-invalid-phone">
+          Please enter a valid phone number
+        </span>
+      );
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -108,7 +117,18 @@ function EditAgencyModal({
       }, 1000);
     } catch (err) {
       console.error("Update error", err);
-      toast.error("Something went wrong with the update.");
+      if (
+        err?.response?.status === 401 ||
+        err?.message?.includes("invalid current login id")
+      ) {
+        toast.error(
+          <span data-testid="toast-invalid-loginid">
+            Current Login ID is incorrect
+          </span>
+        );
+      } else {
+        toast.error("Something went wrong with the update.");
+      }
     }
   };
 
@@ -117,21 +137,29 @@ function EditAgencyModal({
       window.confirm("Are you sure you want to delete this agency account?")
     ) {
       try {
-        await deleteAgency(token);
-        toast.success("Agency account deleted!");
+        await deleteAgency();
+        toast.success(
+          <span data-testid="toast-agency-deleted">Agency Deleted!</span>
+        );
         setTimeout(() => {
-          onClose();
-        }, 1000);
-        navigate("/home");
+          navigate("/home", { replace: true });
+        }, 600);
       } catch (err) {
-        console.error("Delete error", err);
+        console.error(
+          "Delete error",
+          err?.response?.status,
+          err?.response?.data
+        );
         toast.error("Something went wrong with the deletion.");
       }
     }
   };
 
   return (
-    <div className="card bg-base-100 w-full relative">
+    <div
+      className="card bg-base-100 w-full relative"
+      data-testid="agency-edit-modal"
+    >
       <Toaster
         position="top-center"
         containerClassName="!absolute !top-0"
@@ -151,7 +179,7 @@ function EditAgencyModal({
         <button
           type="button"
           data-testid="agency-back"
-          onClick={() => navigate(backTo)}
+          onClick={onClose}
           className="btn btn-ghost"
         >
           <ArrowLeftIcon className="size-4 mr-2" />
@@ -276,6 +304,7 @@ function EditAgencyModal({
                       src={formData.logo_url}
                       alt="Agency logo preview"
                       className="object-cover"
+                      data-testid="agency-logo-preview"
                     />
                   </div>
                 </div>

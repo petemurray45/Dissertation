@@ -210,11 +210,12 @@ export const updateAgency = async (req, res) => {
 export const deleteAgency = async (req, res) => {
   const { agencyId } = req.auth;
   try {
-    await sql`DELETE FROM agencies WHERE id = ${agencyId}`;
-    res.status(204).send;
+    const { rowCount } = await sql`DELETE FROM agencies WHERE id = ${agencyId}`;
+    if (rowCount === 0) return res.sendStatus(404);
+    return res.sendStatus(204);
   } catch (err) {
     console.error("Delete agency error", err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 

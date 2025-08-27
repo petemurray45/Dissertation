@@ -36,15 +36,16 @@ function PropertyModal({
     description: "",
     price_per_month: "",
     propertyType: "",
-    ensuite: "",
     bedType: "",
-    wifi: "",
-    pets: "",
     location: "",
     latitude: "",
     longitude: "",
     images: [],
     ...initial,
+    // force correct tyoe
+    ensuite: typeof initial.ensuite === "boolean" ? initial.ensuite : null,
+    wifi: typeof initial.wifi === "boolean" ? initial.wifi : null,
+    pets: typeof initial.pets === "boolean" ? initial.pets : null,
   });
 
   const { token } = useAdminStore();
@@ -320,14 +321,20 @@ function PropertyModal({
                 aria-label="ensuite"
                 data-testid="en-suite"
                 className="select select-bordered w-full pl-10"
-                value={formData.ensuite || ""}
+                value={
+                  formData.ensuite === null ? "" : String(formData.ensuite)
+                }
                 onChange={(e) => {
-                  setFormData({ ...formData, ensuite: e.target.value });
+                  const v = e.target.value;
+                  setFormData({
+                    ...formData,
+                    ensuite: v === "" ? null : v === "true",
+                  });
                 }}
               >
                 <option className="font-raleway" disabled></option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
           </div>
@@ -346,14 +353,18 @@ function PropertyModal({
                 aria-label="wifi"
                 data-testid="wifi"
                 className="select select-bordered w-full pl-10"
-                value={formData.wifi || ""}
+                value={formData.wifi === null ? "" : String(formData.wifi)}
                 onChange={(e) => {
-                  setFormData({ ...formData, wifi: e.target.value });
+                  const v = e.target.value;
+                  setFormData({
+                    ...formData,
+                    wifi: v === "" ? null : v === "true",
+                  });
                 }}
               >
                 <option className="font-raleway" value="" disabled></option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
           </div>
@@ -371,14 +382,18 @@ function PropertyModal({
                 aria-label="pets"
                 data-testid="pets"
                 className="select select-bordered w-full pl-10"
-                value={formData.pets || ""}
+                value={formData.pets === null ? "" : String(formData.pets)}
                 onChange={(e) => {
-                  setFormData({ ...formData, pets: e.target.value });
+                  const v = e.target.value;
+                  setFormData({
+                    ...formData,
+                    pets: v === "" ? null : v === "true",
+                  });
                 }}
               >
                 <option className="font-raleway" disabled></option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
           </div>
@@ -562,9 +577,9 @@ function PropertyModal({
                 formData.description === "" ||
                 !priceValid ||
                 formData.bedType === "" ||
-                formData.wifi === "" ||
-                formData.pets === "" ||
-                formData.ensuite === "" ||
+                formData.ensuite === null ||
+                formData.wifi === null ||
+                formData.pets === null ||
                 formData.propertyType === "" ||
                 formData.location === "" ||
                 (showAgencyPicker && !selectedAgencyId)
