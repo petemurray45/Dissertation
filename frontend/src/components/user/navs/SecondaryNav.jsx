@@ -23,6 +23,7 @@ function SecondaryNav({ activeTab, setActiveTab, tabs }) {
             <React.Fragment key={tab.key}>
               <button
                 type="button"
+                data-testid={`tab-${tab.key}`}
                 onClick={() => setActiveTab(tab.key)}
                 className={`
                   whitespace-nowrap

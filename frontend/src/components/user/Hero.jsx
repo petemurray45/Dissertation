@@ -59,6 +59,7 @@ function Hero() {
               <button
                 className="btn border-none bg-[#02343F] text-white rounded-md px-6 py-3 text-lg sm:text-xl text-center"
                 type="button"
+                data-testid="hero-scroll"
                 onClick={() =>
                   searchBar?.scrollIntoView({ behavior: "smooth" })
                 }
@@ -84,6 +85,7 @@ function Hero() {
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full">
               <div className="flex flex-col sm:flex-row gap-1 w-full lg:flex-grow lg:max-w-[50%]">
                 <UserAutocomplete
+                  dataTestId="hero-location"
                   onPlaceSelect={({ location, latitude, longitude }) =>
                     setDestination({ label: location, latitude, longitude })
                   }
@@ -91,6 +93,7 @@ function Hero() {
                   placeholder="Enter a location"
                 />
                 <select
+                  data-testid="hero-distance"
                   value={radius}
                   onChange={(e) => setRadius(e.target.value)}
                   className="rounded-md border-2 px-4 py-3 w-full sm:w-36 text-base sm:text-lg md:text-2xl lg:text-3xl"
@@ -105,6 +108,7 @@ function Hero() {
 
               <input
                 type="number"
+                data-testid="hero-max-price"
                 placeholder="Max Price"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
@@ -113,6 +117,7 @@ function Hero() {
 
               <input
                 type="number"
+                data-testid="hero-min-price"
                 placeholder="Min Price"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
@@ -121,6 +126,7 @@ function Hero() {
 
               <button
                 type="submit"
+                data-testid="hero-search"
                 className="rounded-md   flex-1 bg-[#e3d6a1] text-black hover:bg-[#02343F] hover:text-white hover:border-[#F0EDCC] px-6 py-3 text-base sm:text-lg md:text-2xl lg:text-3xl lg:h-24 md:h-16 sm:h-12 "
               >
                 SEARCH

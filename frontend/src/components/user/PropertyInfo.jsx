@@ -23,7 +23,10 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
       <div>
         <div className="grid grid-cols-1 md:flex-row">
           <div>
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-gray-300 py-2 md:py-3 font-semibold">
+            <h1
+              className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-gray-300 py-2 md:py-3 font-semibold"
+              data-testid="property-title"
+            >
               {addressSplit[0]},
             </h1>
             <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl text-gray-200 py-1 md:py-3 font-thin">
@@ -40,17 +43,25 @@ function PropertyInfo({ property, isLiked, onToggleLike }) {
         <div className="bg-gray-300 px-2 py-2 rounded-2xl">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 w-full p-4 sm:p-6 text-base sm:text-lg md:text-xl bg-gray-200 rounded-2xl shadow-xl border-gray-300">
             <p>Price:</p>
-            <p className="text-end">£{property.price_per_month}</p>
+            <p className="text-end" data-testid="property-price">
+              £{property.price_per_month}
+            </p>
             <p>Property Type:</p>
             <p className="text-end">{property.property_type}</p>
             <p>En suite:</p>
-            <p className=" text-end">{property.ensuite ? "Yes" : "No"}</p>
+            <p className=" text-end" data-testid="badge-ensuite">
+              {property.ensuite ? "Yes" : "No"}
+            </p>
             <p>Bed Type:</p>
             <p className=" text-end">{property.bed_type}</p>
             <p>Wifi:</p>
-            <p className="text-end">{property.wifi ? "Yes" : "No"}</p>
+            <p className="text-end" data-testid="badge-wifi">
+              {property.wifi ? "Yes" : "No"}
+            </p>
             <p>Pet Friendly</p>
-            <p className="text-end">{property.pets ? "Yes" : "No"}</p>
+            <p className="text-end" data-testid="badge-pets">
+              {property.pets ? "Yes" : "No"}
+            </p>
           </div>
         </div>
 

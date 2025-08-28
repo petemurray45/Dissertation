@@ -58,6 +58,7 @@ function SearchDrawer() {
     <div className=" w-full px-14 sm:px-10 mx-auto mt-5 font-raleway mb-10">
       <button
         onClick={() => setOpen(!open)}
+        data-testid="open-drawer"
         className="w-full bg-[#02343F] text-white px-4 py-3 rounded-t-lg text-center text-2xl flex justify-center items-center font-semibold"
       >
         {open ? (
@@ -94,6 +95,7 @@ function SearchDrawer() {
                 </div>
                 <select
                   name="sortBy"
+                  data-testid="sort-select"
                   className="select select-bordered w-full pl-10"
                   placeholder="Low to high"
                   value={pendingFilters.sortBy}
@@ -195,6 +197,7 @@ function SearchDrawer() {
 
                 <select
                   name="property_type"
+                  data-testid="filter-prop-type"
                   className="select select-bordered w-full pl-10"
                   placeholder="Pick a bed type"
                   value={pendingFilters.property_type}
@@ -225,6 +228,7 @@ function SearchDrawer() {
                 </div>
                 <select
                   name="ensuite"
+                  data-testid="filter-ensuite"
                   className="select select-bordered w-full pl-10"
                   value={pendingFilters.ensuite}
                   onChange={(e) => {
@@ -232,8 +236,8 @@ function SearchDrawer() {
                   }}
                 >
                   <option className="font-raleway" disabled selected></option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
                 </select>
               </div>
             </div>

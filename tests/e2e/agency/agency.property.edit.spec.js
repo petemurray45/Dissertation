@@ -207,6 +207,11 @@ test.describe("Agency edit seeded properties", () => {
     await page.getByTestId("delete-property").click();
 
     await del;
+
+    await expect(page.getByTestId("toast-delete")).toBeVisible({
+      timeout: 2000,
+    });
+
     await expect(page).toHaveURL(/\/agency\/dashboard/);
 
     // The original seeded title should no longer be present

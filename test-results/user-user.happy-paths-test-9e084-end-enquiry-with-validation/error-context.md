@@ -1,0 +1,82 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - navigation [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e8]: Test User
+      - list [ref=e10]:
+        - listitem [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /home
+        - listitem [ref=e13]:
+          - link "Search" [ref=e14] [cursor=pointer]:
+            - /url: /properties
+        - listitem [ref=e15]:
+          - link "PropPal" [ref=e16] [cursor=pointer]:
+            - /url: /propPal
+        - listitem [ref=e17]:
+          - link "Profile" [ref=e18] [cursor=pointer]:
+            - /url: /profile
+      - button "Logout" [ref=e20] [cursor=pointer]
+  - button "Back to search" [ref=e22] [cursor=pointer]:
+    - img [ref=e23] [cursor=pointer]
+    - text: Back to search
+  - generic [ref=e25]:
+    - img "Property image 1" [ref=e29]
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - heading "Leeds," [level=1] [ref=e35]
+          - heading "UK" [level=1] [ref=e36]
+        - heading "£950.00" [level=1] [ref=e38]
+      - generic [ref=e40]:
+        - paragraph [ref=e41]: "Price:"
+        - paragraph [ref=e42]: £950.00
+        - paragraph [ref=e43]: "Property Type:"
+        - paragraph [ref=e44]: Bungalow
+        - paragraph [ref=e45]: "En suite:"
+        - paragraph [ref=e46]: "Yes"
+        - paragraph [ref=e47]: "Bed Type:"
+        - paragraph [ref=e48]: Single
+        - paragraph [ref=e49]: "Wifi:"
+        - paragraph [ref=e50]: "Yes"
+        - paragraph [ref=e51]: Pet Friendly
+        - paragraph [ref=e52]: "Yes"
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - heading "Like this property?" [level=1] [ref=e55]
+          - paragraph [ref=e56]: Save it for later.
+        - button [ref=e58] [cursor=pointer]:
+          - img [ref=e59] [cursor=pointer]
+  - generic [ref=e63]:
+    - heading "About Leeds, UK" [level=1] [ref=e65]
+    - generic [ref=e66]: Compact studio close to transport.
+  - generic [ref=e70]:
+    - button "Plan your routes" [ref=e71] [cursor=pointer]
+    - button "Places nearby" [ref=e73] [cursor=pointer]
+    - button "Make a note" [ref=e75] [cursor=pointer]
+    - button "Enquire about this room" [ref=e77] [cursor=pointer]
+  - generic [ref=e80]:
+    - heading "Make an enquiry by filling out our enquiry request form below." [level=1] [ref=e81]
+    - generic [ref=e82]:
+      - generic [ref=e83]:
+        - generic [ref=e85]: "Full Name:"
+        - generic [ref=e86]:
+          - generic:
+            - img
+          - textbox "Enter full name" [ref=e87]: Test User
+      - generic [ref=e88]:
+        - generic [ref=e90]: "Your email:"
+        - generic [ref=e91]:
+          - generic:
+            - img
+          - textbox [ref=e92]: testuser@example.com
+      - generic [ref=e93]:
+        - generic [ref=e95]: "Message:"
+        - generic [ref=e96]:
+          - generic:
+            - img
+          - textbox "Write your message here..." [ref=e97]
+      - button "Submit" [ref=e99] [cursor=pointer]
+```

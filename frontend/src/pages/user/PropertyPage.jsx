@@ -163,6 +163,7 @@ function PropertyPage() {
             <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10  md:my-[4%] px-4 sm:px-6 md:px-10 scroll-mt-24 "
               id="results"
+              data-testid="listing-grid"
               ref={resultsRef}
             >
               {Array.isArray(propertyList) &&

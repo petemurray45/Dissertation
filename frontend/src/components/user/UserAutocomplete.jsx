@@ -1,12 +1,38 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
-import { debounce } from "lodash"; // This import is not used
-import axios from "axios"; // This import is not used
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
 
-const LocationAutocomplete = ({ onPlaceSelect, className = "" }) => {
+const LocationAutocomplete = ({
+  onPlaceSelect,
+  className = "",
+  placeholder = "Enter a location",
+  dataTestId = "hero-location",
+}) => {
+  const isTestMode =
+    typeof window !== "undefined" && localStorage.getItem("E2E") === "1";
+
+  const [val, setVal] = useState("");
+  if (isTestMode) {
+    return (
+      <input
+        data-testid={dataTestId}
+        className={`input input-bordered w-full ${className}`}
+        placeholder={placeholder}
+        value={val}
+        onChange={(e) => {
+          const v = e.target.value;
+          setVal(v);
+          onPlaceSelect?.({
+            location: v,
+            latitude: 54.597,
+            longitude: -5.93,
+          });
+        }}
+      />
+    );
+  }
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
@@ -36,16 +62,27 @@ const LocationAutocomplete = ({ onPlaceSelect, className = "" }) => {
         onPlaceSelect(locationData);
       });
     }
+    return () => {
+      if (listener && listener.remove) listener.remove();
+    };
   }, [isLoaded, onPlaceSelect]);
 
   if (!isLoaded) {
-    return <div>Loading maps...</div>;
+    return (
+      <input
+        disabled
+        data-testid={dataTestId}
+        className={`input input-bordered w-full ${className}`}
+        placeholder="Loading maps…"
+      />
+    );
   }
 
   return (
     <input
       type="text"
-      placeholder="Enter location"
+      data-testid={dataTestId}
+      placeholder={placeholder}
       ref={inputRef}
       className={`input input-bordered w-full pl-10 font-raleway ${className}`}
     />

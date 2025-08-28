@@ -19,6 +19,7 @@ function Description({ property }) {
           leading-relaxed md:leading-loose
           text-gray-800 font-raleway
           whitespace-pre-line break-words hyphens-auto"
+            data-testid="property-description"
           >
             {property.description}
           </div>

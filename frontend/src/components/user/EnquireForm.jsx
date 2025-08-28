@@ -14,6 +14,9 @@ function EnquireForm({ property }) {
   const [submitted, setSubmitted] = useState(false);
   const { addEnquiry } = useListingStore();
 
+  const isTestMode =
+    typeof window !== "undefined" && localStorage.getItem("E2E") === "1";
+
   useEffect(() => {
     if (user) {
       setEmail(user.email);
@@ -23,6 +26,22 @@ function EnquireForm({ property }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // chose email depending on logged in state
+    const emailToCheck = user?.email ?? email;
+
+    // regex validation
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToCheck);
+
+    if (!isValidEmail) {
+      toast.error(
+        <span data-testid="toast-invalid-email">
+          Please enter a valid email address
+        </span>
+      );
+      return; // stop submission
+    }
+
     try {
       const payload = {
         property_id: property.id,
@@ -33,7 +52,9 @@ function EnquireForm({ property }) {
       };
       const res = await addEnquiry(payload);
       toast.success(
-        "Enquiry Submitted! You should recieve a confirmation email shortly."
+        <span data-testid="toast-enquiry-sent">
+          Enquiry Submitted! You should receive a confirmation email shortly.
+        </span>
       );
       setSubmitted(true);
       console.log("Enquiry submitted");
@@ -77,8 +98,9 @@ function EnquireForm({ property }) {
               </div>
               <input
                 className="input py-1 focus:input-primary transition-colors duration-200 input-bordered w-[30%] px-12 sm:h-12 md:h-16 sm:text-xl md:text-2xl"
+                data-testid="enquiry-name"
                 value={user ? user.name : name}
-                disabled={user}
+                disabled={!isTestMode && user}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter full name"
               />
@@ -103,8 +125,9 @@ function EnquireForm({ property }) {
                 />
               ) : (
                 <input
+                  data-testid="enquiry-email"
                   className="input pl-12 py-1 focus:input-primary transition-colors duration-200 input-bordered w-full px-12 sm:h-12 md:h-16 md:text-2xl sm:text-xl text-gray-800"
-                  disabled={user}
+                  disabled={!isTestMode && user}
                   type="text"
                   value={user.email}
                 />
@@ -124,6 +147,7 @@ function EnquireForm({ property }) {
               </div>
               <textarea
                 className="textarea textarea-bordered w-full px-12 py-5 sm:text-xl md:text-2xl resize-none h-52 md:h-80"
+                data-testid="enquiry-message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Write your message here..."
@@ -134,6 +158,7 @@ function EnquireForm({ property }) {
           <div className="flex w-full justify-end">
             <button
               type="submit"
+              data-testid="enquiry-submit"
               className="sm:w-36 md:w-44 sm:h-12 md:h-16 rounded-md bg-[#02343F] text-white md:text-2xl sm:text-xl hover:bg-[#F0EDCC] hover:text-black"
             >
               Submit

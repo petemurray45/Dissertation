@@ -74,6 +74,10 @@ function AgencyEditProperty() {
     if (window.confirm("Are you sure you want to delete this property?")) {
       try {
         await deleteProperty(id, agencyToken);
+        toast.success(
+          <span data-testid="toast-delete">Property Deleted!</span>
+        );
+        navigate("/agency/dashboard");
       } catch (err) {
         console.error("Failed to delete property", err);
         toast.error("Something went wrong with the deletion.");
