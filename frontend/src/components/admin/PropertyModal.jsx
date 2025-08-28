@@ -108,15 +108,18 @@ function PropertyModal({
 
     try {
       await onSubmit(finalPayload);
+      // one toast only, with a stable id for de-duping
       toast.success(
         <span data-testid="toast-prop-saved">
           {isEdit ? "Property updated!" : "Property added!"}
-        </span>
+        </span>,
+        { id: "prop-save" }
       );
+      // give the toast time to render before we unmount this component
       setTimeout(() => {
-        onClose();
-      }, 1000);
-      navigate(backTo);
+        onClose?.();
+        navigate(backTo);
+      }, 1200); // 1.2s is enough for UX + tests
     } catch (err) {
       console.error("Submit error", err);
       toast.error("Something went wrong");
@@ -134,7 +137,10 @@ function PropertyModal({
   const priceValid = /^\d+(\.\d{1,2})?$/.test(priceStr);
 
   return (
-    <div className="card bg-base-100 w-full">
+    <div
+      className="card bg-base-100 w-full"
+      data-testid="agency-property-modal"
+    >
       <Toaster
         position="top-center"
         containerClassName="!absolute !top-0"
@@ -168,6 +174,7 @@ function PropertyModal({
                   className="relative rounded-lg overflow-hidden aspect-[4/3] w-full max-w-[400px] shadow-lg"
                 >
                   <button
+                    type="button"
                     onClick={() => handleDeleteImage(index)}
                     className="absolute top-2 right-2 z-10 bg-white text-black-600 font-bold rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-100"
                   >

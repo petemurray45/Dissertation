@@ -32,6 +32,11 @@ test.describe("agency dashboard", () => {
     // click add property button
     await page.getByRole("button", { name: /add property/i }).click();
 
+    // ensure on form field
+    await expect(page).toHaveURL(/\/agency\/addproperty$/);
+    const modal = page.getByTestId("agency-property-modal");
+    await expect(modal).toBeVisible();
+
     //fill out form fields
     await page.getByTestId("prop-title").fill("E2E Test Property");
     await page.getByTestId("prop-price").fill("750");

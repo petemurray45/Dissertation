@@ -209,28 +209,63 @@ export const updateProperty = async (req, res) => {
     location,
     latitude,
     longitude,
-    imageUrls,
+    existingImageUrls,
+    newImageUrls,
   } = req.body;
-
-  console.log("propertyType:", propertyType, typeof propertyType);
-  console.log(
-    "Char codes:",
-    propertyType.split("").map((c) => c.charCodeAt(0))
-  );
 
   try {
     const updatedProperty = await sql`
-      UPDATE properties SET title=${title}, description=${description}, price_per_month=${price_per_month},  location=${location}, latitude=${latitude}, longitude=${longitude}, ensuite=${ensuite}, bed_type=${bedType}, wifi=${wifi}, pets=${pets}, property_type=${propertyType} WHERE id=${id} RETURNING *`;
+      UPDATE properties 
+      SET 
+        title = ${title}, 
+        description = ${description}, 
+        price_per_month = ${price_per_month},  
+        location = ${location}, 
+        latitude = ${latitude}, 
+        longitude = ${longitude}, 
+        ensuite = ${ensuite}, 
+        bed_type = ${bedType}, 
+        wifi = ${wifi}, 
+        pets = ${pets}, 
+        property_type = ${propertyType} 
+      WHERE id = ${id} 
+      RETURNING *`;
 
     if (updatedProperty.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "Property not found" });
     }
+
+    // Correct syntax for handling array in `NOT IN` clause
+    if (existingImageUrls && existingImageUrls.length > 0) {
+      await sql`
+        DELETE FROM images 
+        WHERE property_id = ${id} AND image_url NOT IN (${sql(existingImageUrls)})
+      `;
+    } else {
+      // If the array is empty, delete all images for this property.
+      await sql`
+        DELETE FROM images 
+        WHERE property_id = ${id}
+      `;
+    }
+
+    if (newImageUrls && newImageUrls.length > 0) {
+      const newImages = newImageUrls.map((url) => ({
+        property_id: id,
+        image_url: url,
+      }));
+      await sql`
+          INSERT INTO images ${sql(newImages)}
+        `;
+    }
     res.status(200).json({ success: true, data: updatedProperty[0] });
   } catch (err) {
-    console.log("Error updating product", err);
-    res.status(500).json({ success: false, message: "Error updating product" });
+    console.error("Error updating property", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating property" });
   }
 };
 

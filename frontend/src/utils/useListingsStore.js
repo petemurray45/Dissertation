@@ -364,10 +364,28 @@ export const useListingStore = create((set, get) => ({
   updateProperty: async (id, payload, token) => {
     set({ loading: true });
     try {
+      const { formData } = get();
+
+      // Separate images into existing and new
+      const existingImageUrls = formData.images
+        .filter((img) => img.isExisting)
+        .map((img) => img.url);
+
+      const newImageUrls = formData.images
+        .filter((img) => !img.isExisting)
+        .map((img) => img.url);
+
+      // Create a new payload that includes the separated image URLs
+      const updatedPayload = {
+        ...payload,
+        existingImageUrls, // Tell the backend which ones to keep
+        newImageUrls, // Tell the backend which ones to add
+      };
+
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.put(
         `${BASE_URL}/api/properties/${id}`,
-        payload,
+        updatedPayload,
         { headers }
       );
       const updated =
@@ -378,7 +396,6 @@ export const useListingStore = create((set, get) => ({
         ),
         currentProperty: updated,
       }));
-      toast.success("Property updated successfully");
     } catch (err) {
       console.log("Error updating property");
       toast.error("Something went wrong");

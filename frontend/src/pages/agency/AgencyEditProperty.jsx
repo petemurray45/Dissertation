@@ -64,8 +64,6 @@ function AgencyEditProperty() {
   const handleSubmit = async (payload) => {
     try {
       await updateProperty(id, payload, agencyToken);
-      toast.success("Property updated successfully!");
-      navigate("/agency/dashboard");
     } catch (err) {
       console.error("Failed to update property", err);
       toast.error("Something went wrong with the update.");
@@ -76,10 +74,6 @@ function AgencyEditProperty() {
     if (window.confirm("Are you sure you want to delete this property?")) {
       try {
         await deleteProperty(id, agencyToken);
-        toast.success("Property deleted successfully!", { id: "delete-toast" });
-        setTimeout(() => {
-          navigate("/agency/dashboard");
-        }, 1000);
       } catch (err) {
         console.error("Failed to delete property", err);
         toast.error("Something went wrong with the deletion.");
@@ -113,8 +107,11 @@ function AgencyEditProperty() {
   return (
     <>
       <AdminNavBar />
-      <Toaster />
-      <div className="container mx-auto px-4 py-6">
+
+      <div
+        className="container mx-auto px-4 py-6"
+        data-testid="agency-edit-prop"
+      >
         <h2 className="text-4xl mb-6">Edit Property</h2>
         <PropertyModal
           initial={mapPropertyToForm(property)}
@@ -123,6 +120,7 @@ function AgencyEditProperty() {
           onDelete={handleDelete}
           onClose={onClose}
           showAgencyPicker={false}
+          backTo="/agency/dashboard"
         />
       </div>
     </>
