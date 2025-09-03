@@ -12,10 +12,10 @@ import { fetchAgencyEnquiries } from "../controllers/agencyController.js";
 import { updateEnquiryStatus } from "../controllers/agencyController.js";
 const router = express.Router();
 
-router.post("/registerAgency", registerAgency);
-router.post("/agencyLogin", agencyLogin);
+router.post("/registeragency", registerAgency);
+router.post("/agencylogin", agencyLogin);
 router.get(
-  "/:id/agencyProperties",
+  "/:id/agencyproperties",
   requireAuth("agent", "admin"),
   ensureSelfOrAdmin,
   fetchPropertyByAgency

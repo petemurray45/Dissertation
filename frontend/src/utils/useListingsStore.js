@@ -410,7 +410,7 @@ export const useListingStore = create((set, get) => ({
     try {
       console.log("Payload recieved", payload);
       const res = await axios.post(
-        `${BASE_URL}/api/properties/insert-enquiry`,
+        `${BASE_URL}/api/properties/enquiries`,
         payload
       );
       if (!res.data.success)

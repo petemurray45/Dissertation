@@ -14,10 +14,10 @@ import { getEnquiries } from "../controllers/propertyControllers.js";
 const router = express.Router();
 
 // likes
-router.get("/checkLikes", requireAuth("user"), checkLikes);
+router.get("/likes", requireAuth("user"), checkLikes);
 router.post("/likes", requireAuth("user"), addToLikes);
 router.get("/getLikes", requireAuth("user"), getAllLikedProperties);
-router.delete("/removelike", requireAuth("user"), removeLike);
+router.delete("/like", requireAuth("user"), removeLike);
 
 //enquiries
 router.get("/enquiries", requireAuth("user"), getEnquiries);

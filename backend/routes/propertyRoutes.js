@@ -20,8 +20,8 @@ router.post("/travel-time", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 
 router.get("/places", getPlaces);
-router.post("/insert-enquiry", insertEnquiries);
-router.get("/get-enquiry", getEnquiries);
+router.post("/enquiries", insertEnquiries);
+router.get("/enquiries", getEnquiries);
 router.get("/search", searchWithRadius);
 
 // protected

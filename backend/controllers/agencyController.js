@@ -46,7 +46,7 @@ export const agencyLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "2hr" }
     );
-    res.json({ token, agency });
+    res.status(200).json({ token, agency });
   } catch (err) {
     console.error("Error logging in", err);
     res.status(500).json({ error: "Login failed" });
@@ -104,7 +104,7 @@ export const fetchPropertyByAgency = async (req, res) => {
       imageUrls: imgsByProp.get(Number(p.id)) ?? [],
     }));
 
-    return res.json({
+    return res.status(200).json({
       properties: propertiesWithImages,
       totalCount,
       page,
@@ -126,7 +126,7 @@ export const getAgencyMe = async (req, res) => {
       return res.status(404).json({ error: "Agency not found" });
 
     const agency = rows[0];
-    return res.json({ agency });
+    return res.status(200).json({ agency });
   } catch (err) {
     console.error("Error in agency/me", err);
     return res.status(500).json({ error: "Failed to fetch agency" });
@@ -139,7 +139,7 @@ export const listAgencies = async (req, res) => {
         SELECT id, agency_name FROM
         agencies
         ORDER BY agency_name ASC`;
-    res.json({ agencies: rows });
+    res.status(200).json({ agencies: rows });
   } catch (err) {
     console.error("Error listing agencies", err);
     res.status(500).json({ error: "Failed to fetch agencies" });
@@ -203,7 +203,7 @@ export const updateAgency = async (req, res) => {
     res.status(200).json(updatedAgency);
   } catch (err) {
     console.error("Update agency error", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to update agency" });
   }
 };
 
@@ -212,10 +212,10 @@ export const deleteAgency = async (req, res) => {
   try {
     const { rowCount } = await sql`DELETE FROM agencies WHERE id = ${agencyId}`;
     if (rowCount === 0) return res.sendStatus(404);
-    return res.sendStatus(204);
+    return res.status(200);
   } catch (err) {
     console.error("Delete agency error", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Failed to delete agency" });
   }
 };
 

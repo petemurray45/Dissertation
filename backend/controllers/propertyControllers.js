@@ -308,18 +308,21 @@ export const deleteProperty = async (req, res) => {
 export const getPropertiesWithTravelTime = async (req, res) => {
   const { destinations, modes = ["DRIVING"] } = req.body;
 
+  // checks destinations isnt emoty
   if (!Array.isArray(destinations) || destinations.length === 0) {
     return res
       .status(400)
       .json({ error: "At least one destination is required" });
   }
 
+  // normalises modes to allowed set of driving, walking cycling
   const ALLOWED = new Set(["DRIVING", "WALKING", "BICYCLING"]);
   const selectedModes = (Array.isArray(modes) ? modes : ["DRIVING"])
     .map((m) => String(m).toUpperCase().trim())
     .filter((m) => ALLOWED.has(m));
   if (selectedModes.length === 0) selectedModes.push("DRIVING");
 
+  // normalise destinations to avoid any small regressions
   const normalizeDest = (d) => {
     if (typeof d === "string") {
       return { coords: d, label: d };
@@ -364,10 +367,13 @@ export const getPropertiesWithTravelTime = async (req, res) => {
         }
 
         const origin = `${property.latitude},${property.longitude}`;
+        // normalises destinations
         const normalizedDests = destinations.map(normalizeDest);
 
         const calls = [];
+        // loop over each destination
         for (const { coords, label } of normalizedDests) {
+          // loop over each mode for each destination
           for (const mode of selectedModes) {
             const apiMode = mode.toLowerCase();
             calls.push(
@@ -459,7 +465,7 @@ export const getPlaces = async (req, res) => {
         : null,
     }));
     console.log("Google places response", response.data);
-    res.json({ places });
+    res.status(200).json({ places });
   } catch (err) {
     console.error("Error fetching places", err);
     res.status(500).json({ error: "Failed to get nearby places" });
@@ -542,7 +548,7 @@ export const getEnquiries = async (req, res) => {
         WHERE e.user_id = ${uid}
         ORDER BY e.created_at DESC
       `;
-      return res.json({ data: rows });
+      return res.status(200).json({ data: rows });
     }
 
     return res.sendStatus(403);
@@ -626,6 +632,6 @@ export const searchWithRadius = async (req, res) => {
     res.status(200).json(propertiesWithImages);
   } catch (err) {
     console.error("Search error", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Radius Search Failed" });
   }
 };

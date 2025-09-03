@@ -22,7 +22,7 @@ export const adminLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
-    res.json({
+    res.status(200).json({
       token,
       user: { id: admin.id, username: admin.username, role: "admin" },
     });

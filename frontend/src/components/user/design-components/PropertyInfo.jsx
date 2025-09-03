@@ -74,7 +74,7 @@ function PropertyInfo({
         {!user ? (
           <div className="flex flex-col sm:flex-row justify-center items-center w-full mt-5 px-4 sm:px-5 gap-3 sm:gap-7">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl">
+              <h1 className="text-xl sm:text-2xl text-gray-100">
                 Want to save this for later?
               </h1>
             </div>
@@ -109,7 +109,7 @@ function PropertyInfo({
             src={property.logo_url}
             className="h-24 w-24 md:h-36 md:w-36 rounded-2xl mt-5"
           />
-          <span className="font-raleway text-gray-100 text-xl md:text-4xl">
+          <span className="font-raleway text-gray-100 text-xl md:text-4xl items-center">
             {property.agency_name}
           </span>
         </div>

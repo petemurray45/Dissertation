@@ -63,34 +63,41 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  const result = await sql`SELECT * FROM users WHERE email = ${email}`;
-  const user = result[0];
-  if (!user)
-    return res.status(400).json({ error: "Invalid email or password" });
+  try {
+    const result = await sql`SELECT * FROM users WHERE email = ${email}`;
+    const user = result[0];
+    if (!user)
+      return res.status(400).json({ error: "Invalid email or password" });
 
-  const valid = await bcrypt.compare(password, user.password_hash);
-  if (!valid)
-    return res.status(400).json({ error: "Invalid email or password" });
-  console.log("User in login:", user);
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid)
+      return res.status(400).json({ error: "Invalid email or password" });
+    console.log("User in login:", user);
 
-  const token = jwt.sign(
-    { id: user.id, role: "user", name: user.full_name, email: user.email },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "2h",
-    }
-  );
-  console.log("JWT_SECRET in login:", process.env.JWT_SECRET);
-  res.json({
-    token,
-    user: {
-      id: user.id,
-      name: user.full_name,
-      role: "user",
-      email: user.email,
-      photoUrl: user.photo_url ?? null,
-    },
-  });
+    const token = jwt.sign(
+      { id: user.id, role: "user", name: user.full_name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
+    console.log("JWT_SECRET in login:", process.env.JWT_SECRET);
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        name: user.full_name,
+        role: "user",
+        email: user.email,
+        photoUrl: user.photo_url ?? null,
+      },
+    });
+  } catch (err) {
+    console.error("Login Error");
+    res.status(500).json({
+      error: "Invalid user details",
+    });
+  }
 };
 
 export const adminLogin = async (req, res) => {

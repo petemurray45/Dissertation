@@ -92,7 +92,7 @@ export const useUserStore = create((set, get) => ({
     if (!token) return;
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/user/checkLikes`, {
+      const res = await axios.get(`${BASE_URL}/api/user/likes`, {
         params: { propertyId: property.id },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ export const useUserStore = create((set, get) => ({
       console.log("Check like result", res.data);
 
       if (res.data.liked) {
-        await axios.delete(`${BASE_URL}/api/user/removelike`, {
+        await axios.delete(`${BASE_URL}/api/user/likes`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

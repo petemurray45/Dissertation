@@ -207,7 +207,7 @@ export const botChat = async (req, res) => {
         });
       }
     }
-    return res.json({
+    return res.status(200).json({
       reply: response.choices[0].message.content,
       properties: [],
     });
