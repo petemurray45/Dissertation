@@ -1,6 +1,6 @@
 import { jest } from "@jest/globals";
 
-// mocks
+// --- mocks (must be declared before importing the SUT) ---
 jest.unstable_mockModule("../../../backend/config/db.js", () => ({
   sql: jest.fn(),
 }));
@@ -18,7 +18,7 @@ jest.unstable_mockModule("jsonwebtoken", () => ({
   },
 }));
 
-// pull in mocks
+// pull in the mocked deps and controller under test
 const { sql } = await import("../../../backend/config/db.js");
 const bcrypt = (await import("bcrypt")).default;
 const jwt = (await import("jsonwebtoken")).default;
@@ -35,8 +35,7 @@ const {
   updateEnquiryStatus,
 } = await import("../../../backend/controllers/agencyController.js");
 
-// helpers
-
+// --- helpers ---
 function createRes() {
   const res = {};
   res.statusCode = 200;
@@ -61,13 +60,22 @@ describe("agencyController", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env = { ...OLD_ENV, JWT_SECRET: "test-secret" };
+
+    sql.mockReset();
+    bcrypt.hash.mockReset();
+    bcrypt.genSalt.mockReset();
+    bcrypt.compare.mockReset();
+    jwt.sign.mockReset();
+    jwt.verify.mockReset();
+
+    process.env.JWT_SECRET = "test-secret";
   });
 
   afterAll(() => {
     process.env = OLD_ENV;
   });
 
+  // ---------- registerAgency ----------
   describe("registerAgency", () => {
     test("201 + token + agency on success", async () => {
       bcrypt.hash.mockResolvedValueOnce("hashed-login-id");
@@ -76,7 +84,7 @@ describe("agencyController", () => {
           id: 99,
           agency_name: "Acme",
           agency_email: "a@acme.com",
-          phone: "123",
+          phone: "0123456",
           website: "acme.test",
           logo_url: null,
         },
@@ -87,7 +95,7 @@ describe("agencyController", () => {
         body: {
           agency_name: "Acme",
           agency_email: "a@acme.com",
-          phone: "123",
+          phone: "0123456",
           loginId: "secret",
           website: "acme.test",
         },
@@ -97,7 +105,7 @@ describe("agencyController", () => {
       await registerAgency(req, res);
 
       expect(bcrypt.hash).toHaveBeenCalledWith("secret", 10);
-      expect(sql).toHaveBeenCalled(); // tagged template: avoid strict arg check
+      expect(sql).toHaveBeenCalled();
       expect(jwt.sign).toHaveBeenCalledWith(
         { agencyId: 99, role: "agent" },
         "test-secret",
@@ -123,18 +131,19 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- agencyLogin ----------
   describe("agencyLogin", () => {
-    test("400 when agency not found", async () => {
-      sql.mockResolvedValueOnce([]); // SELECT agency by name -> none
+    test("401 when agency not found", async () => {
+      sql.mockResolvedValueOnce([]); // none
       const req = { body: { agency_name: "Acme", loginId: "pw" } };
       const res = createRes();
 
       await agencyLogin(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(401);
       expect(res.body).toEqual({ error: "Invalid credentials" });
     });
 
-    test("400 when loginId mismatch", async () => {
+    test("401 when loginId mismatch", async () => {
       sql.mockResolvedValueOnce([{ id: 1, login_id_hash: "hash" }]);
       bcrypt.compare.mockResolvedValueOnce(false);
 
@@ -142,7 +151,7 @@ describe("agencyController", () => {
       const res = createRes();
 
       await agencyLogin(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(401);
       expect(res.body).toEqual({ error: "Invalid credentials" });
     });
 
@@ -162,6 +171,7 @@ describe("agencyController", () => {
         "test-secret",
         { expiresIn: "2hr" }
       );
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         token: "jwt",
         agency: expect.objectContaining({ id: 1 }),
@@ -177,27 +187,26 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- fetchPropertyByAgency ----------
   describe("fetchPropertyByAgency", () => {
     test("200 with properties + images + pagination", async () => {
-      // 1) properties
       sql
         .mockResolvedValueOnce([
           { id: 10, title: "P1", agency_id: 5 },
           { id: 11, title: "P2", agency_id: 5 },
-        ])
-        // 2) count
-        .mockResolvedValueOnce([{ count: 2 }])
-        // 3) images
+        ]) // properties
+        .mockResolvedValueOnce([{ count: 2 }]) // count
         .mockResolvedValueOnce([
           { property_id: 10, image_url: "img-a" },
           { property_id: 10, image_url: "img-b" },
           { property_id: 11, image_url: "img-c" },
-        ]);
+        ]); // images
 
       const req = { params: { id: "5" }, query: { page: "1", limit: "6" } };
       const res = createRes();
 
       await fetchPropertyByAgency(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           properties: expect.arrayContaining([
@@ -233,6 +242,7 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- getAgencyMe ----------
   describe("getAgencyMe", () => {
     test("401 when no auth", async () => {
       const res = createRes();
@@ -253,6 +263,7 @@ describe("agencyController", () => {
       sql.mockResolvedValueOnce([{ id: 1, agency_name: "A" }]);
       const res = createRes();
       await getAgencyMe({ auth: { agencyId: 1 } }, res);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         agency: { id: 1, agency_name: "A" },
       });
@@ -267,11 +278,13 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- listAgencies ----------
   describe("listAgencies", () => {
     test("200 with agencies", async () => {
       sql.mockResolvedValueOnce([{ id: 1, agency_name: "A" }]);
       const res = createRes();
       await listAgencies({}, res);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         agencies: [{ id: 1, agency_name: "A" }],
       });
@@ -286,13 +299,14 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- updateAgency ----------
   describe("updateAgency", () => {
-    test("404 when current agency not found", async () => {
+    test("403 when current agency not found", async () => {
       sql.mockResolvedValueOnce([]); // SELECT *
       const res = createRes();
       await updateAgency({ auth: { agencyId: 9 }, body: {} }, res);
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.body).toEqual({ error: "Agency not found." });
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.body).toEqual({ error: "Forbidden" });
     });
 
     test("400 when changing password without current", async () => {
@@ -324,17 +338,24 @@ describe("agencyController", () => {
       expect(res.body).toEqual({ error: "Invalid current password" });
     });
 
-    test("200 updates fields without password change", async () => {
+    test("200 updates fields without password change (valid phone/email)", async () => {
       sql
         .mockResolvedValueOnce([
-          { id: 1, login_id_hash: "hash", agency_name: "Old" },
+          {
+            id: 1,
+            login_id_hash: "hash",
+            agency_name: "Old",
+            phone: "0123456",
+            agency_email: "a@b.c",
+            website: "",
+          },
         ])
         .mockResolvedValueOnce([
           {
             id: 1,
             agency_name: "New",
             agency_email: "e@x.com",
-            phone: "123",
+            phone: "0123456",
             logo_url: null,
             website: "w",
           },
@@ -347,7 +368,7 @@ describe("agencyController", () => {
           body: {
             agency_name: "New",
             agency_email: "e@x.com",
-            phone: "123",
+            phone: "0123456", // >= 7 chars to satisfy validation
             website: "w",
           },
         },
@@ -355,19 +376,28 @@ describe("agencyController", () => {
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.body).toEqual(
-        expect.objectContaining({ id: 1, agency_name: "New", phone: "123" })
+        expect.objectContaining({ id: 1, agency_name: "New", phone: "0123456" })
       );
     });
 
     test("200 with password change path", async () => {
       sql
-        .mockResolvedValueOnce([{ id: 1, login_id_hash: "oldHash" }]) // SELECT *
+        .mockResolvedValueOnce([
+          {
+            id: 1,
+            login_id_hash: "oldHash",
+            agency_name: "Old",
+            phone: "0123456",
+            agency_email: "a@b.c",
+            website: "",
+          },
+        ]) // SELECT *
         .mockResolvedValueOnce([
           {
             id: 1,
             agency_name: "Old",
             agency_email: "a@b.c",
-            phone: "1",
+            phone: "0123456",
             logo_url: null,
             website: "",
           },
@@ -398,16 +428,17 @@ describe("agencyController", () => {
       const res = createRes();
       await updateAgency({ auth: { agencyId: 1 }, body: {} }, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.body).toEqual({ error: "Server error" });
+      expect(res.body).toEqual({ error: "Failed to update agency" });
     });
   });
 
+  // ---------- deleteAgency ----------
   describe("deleteAgency", () => {
-    test("204 on success", async () => {
+    test("200 on success", async () => {
       sql.mockResolvedValueOnce({ rowCount: 1 });
       const res = createRes();
       await deleteAgency({ auth: { agencyId: 3 } }, res);
-      expect(res.sendStatus).toHaveBeenCalledWith(204);
+      expect(res.status).toHaveBeenCalledWith(200);
     });
 
     test("404 when not found", async () => {
@@ -422,10 +453,11 @@ describe("agencyController", () => {
       const res = createRes();
       await deleteAgency({ auth: { agencyId: 3 } }, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.body).toEqual({ error: "Server error" });
+      expect(res.body).toEqual({ error: "Failed to delete agency" });
     });
   });
 
+  // ---------- fetchAgencyEnquiries ----------
   describe("fetchAgencyEnquiries", () => {
     test("200 with data + meta", async () => {
       sql
@@ -458,7 +490,7 @@ describe("agencyController", () => {
           totalCount: 1,
         })
       );
-      expect(Array.isArray(res.body.data)).toBe(true); // controller returns 'data: enquiries'
+      expect(Array.isArray(res.body.data)).toBe(true);
     });
 
     test("500 on error", async () => {
@@ -473,6 +505,7 @@ describe("agencyController", () => {
     });
   });
 
+  // ---------- updateEnquiryStatus ----------
   describe("updateEnquiryStatus", () => {
     test("400 on invalid status", async () => {
       const res = createRes();
@@ -502,7 +535,7 @@ describe("agencyController", () => {
     });
 
     test("404 when no row returned", async () => {
-      sql.mockResolvedValueOnce([undefined]); // UPDATE RETURNING -> none
+      sql.mockResolvedValueOnce([undefined]);
       const res = createRes();
       await updateEnquiryStatus(
         {

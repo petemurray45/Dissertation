@@ -54,14 +54,10 @@ export const canManageProperty = async (req, res, next) => {
 };
 
 export const attachAgencyOnCreate = (req, res, next) => {
-  const { role, agencyId } = req.auth || {};
-  if (role === "admin") return next();
-
-  if (req.body.agency_id && String(req.body.agency_id) !== String(agencyId)) {
-    return res
-      .status(403)
-      .json({ error: "Forbidden: Cannot create for another agency" });
+  if (req.auth?.role === "agent") {
+    req.body = req.body || {};
+    req.body.agency_id = req.auth.agencyId;
   }
-  req.body.agency_id = agencyId;
+
   next();
 };

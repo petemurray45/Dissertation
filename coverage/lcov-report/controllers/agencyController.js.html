@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98.86% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>341/341</span>
+                <span class='fraction'>347/351</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.82% </span>
+                <span class="strong">91.93% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>55/58</span>
+                <span class='fraction'>57/62</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98.86% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>341/341</span>
+                <span class='fraction'>347/351</span>
             </div>
         
             
@@ -404,7 +404,17 @@
 <a name='L339'></a><a href='#L339'>339</a>
 <a name='L340'></a><a href='#L340'>340</a>
 <a name='L341'></a><a href='#L341'>341</a>
-<a name='L342'></a><a href='#L342'>342</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -566,6 +576,16 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -783,17 +803,17 @@ export const agencyLogin = async (req, res) =&gt; {
       await sql`SELECT * FROM agencies WHERE agency_name = ${agency_name}`;
     const agency = result[0];
 &nbsp;
-    if (!agency) return res.status(400).json({ error: "Invalid credentials" });
+    if (!agency) return res.status(401).json({ error: "Invalid credentials" });
 &nbsp;
     const valid = await bcrypt.compare(loginId, agency.login_id_hash);
-    if (!valid) return res.status(400).json({ error: "Invalid credentials" });
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 &nbsp;
     const token = jwt.sign(
       { agencyId: agency.id, role: "agent" },
       process.env.JWT_SECRET,
       { expiresIn: "2hr" }
     );
-    res.json({ token, agency });
+    res.status(200).json({ token, agency });
   } catch (err) {
     console.error("Error logging in", err);
     res.status(500).json({ error: "Login failed" });
@@ -851,7 +871,7 @@ export const fetchPropertyByAgency = async (req, res) =&gt; {
       imageUrls: imgsByProp.get(Number(p.id)) <span class="branch-0 cbranch-no" title="branch not covered" >?? [],</span>
     }));
 &nbsp;
-    return res.json({
+    return res.status(200).json({
       properties: propertiesWithImages,
       totalCount,
       page,
@@ -873,7 +893,7 @@ export const getAgencyMe = async (req, res) =&gt; {
       return res.status(404).json({ error: "Agency not found" });
 &nbsp;
     const agency = rows[0];
-    return res.json({ agency });
+    return res.status(200).json({ agency });
   } catch (err) {
     console.error("Error in agency/me", err);
     return res.status(500).json({ error: "Failed to fetch agency" });
@@ -886,7 +906,7 @@ export const listAgencies = async (req, res) =&gt; {
         SELECT id, agency_name FROM
         agencies
         ORDER BY agency_name ASC`;
-    res.json({ agencies: rows });
+    res.status(200).json({ agencies: rows });
   } catch (err) {
     console.error("Error listing agencies", err);
     res.status(500).json({ error: "Failed to fetch agencies" });
@@ -908,12 +928,22 @@ export const updateAgency = async (req, res) =&gt; {
   console.log("updateAgency agencyId=", req.auth?.agencyId);
   console.log("updateAgency body.logo_url=", req.body?.logo_url);
 &nbsp;
+  // check valid email and phone inputs
+&nbsp;
+  if (agency_email &amp;&amp; !agency_email.includes("@")) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ error: "Invalid email" });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+&nbsp;
+  if (phone &amp;&amp; phone.length &lt; 7) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ error: "Invalid phone number" });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+&nbsp;
   try {
     const response = await sql`SELECT * FROM agencies WHERE id = ${agencyId}`;
     const agency = response[0];
 &nbsp;
     if (!agency) {
-      return res.status(404).json({ error: "Agency not found." });
+      return res.status(403).json({ error: "Forbidden" });
     }
 &nbsp;
     let login_id_hashed = agency.login_id_hash;
@@ -950,7 +980,7 @@ export const updateAgency = async (req, res) =&gt; {
     res.status(200).json(updatedAgency);
   } catch (err) {
     console.error("Update agency error", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to update agency" });
   }
 };
 &nbsp;
@@ -959,10 +989,10 @@ export const deleteAgency = async (req, res) =&gt; {
   try {
     const { rowCount } = await sql`DELETE FROM agencies WHERE id = ${agencyId}`;
     if (rowCount === 0) return res.sendStatus(404);
-    return res.sendStatus(204);
+    return res.status(200);
   } catch (err) {
     console.error("Delete agency error", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Failed to delete agency" });
   }
 };
 &nbsp;
@@ -1093,7 +1123,7 @@ export const updateEnquiryStatus = async (req, res) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-29T11:14:53.855Z
+                at 2025-09-04T18:53:59.878Z
             </div>
         <script src="../prettify.js"></script>
         <script>

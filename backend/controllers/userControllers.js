@@ -12,7 +12,7 @@ export const checkLikes = async (req, res) => {
     const result =
       await sql`SELECT 1 FROM likes WHERE user_id = ${uid} AND property_id = ${propertyId}`;
     console.log("liked?", result);
-    res.json({ liked: result.length > 0 });
+    res.status(200).json({ liked: result.length > 0 });
   } catch (err) {
     console.log("Error checking like", err);
     res.status(500).json({ message: "Internal Server Error" });
@@ -72,8 +72,13 @@ export const removeLike = async (req, res) => {
 };
 
 export const addNote = async (req, res) => {
-  console.log("POST /notes hit");
-  const { property_id, content } = req.body;
+  const property_id =
+    req.params.property_id ??
+    req.params.propertyId ??
+    req.body?.property_id ??
+    req.body?.propertyId;
+
+  const { content } = req.body ?? {};
   const uid = req.auth?.userId ?? req.auth?.id ?? null;
 
   if (!uid || !property_id || !content) {
@@ -81,8 +86,12 @@ export const addNote = async (req, res) => {
   }
 
   try {
-    await sql`INSERT INTO notes (user_id, property_id, content) VALUES (${uid}, ${property_id}, ${content})`;
-    res.status(201).json({ success: true });
+    const [note] = await sql`
+      INSERT INTO notes (user_id, property_id, content)
+      VALUES (${uid}, ${property_id}, ${content})
+      RETURNING id, user_id, property_id, content, created_at
+    `;
+    return res.status(201).json({ note });
   } catch (err) {
     console.log("Error adding note", err);
     return res.status(500).json({ error: "Failed to add note" });
@@ -90,7 +99,7 @@ export const addNote = async (req, res) => {
 };
 
 export const getNotes = async (req, res) => {
-  const { property_id } = req.params;
+  const property_id = req.params.property_id ?? req.params.propertyId;
 
   const uid = req.auth?.userId ?? req.auth?.id ?? null;
 
@@ -99,13 +108,16 @@ export const getNotes = async (req, res) => {
   }
 
   try {
-    const result =
-      await sql`SELECT * FROM notes WHERE user_id = ${uid} AND property_id = ${property_id}`;
-    console.log(result);
-    res.json(result);
+    const notes = await sql`
+      SELECT id, user_id, property_id, content, created_at
+      FROM notes
+      WHERE user_id = ${uid} AND property_id = ${property_id}
+      ORDER BY created_at
+    `;
+    return res.status(200).json({ notes });
   } catch (err) {
     console.error("Error getting notes", err);
-    res.status(500).json({ error: "Failed to fetch notes" });
+    return res.status(500).json({ error: "Failed to fetch notes" });
   }
 };
 
@@ -131,7 +143,7 @@ export const getAllNotes = async (req, res) => {
       ORDER BY n.created_at
     `;
     console.log("Notes result", result);
-    res.json(result);
+    res.status(200).json(result);
   } catch (err) {
     console.error("Error getting all notes", err);
     res.status(500).json({ error: "Failed to fetch all notes" });
@@ -152,10 +164,10 @@ export const deleteNote = async (req, res) => {
     `;
 
     if (result.length === 0) {
-      return res.status(404).json({ error: "Note not found or not yours" });
+      return res.status(403).json({ error: "Forbidden" });
     }
 
-    return res.json({ success: true, message: "Note deleted" });
+    return res.status(200).json({ success: true, id: result[0].id });
   } catch (err) {
     console.log("Error deleting note", err);
     res.status(500).json({ error: "Failed to delete note" });
@@ -169,6 +181,17 @@ export const updateProfile = async (req, res) => {
 
   const { full_name, email, password, photoUrl } = req.body ?? {};
 
+  // reject empty payload
+  const hasAnyField =
+    full_name !== undefined ||
+    email !== undefined ||
+    password !== undefined ||
+    photoUrl !== undefined;
+
+  if (!hasAnyField) {
+    return res.status(400).json({ error: "No fields to update" });
+  }
+
   try {
     let hashed = null;
     if (password && password.trim()) {
@@ -180,21 +203,20 @@ export const updateProfile = async (req, res) => {
       UPDATE users SET
         full_name     = COALESCE(${full_name}, full_name),
         email         = COALESCE(${email}, email),
-        photo_url     = COALESCE(${photoUrl}, photo_url),
-        password_hash = COALESCE(${hashed}, password_hash),
-        updated_at    = NOW()
+        photo_url     = COALESCE(${photoUrl}, photo_url),  
+        password_hash = COALESCE(${hashed}, password_hash)
       WHERE id = ${uid}
       RETURNING id, full_name, email, photo_url
     `;
 
     if (!updated) return res.status(404).json({ error: "User not found" });
 
-    return res.json({ user: updated });
+    return res.status(200).json({ user: updated });
   } catch (err) {
     if (err.code === "23505") {
       return res.status(409).json({ error: "Email already in use" });
     }
     console.error("updateProfile error:", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Failed to update profile" });
   }
 };

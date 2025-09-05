@@ -126,7 +126,7 @@ describe("auth controller", () => {
   });
 
   describe("login", () => {
-    it("400 when user not found", async () => {
+    it("401 when user not found", async () => {
       sql.mockResolvedValueOnce([]);
 
       const req = { body: { email: "missing@x.com", password: "pw" } };
@@ -134,11 +134,11 @@ describe("auth controller", () => {
 
       await login(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(401);
       expect(res.body).toEqual({ error: "Invalid email or password" });
     });
 
-    it("400 when password mismatch", async () => {
+    it("401 when password mismatch", async () => {
       sql.mockResolvedValueOnce([
         { id: 1, full_name: "U", email: "u@x.com", password_hash: "hash" },
       ]);
@@ -150,7 +150,7 @@ describe("auth controller", () => {
       await login(req, res);
 
       expect(bcrypt.compare).toHaveBeenCalledWith("bad", "hash");
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(401);
       expect(res.body).toEqual({ error: "Invalid email or password" });
     });
 

@@ -17,18 +17,19 @@ const router = express.Router();
 router.get("/likes", requireAuth("user"), checkLikes);
 router.post("/likes", requireAuth("user"), addToLikes);
 router.get("/getLikes", requireAuth("user"), getAllLikedProperties);
-router.delete("/like", requireAuth("user"), removeLike);
+router.delete("/likes", requireAuth("user"), removeLike);
 
 //enquiries
 router.get("/enquiries", requireAuth("user"), getEnquiries);
 
 // notes
-router.post("/addNote", requireAuth("user"), addNote);
-router.get("/getNotes/:property_id", requireAuth("user"), getNotes);
-router.get("/getAllNotes/:user_id", requireAuth("user"), getAllNotes);
-router.delete("/deleteNote/:note_id", requireAuth("user"), deleteNote);
+router.post("/notes", requireAuth("user"), addNote);
+router.post("/notes/:property_id", requireAuth("user"), addNote);
+router.get("/notes/:property_id", requireAuth("user"), getNotes);
+router.get("/notes", requireAuth("user"), getAllNotes);
+router.delete("/notes/:note_id", requireAuth("user"), deleteNote);
 
 //profile
-router.patch("/updateProfile/:id", requireAuth("user"), updateProfile);
+router.patch("/profile/:id", requireAuth("user"), updateProfile);
 
 export default router;

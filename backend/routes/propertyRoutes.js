@@ -20,7 +20,7 @@ router.post("/travel-time", getPropertiesWithTravelTime);
 router.get("/", getAllProperties);
 
 router.get("/places", getPlaces);
-router.post("/enquiries", insertEnquiries);
+router.post("/enquiries", requireAuth("user"), insertEnquiries);
 router.get("/enquiries", getEnquiries);
 router.get("/search", searchWithRadius);
 

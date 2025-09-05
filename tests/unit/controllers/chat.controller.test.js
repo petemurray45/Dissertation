@@ -108,10 +108,13 @@ describe("chat controller botChat", () => {
 
     axios.post.mockResolvedValueOnce({
       data: [
-        { id: 1, travelTimes: [{ duration: "22 min" }] },
-        { id: 2, travelTimes: [{ duration: "45 min" }] },
-        { id: 3, travelTimes: [{ duration: "1 hour 10 min" }] },
-        { id: 4, travelTimes: [{ duration: "18 min" }] },
+        { id: 1, travelTimes: [{ mode: "driving", duration: "22 mins" }] },
+        { id: 2, travelTimes: [{ mode: "driving", duration: "45 mins" }] },
+        {
+          id: 3,
+          travelTimes: [{ mode: "driving", duration: "1 hour 10 mins" }],
+        },
+        { id: 4, travelTimes: [{ mode: "driving", duration: "18 mins" }] },
       ],
     });
 
@@ -191,20 +194,30 @@ describe("chat controller botChat", () => {
     sql.mockImplementation((strings, ...values) => {
       const text = Array.isArray(strings) ? strings.join(" ") : String(strings);
 
-      if (
-        text.includes("SELECT * FROM properties") &&
-        text.includes("ORDER BY price_per_month ASC")
-      ) {
-        return [
-          { id: 10, title: "room a", price_per_month: 800 },
-          { id: 11, title: "room b", price_per_month: 850 },
-        ];
+      // any properties listing (with or without alias/join/order)
+      if (text.includes("FROM properties")) {
+        // return rows only once; further fragments can still call this mock
+        if (!sql._returnedPropsOnce) {
+          sql._returnedPropsOnce = true;
+          return [
+            {
+              id: 10,
+              title: "room a",
+              price_per_month: 800,
+              location: "Belfast",
+            },
+            {
+              id: 11,
+              title: "room b",
+              price_per_month: 850,
+              location: "Belfast",
+            },
+          ];
+        }
       }
 
-      if (
-        text.includes("SELECT property_id, image_url FROM images") &&
-        text.includes("ORDER BY")
-      ) {
+      // any images select
+      if (text.includes("FROM images")) {
         return [
           { property_id: 10, image_url: "img-10a.jpg" },
           { property_id: 10, image_url: "img-10b.jpg" },
@@ -212,7 +225,12 @@ describe("chat controller botChat", () => {
         ];
       }
 
-      // for filter fragments and any other calls, return a harmless token
+      // optional: COUNT(*) if your controller does it in this path
+      if (text.includes("COUNT(")) {
+        return [{ count: 2 }];
+      }
+
+      // fragments / filters
       return "__frag__";
     });
 
@@ -226,18 +244,18 @@ describe("chat controller botChat", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.reply).toMatch(/match your search/i);
     expect(res.body.properties).toEqual([
-      {
+      expect.objectContaining({
         id: 10,
         title: "room a",
         price_per_month: 800,
         imageUrls: ["img-10a.jpg", "img-10b.jpg"],
-      },
-      {
+      }),
+      expect.objectContaining({
         id: 11,
         title: "room b",
         price_per_month: 850,
         imageUrls: ["img-11a.jpg"],
-      },
+      }),
     ]);
   });
 

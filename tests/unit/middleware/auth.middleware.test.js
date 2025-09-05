@@ -136,8 +136,10 @@ describe("auth middleware", () => {
       const next = jest.fn();
 
       requireAuth()(req, res, next);
-
-      expect(res.sendStatus).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ error: expect.any(String) })
+      );
       expect(next).not.toHaveBeenCalled();
     });
 

@@ -40,12 +40,16 @@ export const useTravelStore = create((set, get) => ({
     set({ selectedTravelTime: travelTime }),
 
   getPropertiesWithTravelTime: async (
+    // modes to be made available
     modes = ["DRIVING", "BICYCLING", "WALKING"]
   ) => {
+    // set loading state
     set({ loading: true });
     try {
+      // get array of destinations entered by the user
       const destinations = get().searchDestinations;
 
+      // fetch from API travel times for each destination and each mode
       const { data } = await axios.post(
         `${BASE_URL}/api/properties/travel-time`,
         {
@@ -54,15 +58,20 @@ export const useTravelStore = create((set, get) => ({
               ? { label: d, latitude: null, longitude: null }
               : { label: d.label, latitude: d.latitude, longitude: d.longitude }
           ),
+          // array of travel modes
           modes,
         }
       );
       console.log("API response with travel times", data);
+
+      // updates properties array in useTravelStore thats used to render properties on frontend
       useListingStore.getState().updatePropertyTravelTimes(data);
+
       return data;
     } catch (err) {
       console.log("Error fetching travel times from backend", err);
     } finally {
+      // reset loading state
       set({ loading: false });
     }
   },

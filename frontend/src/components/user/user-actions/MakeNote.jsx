@@ -30,7 +30,7 @@ function MakeNote({ property }) {
   const handleOpenDrawer = async () => {
     try {
       const response = await fetchNotes({ property_id: property.id });
-      setNotes(response);
+      setNotes(Array.isArray(response) ? response : []);
       console.log("notes response:", response);
       setShowDrawer(true);
     } catch (err) {
@@ -155,7 +155,9 @@ function MakeNote({ property }) {
                       key={note.id}
                       className="flex justify-between items-center bg-gray-100 px-5 py-5"
                     >
-                      <span className="text-xl">{note.content}</span>
+                      <span className="text-xl w-full border-2 border-gray-300 rounded-md shadow-sm p-4 mx-2">
+                        {note.content}
+                      </span>
                       <button
                         className="btn w-28 h-16 bg-red-200 rounded-md"
                         onClick={() => handleDelete(note.id)}

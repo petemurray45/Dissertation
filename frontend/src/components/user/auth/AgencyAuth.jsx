@@ -126,6 +126,7 @@ function AgencyAuth() {
                     value={agencyName}
                     onChange={(e) => setAgencyName(e.target.value)}
                     className="w-full py-3 outline-none text-lg"
+                    data-testid="agency-name"
                   />
                 </div>
               </div>
@@ -140,6 +141,7 @@ function AgencyAuth() {
                     value={loginId}
                     onChange={(e) => setLoginId(e.target.value)}
                     className="w-full py-3 outline-none text-lg"
+                    data-testid="agency-loginid"
                   />
                 </div>
               </div>
@@ -148,6 +150,7 @@ function AgencyAuth() {
               <button
                 type="submit"
                 className="md:hidden w-full h-12 rounded-xl bg-gray-700 text-white font-semibold hover:bg-[#02343F] transition"
+                data-testid="agency-login-submit-desktop"
               >
                 Sign in
               </button>
@@ -159,6 +162,7 @@ function AgencyAuth() {
               onClick={handleSubmit}
               className="hidden md:flex items-center justify-center absolute bottom-6 right-6 bg-gray-600 text-white rounded-full shadow-md hover:bg-[#02343F] transition p-2"
               aria-label="Submit"
+              data-testid="agency-login-submit-desktop"
             >
               <FaArrowAltCircleRight className="size-16" />
             </button>

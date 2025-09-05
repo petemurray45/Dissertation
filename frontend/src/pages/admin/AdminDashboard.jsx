@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import AdminNavBar from "../../components/admin/AdminNavBar";
 import AdminHero from "../../components/admin/AdminHero";
 import AdminCard from "../../components/admin/AdminCard";
-import AddPropertyModal from "../../components/admin/PropertyModal.jsx";
 import PropertyTile from "../../components/admin/PropertyTile";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdBrowserUpdated } from "react-icons/md";
@@ -10,10 +9,8 @@ import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from "lucide-react";
 import { HiOutlineViewfinderCircle } from "react-icons/hi2";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useListingStore } from "../../utils/useListingsStore.js";
-import { useUserStore } from "../../utils/useUserStore.js";
-import { useAgencyStore } from "../../utils/useAgencyStore.js";
+import ManageAgency from "../../components/admin/ManageAgency.jsx";
 import { useNavigate } from "react-router-dom";
-import PropertyModal from "../../components/admin/PropertyModal.jsx";
 import { useAdminStore } from "../../utils/useAdminStore.js";
 
 function mapPropertyToForm(p) {
@@ -47,8 +44,7 @@ function AdminDashboard() {
 
   const { token: adminToken } = useAdminStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editing, setEditing] = useState(null);
+  const [agencyModalOpen, setAgencyModalOpen] = useState(false);
 
   console.log("Admin Token:", adminToken);
 
@@ -59,21 +55,6 @@ function AdminDashboard() {
       fetchProperties(adminToken);
     }
   }, [fetchProperties, adminToken]);
-
-  const handleSubmit = async (payload) => {
-    if (editing) {
-      await updateProperty(editing.id, payload, adminToken);
-    } else {
-      await addProperty(payload, adminToken);
-    }
-    closeModal();
-  };
-
-  const handleDelete = async () => {
-    if (!editing) return;
-    await deleteProperty(editing.id, adminToken);
-    closeModal();
-  };
 
   return (
     <>
@@ -108,7 +89,7 @@ function AdminDashboard() {
         </div>
 
         <div className="flex items-center justify-center pl-10 pr-10 font-raleway">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center ">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 w-full  items-center gap-2">
             <button
               className="btn btn-primary"
               onClick={() => navigate("/admin/addproperty")}
@@ -116,9 +97,14 @@ function AdminDashboard() {
               <PlusCircleIcon className="size-8 mr-2" />
               Add property
             </button>
-            <h2 className="md:text-6xl sm:text-2xl text-3xl font-bold md:py-6 text-black pl-10 text-center w-full">
-              Current Listings
-            </h2>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setAgencyModalOpen(true)}
+              data-testid="manage-agencies-open"
+            >
+              <PlusCircleIcon className="size-8 mr-2" />
+              Manage Agencies
+            </button>
             <button className="btn bg-gray-200 " onClick={fetchProperties}>
               <RefreshCwIcon className="size-8" />
               Refresh
@@ -162,6 +148,10 @@ function AdminDashboard() {
           )}
         </div>
       </div>
+      <ManageAgency
+        open={agencyModalOpen}
+        onClose={() => setAgencyModalOpen(false)}
+      />
     </>
   );
 }

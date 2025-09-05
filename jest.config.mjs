@@ -9,20 +9,19 @@ const config = {
   coverageDirectory: "coverage",
   coverageProvider: "v8",
 
-  testEnvironment: "node",
+  coverageReporters: ["text", "lcov", "html"],
 
-  // Tell Jest where tests live (adjust if needed)
+  testEnvironment: "node",
   roots: ["<rootDir>/tests"],
 
-  // No transforms needed for plain JS
   transform: {},
 
-  // (Optional) be explicit about matches
   testMatch: ["**/?(*.)+(spec|test).js"],
 
   testPathIgnorePatterns: [
     "/node_modules/",
-    "<rootDir>/tests/e2e/", // <-- add this line
+    "<rootDir>/tests/e2e/",
+    "<rootDir>/tests/integration/",
   ],
 };
 

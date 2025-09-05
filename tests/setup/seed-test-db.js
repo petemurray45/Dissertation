@@ -108,6 +108,9 @@ export async function seedTestData() {
     userRow = await sql`
       INSERT INTO users (full_name, email, password_hash)
       VALUES (${USER.name}, ${USER.email}, ${hash})
+      ON CONFLICT (email) DO UPDATE
+      SET full_name = EXCLUDED.full_name,
+      password_hash = EXCLUDED.password_hash
       RETURNING id`;
     console.log("[seed] inserted test user");
   } else {

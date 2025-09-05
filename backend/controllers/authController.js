@@ -67,21 +67,24 @@ export const login = async (req, res) => {
     const result = await sql`SELECT * FROM users WHERE email = ${email}`;
     const user = result[0];
     if (!user)
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid email or password" });
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid)
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid email or password" });
     console.log("User in login:", user);
 
+    // creates JWT token with key details for navigating system
     const token = jwt.sign(
       { id: user.id, role: "user", name: user.full_name, email: user.email },
+      // jwt secret stored in .env
       process.env.JWT_SECRET,
       {
         expiresIn: "2h",
       }
     );
     console.log("JWT_SECRET in login:", process.env.JWT_SECRET);
+    // full user object returned with token attached
     res.status(200).json({
       token,
       user: {

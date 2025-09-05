@@ -9,34 +9,52 @@ const GEOCODE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 export const getAllProperties = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  // cast req variables
+  const page = Math.max(1, parseInt(req.query.page ?? "1", 10));
+  const limit = Math.max(1, parseInt(req.query.limit ?? "6", 10));
   const offset = (page - 1) * limit;
+
+  // price filters
+  const minPrice = req.query.min_price ?? req.query.minPrice ?? null;
+  const maxPrice = req.query.max_price ?? req.query.maxPrice ?? null;
+
   try {
+    // building a where clause
+    const where = [];
+    if (minPrice != null && minPrice !== "")
+      where.push(sql`p.price_per_month >= ${Number(minPrice)}`);
+    if (maxPrice != null && maxPrice !== "")
+      where.push(sql`p.price_per_month <= ${Number(maxPrice)}`);
+    const whereClause = where.length
+      ? where.reduce((a, b) => sql`${a} AND ${b}`)
+      : sql`TRUE`;
+
     const [properties, [{ count }]] = await Promise.all([
       sql`
       SELECT 
-        p.*, 
+        p.*,
+        p.price_per_month::float8 AS price,
         a.agency_name, 
         a.logo_url AS logo_url
       FROM properties p
       JOIN agencies a ON a.id = p.agency_id
+      WHERE ${whereClause}
       ORDER BY p.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
       `,
-      sql`SELECT COUNT(*)::int FROM properties`,
+      sql`SELECT COUNT(*)::int AS count FROM properties`,
     ]);
 
     const propertyIds = properties.map((p) => Number(p.id));
     let images = [];
-    console.log("property ids", propertyIds);
 
-    if (propertyIds.length > 0) {
+    if (propertyIds.length) {
       console.log("Type of first property ID:", typeof propertyIds[0]);
 
       images = await sql`
       SELECT property_id, image_url
       FROM images
-      WHERE property_id = ANY(${propertyIds}::integer[])
+      WHERE property_id = ANY(${propertyIds}::int[])
       ORDER BY property_id, id;`;
     }
 
@@ -67,13 +85,16 @@ export const getAllProperties = async (req, res) => {
 };
 
 export const createProperty = async (req, res) => {
+  // derives role and agencyId from headers
   const { role, agencyId } = req.auth || {};
+  // checks if user role is admin - take agencyId from the body to assign property
+  // if not admin use agencyId from decoed JWT locking agents to their own agency
   const agency_id = role === "admin" ? (req.body.agency_id ?? null) : agencyId;
-
   if (!agency_id)
     return res
       .status(400)
       .json({ success: false, message: "Missing agency id" });
+
   console.log("REQ.BODY:", req.body);
   const {
     title,
@@ -154,6 +175,12 @@ export const getProperty = async (req, res) => {
     JOIN agencies a ON a.id = p.agency_id
     WHERE p.id = ${id}
     `;
+
+    if (!property.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
 
     const fetchedProperty = property[0];
 
@@ -479,10 +506,14 @@ export const insertEnquiries = async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  if (req.auth?.role === "user" && req.auth.userId) {
-    if (user_id && String(user_id) !== String(req.auth.userId)) {
-      return res.status(403).json({ error: "Forbidden: mismatched user_id" });
-    }
+  const role = req.auth?.role ?? "user";
+  const uid = req.auth?.userId ?? req.auth?.id ?? null;
+
+  const realUID =
+    role === "admin" || role === "agent" ? (user_id ?? null) : uid;
+
+  if (role === "user" && user_id && String(user_id) !== String(uid)) {
+    return res.status(403).json({ error: "Forbidden: mismatched user_id" });
   }
 
   try {
@@ -500,11 +531,15 @@ export const insertEnquiries = async (req, res) => {
 
     const [inserted] = await sql`
       INSERT INTO enquiries (property_id, user_id, full_name, email, message, agency_id)
-      VALUES (${property_id}, ${user_id || null}, ${full_name}, ${email}, ${message}, ${agency_id})
+      VALUES (${property_id}, ${realUID}, ${full_name}, ${email}, ${message}, ${agency_id})
       RETURNING *
     `;
-
-    await sendEnquiryConfirmation(email, full_name, location || "a property");
+    // send email but dont crash if it doesnt
+    try {
+      await sendEnquiryConfirmation(email, full_name, location || "a property");
+    } catch (e) {
+      console.warn("sendEnquiryConfirmation failed:", e?.message || e);
+    }
     return res.status(201).json({ success: true, data: inserted });
   } catch (err) {
     console.error("Error inserting enquiry", err);

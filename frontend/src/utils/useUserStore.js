@@ -159,7 +159,7 @@ export const useUserStore = create((set, get) => ({
 
     try {
       const res = await axios.post(
-        `${BASE_URL}/api/user/addNote`,
+        `${BASE_URL}/api/user/notes`,
         {
           property_id,
           content,
@@ -181,7 +181,7 @@ export const useUserStore = create((set, get) => ({
 
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/user/getNotes/${user.id}/${property_id}`,
+        `${BASE_URL}/api/user/notes/${property_id}`,
 
         {
           headers: {
@@ -200,14 +200,11 @@ export const useUserStore = create((set, get) => ({
     if (!user || !token) return;
 
     try {
-      const res = await axios.get(
-        `${BASE_URL}/api/user/getAllNotes/${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/user/notes/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return res.data;
     } catch (err) {
       console.error("Error fetching all Notes", err);
@@ -218,7 +215,7 @@ export const useUserStore = create((set, get) => ({
     const { token } = get();
 
     try {
-      await axios.delete(`${BASE_URL}/api/user/deleteNote/${note_id}`, {
+      await axios.delete(`${BASE_URL}/api/user/notes/${note_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -235,7 +232,7 @@ export const useUserStore = create((set, get) => ({
 
     try {
       const { data } = await axios.patch(
-        `${BASE_URL}/api/user/updateProfile/${user.id}`,
+        `${BASE_URL}/api/user/profile/${user.id}`,
         payLoad,
         {
           headers: {

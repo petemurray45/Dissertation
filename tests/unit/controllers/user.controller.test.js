@@ -9,7 +9,6 @@ import {
   expect,
 } from "@jest/globals";
 
-// mock db and bcrypt before importing controller
 jest.unstable_mockModule("../../../backend/config/db.js", () => ({
   sql: jest.fn(),
 }));
@@ -21,7 +20,6 @@ jest.unstable_mockModule("bcrypt", () => ({
   },
 }));
 
-// import mocked deps and controller exports
 let sql;
 let bcrypt;
 let controller;
@@ -56,7 +54,6 @@ beforeAll(async () => {
   } = controller);
 });
 
-// minimal express style response
 function createRes() {
   const res = {};
   res.statusCode = 200;
@@ -87,9 +84,8 @@ describe("user controller", () => {
     process.env = OLD_ENV;
   });
 
-  // checkLikes
   it("checkLikes returns liked true when row exists", async () => {
-    sql.mockResolvedValueOnce([{}]); // any row means liked
+    sql.mockResolvedValueOnce([{}]);
     const req = { query: { propertyId: "7" }, auth: { userId: 42 } };
     const res = createRes();
 
@@ -119,9 +115,8 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // addToLikes
   it("addToLikes inserts like and returns 201", async () => {
-    sql.mockResolvedValueOnce(undefined); // insert
+    sql.mockResolvedValueOnce(undefined);
     const req = { body: { propertyId: 9 }, auth: { userId: 3 } };
     const res = createRes();
 
@@ -143,7 +138,6 @@ describe("user controller", () => {
   });
 
   it("addToLikes handles db error without throwing", async () => {
-    // this test ensures no throw and leaves status as default
     sql.mockRejectedValueOnce(new Error("db down"));
     const req = { body: { propertyId: 1 }, auth: { userId: 2 } };
     const res = createRes();
@@ -151,11 +145,9 @@ describe("user controller", () => {
     await addToLikes(req, res);
 
     expect(res.status).not.toHaveBeenCalledWith(500);
-    //  ensure it did not mark success either
     expect(res.json).toHaveBeenCalledTimes(0);
   });
 
-  // getAllLikedProperties
   it("getAllLikedProperties returns list of liked ids", async () => {
     sql.mockResolvedValueOnce([{ property_id: 5 }, { property_id: 8 }]);
     const req = { auth: { userId: 77 } };
@@ -186,7 +178,6 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // removeLike
   it("removeLike accepts property id in body and returns 200", async () => {
     sql.mockResolvedValueOnce(undefined);
     const req = { body: { propertyId: 12 }, auth: { userId: 2 } };
@@ -227,10 +218,12 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // addNote
   it("addNote inserts and returns 201", async () => {
-    sql.mockResolvedValueOnce(undefined);
+    sql.mockResolvedValueOnce([
+      { id: 1, user_id: 9, property_id: 5, content: "note" },
+    ]);
     const req = {
+      params: {},
       body: { property_id: 5, content: "note" },
       auth: { userId: 9 },
     };
@@ -239,11 +232,13 @@ describe("user controller", () => {
     await addNote(req, res);
 
     expect(res.statusCode).toBe(201);
-    expect(res.body).toEqual({ success: true });
+    expect(res.body).toEqual({
+      note: { id: 1, user_id: 9, property_id: 5, content: "note" },
+    });
   });
 
   it("addNote returns 400 on missing fields", async () => {
-    const req = { body: {}, auth: { userId: 1 } };
+    const req = { params: {}, body: {}, auth: { userId: 1 } };
     const res = createRes();
 
     await addNote(req, res);
@@ -254,6 +249,7 @@ describe("user controller", () => {
   it("addNote returns 500 on db error", async () => {
     sql.mockRejectedValueOnce(new Error("db"));
     const req = {
+      params: {},
       body: { property_id: 5, content: "x" },
       auth: { userId: 2 },
     };
@@ -264,7 +260,6 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // getNotes
   it("getNotes returns notes for user and property", async () => {
     sql.mockResolvedValueOnce([{ id: 1, content: "a" }]);
     const req = { params: { property_id: "7" }, auth: { userId: 3 } };
@@ -273,7 +268,7 @@ describe("user controller", () => {
     await getNotes(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual([{ id: 1, content: "a" }]);
+    expect(res.body.notes).toEqual([{ id: 1, content: "a" }]);
   });
 
   it("getNotes returns 400 when missing", async () => {
@@ -295,7 +290,6 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // getAllNotes
   it("getAllNotes returns joined list", async () => {
     sql.mockResolvedValueOnce([
       { id: 1, content: "c", property_id: 5, location: "b", created_at: "t" },
@@ -330,26 +324,25 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // deleteNote
   it("deleteNote deletes note when owned", async () => {
-    sql.mockResolvedValueOnce([{ id: 1 }]); // returning row means deleted
+    sql.mockResolvedValueOnce([{ id: 1 }]);
     const req = { params: { note_id: "11" }, auth: { userId: 5 } };
     const res = createRes();
 
     await deleteNote(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({ success: true, message: "Note deleted" });
+    expect(res.body).toEqual({ success: true, id: 1 });
   });
 
-  it("deleteNote returns 404 when not found", async () => {
-    sql.mockResolvedValueOnce([]); // nothing deleted
+  it("deleteNote returns 403 when not found", async () => {
+    sql.mockResolvedValueOnce([]);
     const req = { params: { note_id: "11" }, auth: { userId: 5 } };
     const res = createRes();
 
     await deleteNote(req, res);
 
-    expect(res.statusCode).toBe(404);
+    expect(res.statusCode).toBe(403);
   });
 
   it("deleteNote returns 401 when unauthorized", async () => {
@@ -371,7 +364,6 @@ describe("user controller", () => {
     expect(res.statusCode).toBe(500);
   });
 
-  // updateProfile
   it("updateProfile returns 401 when no user", async () => {
     const req = { auth: {}, body: {} };
     const res = createRes();
@@ -425,8 +417,8 @@ describe("user controller", () => {
   });
 
   it("updateProfile returns 404 when user not found", async () => {
-    sql.mockResolvedValueOnce([]); // no rows
-    const req = { auth: { userId: 1 }, body: {} };
+    sql.mockResolvedValueOnce([]);
+    const req = { auth: { userId: 1 }, body: { full_name: "x" } };
     const res = createRes();
 
     await updateProfile(req, res);
@@ -449,7 +441,7 @@ describe("user controller", () => {
 
   it("updateProfile returns 500 on other error", async () => {
     sql.mockRejectedValueOnce(new Error("x"));
-    const req = { auth: { userId: 1 }, body: {} };
+    const req = { auth: { userId: 1 }, body: { full_name: "y" } };
     const res = createRes();
 
     await updateProfile(req, res);

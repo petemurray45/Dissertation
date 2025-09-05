@@ -36,10 +36,10 @@ export const agencyLogin = async (req, res) => {
       await sql`SELECT * FROM agencies WHERE agency_name = ${agency_name}`;
     const agency = result[0];
 
-    if (!agency) return res.status(400).json({ error: "Invalid credentials" });
+    if (!agency) return res.status(401).json({ error: "Invalid credentials" });
 
     const valid = await bcrypt.compare(loginId, agency.login_id_hash);
-    if (!valid) return res.status(400).json({ error: "Invalid credentials" });
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = jwt.sign(
       { agencyId: agency.id, role: "agent" },
@@ -161,12 +161,22 @@ export const updateAgency = async (req, res) => {
   console.log("updateAgency agencyId=", req.auth?.agencyId);
   console.log("updateAgency body.logo_url=", req.body?.logo_url);
 
+  // check valid email and phone inputs
+
+  if (agency_email && !agency_email.includes("@")) {
+    return res.status(400).json({ error: "Invalid email" });
+  }
+
+  if (phone && phone.length < 7) {
+    return res.status(400).json({ error: "Invalid phone number" });
+  }
+
   try {
     const response = await sql`SELECT * FROM agencies WHERE id = ${agencyId}`;
     const agency = response[0];
 
     if (!agency) {
-      return res.status(404).json({ error: "Agency not found." });
+      return res.status(403).json({ error: "Forbidden" });
     }
 
     let login_id_hashed = agency.login_id_hash;

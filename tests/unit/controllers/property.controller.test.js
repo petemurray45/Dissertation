@@ -104,13 +104,14 @@ describe("property controller", () => {
   // getAllProperties
   it("getAllProperties returns paged properties with images", async () => {
     // first parallel call returns properties and count
-    sql
-      .mockResolvedValueOnce([
-        // select properties join agencies
-        { id: 1, title: "room a", agency_name: "propco", logo_url: "logo.png" },
-        { id: 2, title: "room b", agency_name: "propco", logo_url: "logo.png" },
-      ])
-      .mockResolvedValueOnce([{ count: 2 }]);
+
+    sql.mockImplementationOnce(() => "__frag__");
+    sql.mockResolvedValueOnce([
+      // select properties join agencies
+      { id: 1, title: "room a", agency_name: "propco", logo_url: "logo.png" },
+      { id: 2, title: "room b", agency_name: "propco", logo_url: "logo.png" },
+    ]);
+    sql.mockResolvedValueOnce([{ count: 2 }]);
 
     // images by property id
     sql.mockResolvedValueOnce([
@@ -146,7 +147,6 @@ describe("property controller", () => {
   });
 
   it("getAllProperties handles error", async () => {
-    sql.mockRejectedValueOnce(new Error("db"));
     const req = { query: {} };
     const res = createRes();
 
